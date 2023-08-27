@@ -7,4 +7,4 @@ const FindRoute = () => {
   )
 }
 
-export default FindRoute
+export default FindRoute;

@@ -55,7 +55,7 @@ const Map = () => {
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation, setUseCurrentLocation] = useState(true);
+  const [useCurrentLocation] = useState(true);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
