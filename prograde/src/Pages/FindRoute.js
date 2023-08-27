@@ -1,11 +1,10 @@
-import React from "react";
+import React from 'react'
+import Map from '../Components/Map'
 
 const FindRoute = () => {
   return (
-    <div>
-      <h1>Welcome To Prograde Routes Page!</h1>
-    </div>
-  );
-};
+      <Map />
+  )
+}
 
 export default FindRoute;
