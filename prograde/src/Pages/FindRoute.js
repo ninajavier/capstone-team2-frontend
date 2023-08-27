@@ -3,9 +3,7 @@ import Map from '../Components/Map'
 
 const FindRoute = () => {
   return (
-    <div>
       <Map />
-    </div>
   )
 }
 

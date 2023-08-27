@@ -17,16 +17,13 @@ const LocationInput = ({ useCurrentLocation, currentPosition }) => {
   useEffect(() => {
     if (useCurrentLocation && currentPosition) {
       const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode(
-        { location: currentPosition },
-        (results, status) => {
-          if (status === "OK" && results[0]) {
-            setCurrentAddress(results[0].formatted_address);
-          } else {
-            console.error("Geocoder failed due to: " + status);
-          }
+      geocoder.geocode({ location: currentPosition }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          setCurrentAddress(results[0].formatted_address);
+        } else {
+          console.error("Geocoder failed due to: " + status);
         }
-      );
+      });
     } else {
       setCurrentAddress("");
     }
@@ -142,16 +139,30 @@ const Map = () => {
   return (
     <Container>
       <Row>
-        <LocationInput
-          useCurrentLocation={useCurrentLocation}
-          currentPosition={currentPosition}
-        />
-        <Form.Group as={Col} md={6}>
+        <Col sm={6} className="input-container">
           <Autocomplete>
-            <Form.Control type="text" placeholder="Destination" ref={destinationRef} />
+            <LocationInput
+              useCurrentLocation={useCurrentLocation}
+              currentPosition={currentPosition}
+            />
           </Autocomplete>
-        </Form.Group>
+        </Col>
+        <Col md={5} className="input-container">
+          <Autocomplete>
+            <Form.Control
+              type="text"
+              placeholder="Destination"
+              ref={destinationRef}
+            />
+          </Autocomplete>
+        </Col>
+        <Col sm={1} className="button-container">
+          <Button variant="primary" type="button" onClick={calculateRoute}>
+            Go
+          </Button>
+        </Col>
       </Row>
+
       <Row>
         <Form.Group as={Col} md={2}>
           <label>Mode of Travel:</label>
@@ -162,21 +173,9 @@ const Map = () => {
             <option value="TRANSIT">Transit</option>
           </select>
         </Form.Group>
+
         <Form.Group as={Col} md={2}>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={calculateRoute}
-          >
-            Calculate Route
-          </Button>
-        </Form.Group>
-        <Form.Group as={Col} md={2}>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={clearRoute}
-          >
+          <Button variant="primary" type="button" onClick={clearRoute}>
             Clear Route
           </Button>
         </Form.Group>
