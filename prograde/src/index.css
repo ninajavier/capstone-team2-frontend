@@ -11,3 +11,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.material-icons {
+  color: #273170;
+  font-size: 70px;
+}
