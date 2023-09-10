@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const ESTHandler = (UnixTimeStamp) => {
+  let timeStamp = UnixTimeStamp;
+
+  const date = new Date(timeStamp * 1000);
+  return date.toLocaleString("en-US");
+};
+
 function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState([]);
 
