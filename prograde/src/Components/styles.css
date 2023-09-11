@@ -24,3 +24,25 @@
   padding: 0;
   box-sizing: border-box;
 }
+.dropdown-train-icon {
+  width: 24px;
+  height: 24px;
+}
+.icon-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+/* styles.css */
+.trains-dropdown .dropdown-item {
+  margin-bottom: 15px;
+}
+.multi-column-dropdown {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.trains-dropdown .dropdown-item {
+  margin-bottom: 8px;
+  break-inside: avoid;
+}
