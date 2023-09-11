@@ -53,7 +53,7 @@ const Map = () => {
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation] = useState(true);
+  const [useCurrentLocation, setCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
@@ -86,10 +86,11 @@ const Map = () => {
   
     const directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
- 
+  
     const originAddress = originRef.current.value;
   
     const geocoder = new window.google.maps.Geocoder();
+    console.log("hello")
   
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
@@ -103,6 +104,7 @@ const Map = () => {
       });
   
       const origin = geocodeResult;
+      console.log("geocodeResult")
   
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
@@ -114,6 +116,7 @@ const Map = () => {
           (response, status) => {
             if (status === "OK") {
               resolve(response);
+              console.log("response")
             } else {
               reject(new Error("Directions request failed with status: " + status));
             }
@@ -123,12 +126,13 @@ const Map = () => {
   
       if (results) {
         setDirectionsResponse(results);
-  
+        console.log("testing results")
+        // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
         });
-        setMarkers([]);
   
+        // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
             position: results.routes[0].legs[0].start_location,
@@ -139,26 +143,35 @@ const Map = () => {
             map: map,
           }),
         ];
-  
+  console.log(routeMarkers)
         setMarkers(routeMarkers);
       }
+      
+        
+        console.log(markers)
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-
+  
   function clearRoute() {
+    console.log("test clearRoute")
     if (originRef.current) {
       originRef.current.value = "";
     }
     destinationRef.current.value = "";
     setDirectionsResponse(null);
-
-    markers.forEach((marker) => {
-      marker.setMap(null);
-    });
-    setMarkers([]);
+    console.log(directionsResponse)
+    setCurrentLocation(false)
+    setMarkers([])
+    setMap(null)
   }
+  
+  
+  
+  
+  console.log(directionsResponse)
+  
 
   function centerToUserLocation() {
     if (map && currentPosition) {
@@ -272,7 +285,7 @@ const Map = () => {
                 {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}{" "}
               </h5>
               <h4>Directions:</h4>
-              <ol className="text-left">
+              <ol>
                 {directionsResponse.routes[0].legs[0].steps.map(
                   (step, index) => (
                     <li
