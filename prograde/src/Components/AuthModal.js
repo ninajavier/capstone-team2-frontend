@@ -3,6 +3,8 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider, db } from "../config/firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
+
 
 const AuthModal = ({ show, onClose }) => {
   const [email, setEmail] = useState("");
@@ -46,10 +48,13 @@ const AuthModal = ({ show, onClose }) => {
     fetchUserData();
   }, [user]);
 
+  const navigate = useNavigate();
+
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       onClose();
+      navigate('/landing');
     } catch (error) {
       console.error("Error signing in:", error);
     }
@@ -59,6 +64,7 @@ const AuthModal = ({ show, onClose }) => {
     try {
       await signInWithPopup(auth, googleProvider);
       onClose();
+      navigate('/landing');
     } catch (error) {
       console.error("Error signing in with Google:", error);
     }
