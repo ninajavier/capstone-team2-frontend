@@ -1,31 +1,56 @@
+import { Form, Dropdown } from "react-bootstrap";
+import { useState } from "react";
 const FilterDropdown = () => {
   const submitHandler = (event) => {
     event.preventDefault();
   };
-  return (
-    <form onSubmit={submitHandler}>
-      <select multiple>
-        <option value="a">A</option>
-        <option value="b">B</option>
-        <option value="c">C</option>
-        <option value="d">D</option>
-        <option value="e">E</option>
-        <option value="f">F</option>
-        <option value="g">G</option>
-        <option value="j">J</option>
-        <option value="l">L</option>
-        <option value="m">M</option>
-        <option value="n">N</option>
-        <option value="q">Q</option>
-        <option value="r">R</option>
-        <option value="w">W</option>
-        <option value="lirr">LIRR</option>
-        <option value="mnr">MNR</option>
-        <option value="sirr">SIR</option>
+  const checkboxHandler = (event) => {
+    event.stopPropagation();
+  };
 
-        <option value="c">L</option>
-      </select>
-    </form>
+  const labels = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "J",
+    "L",
+    "M",
+    "N",
+    "Q",
+    "R",
+    "W",
+    "LIRR",
+    "MNR",
+    "SIR",
+  ];
+
+  return (
+    <Dropdown>
+      <Dropdown.Toggle variant="success" id="dropdown-basic">
+        Trains
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Form onSubmit={submitHandler}>
+          <Form.Group className="trains-dropdown">
+            {labels.map((trainLabel, index) => {
+              return (
+                <Dropdown.Item onClick={checkboxHandler} key={index}>
+                  <Form.Check
+                    type="checkbox"
+                    onClick={checkboxHandler}
+                    label={trainLabel}
+                  />
+                </Dropdown.Item>
+              );
+            })}
+          </Form.Group>
+        </Form>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 
