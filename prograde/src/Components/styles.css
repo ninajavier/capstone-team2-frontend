@@ -9,3 +9,18 @@
 .subway-alerts-title {
   padding: 20px;
 }
+.multi-column-dropdown {
+  max-width: 400px;
+}
+
+.trains-dropdown {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.multi-column-dropdown .dropdown-item {
+  flex: 1 0 25%;
+  padding: 0;
+  box-sizing: border-box;
+}

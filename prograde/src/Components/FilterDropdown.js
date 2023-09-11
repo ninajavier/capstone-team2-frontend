@@ -1,5 +1,7 @@
 import { Form, Dropdown } from "react-bootstrap";
+import "./styles.css";
 import { useState } from "react";
+import "../Assets/TrainIcons";
 const FilterDropdown = () => {
   const submitHandler = (event) => {
     event.preventDefault();
@@ -26,6 +28,13 @@ const FilterDropdown = () => {
     "LIRR",
     "MNR",
     "SIR",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
   ];
 
   return (
@@ -33,7 +42,7 @@ const FilterDropdown = () => {
       <Dropdown.Toggle variant="success" id="dropdown-basic">
         Trains
       </Dropdown.Toggle>
-      <Dropdown.Menu>
+      <Dropdown.Menu className="multi-column-dropdown">
         <Form onSubmit={submitHandler}>
           <Form.Group className="trains-dropdown">
             {labels.map((trainLabel, index) => {
