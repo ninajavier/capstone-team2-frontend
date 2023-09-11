@@ -27,11 +27,11 @@ function App() {
           {/* Wrap components with UserContext.Provider */}
           <Navbar />
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="/community" element={<Community />} />
             <Route path="/find-route" element={<FindRoute />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
