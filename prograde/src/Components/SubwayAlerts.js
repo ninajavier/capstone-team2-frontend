@@ -22,6 +22,7 @@ const generateUniqueKey = (id, index) => {
   return `${id}_${index}`;
 };
 
+c;
 function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState([]);
 
@@ -38,44 +39,45 @@ function SubwayAlerts() {
         console.error("Error fetching service alerts:", error);
       });
   }, []);
-
-  //.activePeriod the time the alter should go into affect
-  //.
+  // Sort Alerts by train line
+  // optionally display end time
+  // if end time card is grey'd out
+  //display routeId(Train Letter/number) in sPrograde live alter
 
   return (
     <div>
-      <Card className="card">
-        <Card.Body>
-          <h1>Subway Alerts</h1>
-          {subwayAlerts.entity ? (
-            <ul>
-              {subwayAlerts.entity.map((entity, index) => (
-                <li key={generateUniqueKey(entity.id, index)}>
-                  <strong>PROGRADE LIVE ALERT</strong>{" "}
-                  {entity.alert.headerText.translation[0].text}
-                  <br />
-                  <strong>Goes Into Affect on</strong>{" "}
-                  {ESTHandler(entity.alert.activePeriod[0].start)}
-                  <br />
-                  <strong>Current Train Lines Affected</strong>
-                  <ul>
-                    {entity.alert.informedEntity.map(
-                      (informedEntity, index) => (
-                        <li key={index}>
-                          {informedEntity.routeId}
-                          {/* {informedEntity.stopId || "N/A"} */}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </Card.Body>
-      </Card>
+      <h1>Subway Alerts</h1>
+      {subwayAlerts.entity ? (
+        <ul>
+          {subwayAlerts.entity.map((entity, index) => (
+            <Card
+              className="subway-alerts"
+              key={generateUniqueKey(entity.id, index)}
+            >
+              {console.log(entity)}
+              <Card.Header>PROGRADE LIVE ALERT</Card.Header>{" "}
+              <Card.Title>
+                {entity.alert.headerText.translation[0].text}
+              </Card.Title>
+              <br />
+              <strong>Goes Into Affect on</strong>{" "}
+              {ESTHandler(entity.alert.activePeriod[0].start)}
+              <br />
+              <strong>Current Train Lines Affected</strong>
+              <ul>
+                {entity.alert.informedEntity.map((informedEntity, index) => (
+                  <li key={index}>
+                    {informedEntity.routeId}
+                    {/* {informedEntity.stopId || "N/A"} */}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ))}
+        </ul>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
