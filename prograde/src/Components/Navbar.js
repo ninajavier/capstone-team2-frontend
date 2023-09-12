@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Image, Button } from "react-bootstrap"; // Added Button import
+import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import AuthModal from "./AuthModal";
 import { useUser } from "../context/UserContext";
@@ -23,7 +23,6 @@ const MyNavbar = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      // Optionally, reset any user-specific data or redirect the user to a specific page
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -48,13 +47,22 @@ const MyNavbar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <LinkContainer to="/home">
-              <Nav.Link>Home</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">home</i>
+                Home
+              </Nav.Link>
             </LinkContainer>
             <LinkContainer to="/community">
-              <Nav.Link>Community</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">group</i>
+                Community
+              </Nav.Link>
             </LinkContainer>
             <LinkContainer to="/find-route">
-              <Nav.Link>Find Route</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">directions</i>
+                Find Route
+              </Nav.Link>
             </LinkContainer>
             {user ? (
               <>
@@ -71,13 +79,22 @@ const MyNavbar = () => {
               </Button>
             )}
             <LinkContainer to="/profile" className="ml-3">
-              <Nav.Link>Profile</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">person</i>
+                Profile
+              </Nav.Link>
             </LinkContainer>
             <LinkContainer to="/settings">
-              <Nav.Link>Settings</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">settings</i>
+                Settings
+              </Nav.Link>
             </LinkContainer>
             <LinkContainer to="/station-info">
-              <Nav.Link>Station Info</Nav.Link>
+              <Nav.Link>
+                <i className="material-icons">info</i>
+                Station Info
+              </Nav.Link>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
