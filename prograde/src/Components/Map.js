@@ -55,9 +55,11 @@ const Map = () => {
   const [watchId, setWatchId] = useState(null);
   const [useCurrentLocation, setCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
+  let directionsService;
+  const [isRendered, setIsRendered] = useState([]);
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    if ("geolocation" in navigator && !watchId) {
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -77,21 +79,21 @@ const Map = () => {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, []);
+  }, [watchId]);
 
   async function calculateRoute() {
     if (destinationRef.current.value === "") {
       return;
     }
-  
-    const directionsService = new window.google.maps.DirectionsService();
+    directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-  
+    console.log(directionsService);
+
     const originAddress = originRef.current.value;
-  
+
     const geocoder = new window.google.maps.Geocoder();
-    console.log("hello")
-  
+    console.log("hello");
+
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
         geocoder.geocode({ address: originAddress }, (results, status) => {
@@ -102,10 +104,11 @@ const Map = () => {
           }
         });
       });
-  
+
       const origin = geocodeResult;
-      console.log("geocodeResult")
-  
+      console.log("geocodeResult");
+      setIsRendered(true);
+
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
           {
@@ -116,22 +119,24 @@ const Map = () => {
           (response, status) => {
             if (status === "OK") {
               resolve(response);
-              console.log("response")
+              console.log("response");
             } else {
-              reject(new Error("Directions request failed with status: " + status));
+              reject(
+                new Error("Directions request failed with status: " + status)
+              );
             }
           }
         );
       });
-  
+
       if (results) {
         setDirectionsResponse(results);
-        console.log("testing results")
+        console.log("testing results");
         // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
         });
-  
+
         // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
@@ -143,35 +148,42 @@ const Map = () => {
             map: map,
           }),
         ];
-  console.log(routeMarkers)
+  
         setMarkers(routeMarkers);
       }
-      
-        
-        console.log(markers)
+
+      console.log(markers);
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-  
+  // useEffect(() => {
+  //   setDirectionsResponse(null);
+  // }, [isRendered]);
   function clearRoute() {
-    console.log("test clearRoute")
-    if (originRef.current) {
-      originRef.current.value = "";
-    }
-    destinationRef.current.value = "";
+    console.log("test clearRoute");
+    // if (originRef.current) {
+    //   originRef.current.value = "";
+    // }
+    // destinationRef.current.value = "";
     setDirectionsResponse(null);
-    console.log(directionsResponse)
-    setCurrentLocation(false)
-    setMarkers([])
-    setMap(null)
+    markers.forEach((marker) => {
+      marker.setMap(null);
+    });
+    setMarkers([]);
+    console.log(directionsResponse);
+    // setCurrentLocation(false);
+    centerToUserLocation();
+    console.log(!!directionsResponse);
+    // setIsRendered(false);
+    // setWatchId(null);
+
+    if (directionsService) {
+      directionsService.setMap(null);
+    }
   }
-  
-  
-  
-  
-  console.log(directionsResponse)
-  
+
+  console.log(directionsResponse);
 
   function centerToUserLocation() {
     if (map && currentPosition) {
@@ -224,8 +236,7 @@ const Map = () => {
       <Row className="mt-4">
         <Form.Group as={Col} md={4}>
           <Form.Label>Mode of Travel:</Form.Label>
-       
-      
+
           <Form.Select ref={travelModeRef}>
             <option value="TRANSIT">Transit</option>
             <option value="DRIVING">Driving</option>
@@ -238,12 +249,8 @@ const Map = () => {
           <Button variant="dark" type="button" onClick={clearRoute}>
             Clear Route
           </Button>
-  
-          <Button
-            variant="dark"
-            type="button"
-            onClick={centerToUserLocation}
-          >
+
+          <Button variant="dark" type="button" onClick={centerToUserLocation}>
             Center Map
           </Button>
         </Form.Group>
