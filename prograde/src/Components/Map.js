@@ -39,11 +39,11 @@ const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
     </Form.Group>
   );
 };
-
+const libs = ["places"];
 const Map = () => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries: libs,
   });
 
   const [map, setMap] = useState(null);
@@ -56,7 +56,6 @@ const Map = () => {
   const [useCurrentLocation, setCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
   let directionsService;
-  const [isRendered, setIsRendered] = useState([]);
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
@@ -107,7 +106,6 @@ const Map = () => {
 
       const origin = geocodeResult;
       console.log("geocodeResult");
-      setIsRendered(true);
 
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
@@ -131,7 +129,6 @@ const Map = () => {
 
       if (results) {
         setDirectionsResponse(results);
-        console.log("testing results");
         // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
@@ -152,7 +149,6 @@ const Map = () => {
         setMarkers(routeMarkers);
       }
 
-      console.log(markers);
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
@@ -161,29 +157,11 @@ const Map = () => {
   //   setDirectionsResponse(null);
   // }, [isRendered]);
   function clearRoute() {
-    console.log("test clearRoute");
-    // if (originRef.current) {
-    //   originRef.current.value = "";
-    // }
-    // destinationRef.current.value = "";
     setDirectionsResponse(null);
-    markers.forEach((marker) => {
-      marker.setMap(null);
-    });
-    setMarkers([]);
-    console.log(directionsResponse);
-    // setCurrentLocation(false);
     centerToUserLocation();
-    console.log(!!directionsResponse);
-    // setIsRendered(false);
-    // setWatchId(null);
-
-    if (directionsService) {
-      directionsService.setMap(null);
-    }
   }
 
-  console.log(directionsResponse);
+
 
   function centerToUserLocation() {
     if (map && currentPosition) {
