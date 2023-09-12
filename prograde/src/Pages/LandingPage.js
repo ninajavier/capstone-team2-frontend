@@ -1,22 +1,9 @@
-import React, { useState } from "react";
-import AuthModal from "../Components/AuthModal";
+import React from "react";
 
 const LandingPage = () => {
-  const [showModal, setShowModal] = useState(false);
-
-  const openModal = () => {
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
   return (
     <div>
-      <h1>Welcome to Prograde</h1>
-      <button onClick={openModal}>Open Modal</button>
-      <AuthModal show={showModal} onClose={closeModal} />
+      <h1>Welcome To Prograde Landing Page!</h1>
     </div>
   );
 };
