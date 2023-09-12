@@ -1,6 +1,12 @@
 import React from 'react';
 import UserProfile from './UserProfile'; // Ensure the path is correct
 import { Card, Row, Col } from 'react-bootstrap';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import ForumIcon from '@material-ui/icons/Forum';
+import CommentIcon from '@material-ui/icons/Comment';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import StarIcon from '@material-ui/icons/Star';
 
 const Profile = () => {
   return (
@@ -14,15 +20,15 @@ const Profile = () => {
           <Card className="mb-4" style={{ width: '100%' }}>
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">star</i> Progrades
+                <StarIcon /> Progrades
               </Card.Title>
               <Card.Text>
                 <div>
-                  <i className="material-icons">thumb_up</i> Upvotes
+                  <ThumbUpIcon /> Upvotes
                   {/* Here you'd list out the threads/posts the user has upvoted */}
                 </div>
                 <div className="mt-2">
-                  <i className="material-icons">thumb_down</i> Downvotes
+                  <ThumbDownIcon /> Downvotes
                   {/* Here you'd list out the threads/posts the user has downvoted */}
                 </div>
               </Card.Text>
@@ -34,7 +40,7 @@ const Profile = () => {
           <Card className="mb-4" style={{ width: '100%' }}>
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">forum</i> Threads
+                <ForumIcon /> Threads
               </Card.Title>
               <Card.Text>
                 {/* Here you'd list out the threads the user has created */}
@@ -49,7 +55,7 @@ const Profile = () => {
           <Card className="mb-4" style={{ width: '100%' }}>
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">comment</i> Comments
+                <CommentIcon /> Comments
               </Card.Title>
               <Card.Text>
                 {/* Here you'd list out the comments the user has posted */}
@@ -62,7 +68,7 @@ const Profile = () => {
           <Card className="mb-4" style={{ width: '100%' }}>
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">favorite</i> Favorite Routes
+                <FavoriteIcon /> Favorite Routes
               </Card.Title>
               <Card.Text>
                 {/* Here you'd list out the user's favorite routes */}
