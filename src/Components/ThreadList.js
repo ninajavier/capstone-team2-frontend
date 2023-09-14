@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../config/firebase';
-import { getDocs, collection } from 'firebase/firestore';
+import axios from 'axios';
 
 const ThreadList = () => {
   const [threads, setThreads] = useState([]);
@@ -8,13 +7,9 @@ const ThreadList = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       try {
-        const threadsCollectionRef = collection(db, "threads");
-        const data = await getDocs(threadsCollectionRef);
-        const fetchedThreads = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        setThreads(fetchedThreads);
+        // Adjust the URL to point to your backend endpoint for fetching threads
+        const response = await axios.get('/api/threads');
+        setThreads(response.data);
       } catch (err) {
         console.error("Error fetching threads:", err);
       }

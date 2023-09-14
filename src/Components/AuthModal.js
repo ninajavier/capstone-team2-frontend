@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { auth, googleProvider, db } from "../config/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 
 const AuthModal = ({ show, onClose }) => {
   const [email, setEmail] = useState("");
@@ -15,33 +12,24 @@ const AuthModal = ({ show, onClose }) => {
   const [userThreads, setUserThreads] = useState([]);
 
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        setUser(null);
-      }
-    });
+    // Add logic to check for a valid JWT in cookies/local storage and fetch user data from your backend
   }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          setUserProfile(userDoc.data());
+        try {
+          const response = await axios.get(`/api/users/${user.id}`);
+          setUserProfile(response.data);
+
+          const commentsResponse = await axios.get(`/api/users/${user.id}/comments`);
+          setUserComments(commentsResponse.data);
+
+          const threadsResponse = await axios.get(`/api/users/${user.id}/threads`);
+          setUserThreads(threadsResponse.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
-
-        const commentsRef = collection(db, "comments");
-        const commentsQuery = query(commentsRef, where("userId", "==", user.uid));
-        const commentsSnapshot = await getDocs(commentsQuery);
-        setUserComments(commentsSnapshot.docs.map(doc => doc.data()));
-
-        const threadsRef = collection(db, "threads");
-        const threadsQuery = query(threadsRef, where("userId", "==", user.uid));
-        const threadsSnapshot = await getDocs(threadsQuery);
-        setUserThreads(threadsSnapshot.docs.map(doc => doc.data()));
       }
     };
 
@@ -52,7 +40,8 @@ const AuthModal = ({ show, onClose }) => {
 
   const handleSignIn = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const response = await axios.post('/api/auth/login', { email, password });
+      setUser(response.data);
       onClose();
       navigate('/landing');
     } catch (error) {
@@ -62,7 +51,9 @@ const AuthModal = ({ show, onClose }) => {
 
   const handleSignInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      // If you have a backend endpoint to initiate Google authentication, make a request to that endpoint here
+      const response = await axios.get('/api/auth/google');
+      setUser(response.data);
       onClose();
       navigate('/landing');
     } catch (error) {
@@ -72,7 +63,8 @@ const AuthModal = ({ show, onClose }) => {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await axios.post('/api/auth/logout');
+      setUser(null);
       onClose();
     } catch (error) {
       console.error("Error signing out:", error);

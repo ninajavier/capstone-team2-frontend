@@ -1,8 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, Container, Row, Col, Card, Image } from 'react-bootstrap';
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Form,
+  Container,
+  Row,
+  Col,
+  Card,
+  Image,
+} from "react-bootstrap";
+
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+
+import { useNavigate } from 'react-router-dom';
+
+
 import { auth, googleProvider, db } from "../config/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,35 +29,35 @@ const Login = () => {
   const [userProfile, setUserProfile] = useState({});
   const [userComments, setUserComments] = useState([]);
   const [userThreads, setUserThreads] = useState([]);
+  const [error, setError] = useState("")
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        setUser(null);
-      }
-    });
+    // Here you would check for a valid JWT in cookies/localStorage,
+    // and if one is found, fetch the user data from your backend
   }, []);
-
+console.log(user)
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          setUserProfile(userDoc.data());
+        try {
+          const response = await axios.get(`/api/users/${user.id}`);
+
+          setUserProfile(response.data);
+
+          const commentsResponse = await axios.get(
+            `/api/users/${user.id}/comments`
+          );
+          setUserComments(commentsResponse.data);
+
+          const threadsResponse = await axios.get(
+            `/api/users/${user.id}/threads`
+          );
+          setUserThreads(threadsResponse.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-
-        const commentsRef = collection(db, "comments");
-        const commentsQuery = query(commentsRef, where("userId", "==", user.uid));
-        const commentsSnapshot = await getDocs(commentsQuery);
-        setUserComments(commentsSnapshot.docs.map(doc => doc.data()));
-
-        const threadsRef = collection(db, "threads");
-        const threadsQuery = query(threadsRef, where("userId", "==", user.uid));
-        const threadsSnapshot = await getDocs(threadsQuery);
-        setUserThreads(threadsSnapshot.docs.map(doc => doc.data()));
       }
     };
 
@@ -48,15 +66,29 @@ const Login = () => {
 
   const handleSignIn = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const loginResponse = await signInWithEmailAndPassword(auth, email, password);
+
+      // redirect to landing page
+     navigate('/landing');
+      // setUser(response.data);
+
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.log(error.message)
+      setError(error.message);
+      // console.error("Error signing in:", error);
     }
   };
 
   const handleSignInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      // await signInWithPopup(auth, googleProvider);
+       signInWithPopup(auth, googleProvider).then((res) => {
+        const user = res.user;
+        setUser(user);
+        navigate('/landing');
+      })
+     
+
     } catch (error) {
       console.error("Error signing in with Google:", error);
     }
@@ -64,7 +96,10 @@ const Login = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await axios.post("/api/auth/logout");
+      setUser(null);
+      navigate('/');
+
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -73,7 +108,10 @@ const Login = () => {
   return (
     <Container fluid className="p-0">
       <Row noGutters className="min-vh-100">
-        <Col md={6} className="d-flex align-items-center justify-content-center p-5">
+        <Col
+          md={6}
+          className="d-flex align-items-center justify-content-center p-5"
+        >
           <Card className="w-100 p-4">
             <Card.Title className="text-center">
               <Image
@@ -85,6 +123,7 @@ const Login = () => {
               />
               Welcome to Prograde
             </Card.Title>
+            {error && <div className="login-error">{error}</div>}
             {user ? (
               <>
                 <img src={userProfile.profilePhoto} alt="Profile" />
@@ -128,7 +167,11 @@ const Login = () => {
                 <Button variant="secondary" onClick={handleSignIn}>
                   Sign In
                 </Button>
-                <Button variant="primary" onClick={handleSignInWithGoogle} className="ml-2">
+                <Button
+                  variant="primary"
+                  onClick={handleSignInWithGoogle}
+                  className="ml-2"
+                >
                   Sign In with Google
                 </Button>
               </Form>
