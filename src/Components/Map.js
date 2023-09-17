@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-
 import {
   useJsApiLoader,
   GoogleMap,
@@ -7,14 +6,12 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 
 const center = { lat: 48.8584, lng: 2.2945 };
 
-const LocationInput = ({ useCurrentLocation, currentPosition }) => {
+const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   const [currentAddress, setCurrentAddress] = useState("");
-  const originRef = useRef();
 
   useEffect(() => {
     if (useCurrentLocation && currentPosition) {
@@ -32,35 +29,36 @@ const LocationInput = ({ useCurrentLocation, currentPosition }) => {
   }, [useCurrentLocation, currentPosition]);
 
   return (
-    <Form.Group as={Col} md={6}>
+    <Form.Group as={Col} md={12}>
       <Form.Control
         type="text"
-        placeholder={useCurrentLocation ? `${currentAddress}` : "Origin"}
+        value={currentAddress}
         ref={originRef}
+        onChange={(e) => setCurrentAddress(e.target.value)}
       />
     </Form.Group>
   );
 };
-
+const libs = ["places"];
 const Map = () => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries: libs,
   });
 
   const [map, setMap] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
-  const [distance, setDistance] = useState("");
-  const [duration, setDuration] = useState("");
-  const originRef = useRef();
+  const originRef = useRef(null);
   const destinationRef = useRef();
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation] = useState(true);
+  const [useCurrentLocation, setCurrentLocation] = useState(true);
+  const [markers, setMarkers] = useState([]);
+  let directionsService;
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    if ("geolocation" in navigator && !watchId) {
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -80,43 +78,90 @@ const Map = () => {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, []);
+  }, [watchId]);
 
   async function calculateRoute() {
     if (destinationRef.current.value === "") {
       return;
     }
-
-    const directionsService = new window.google.maps.DirectionsService();
+    directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-    let origin;
+    console.log(directionsService);
 
-    if (useCurrentLocation && currentPosition) {
-      origin = new window.google.maps.LatLng(
-        currentPosition.lat,
-        currentPosition.lng
-      );
-    } else {
-      origin = originRef.current.value;
+    const originAddress = originRef.current.value;
+
+    const geocoder = new window.google.maps.Geocoder();
+    console.log("hello");
+
+    try {
+      const geocodeResult = await new Promise((resolve, reject) => {
+        geocoder.geocode({ address: originAddress }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            resolve(results[0].geometry.location);
+          } else {
+            reject(new Error("Geocoder failed due to: " + status));
+          }
+        });
+      });
+
+      const origin = geocodeResult;
+      console.log("geocodeResult");
+
+      const results = await new Promise((resolve, reject) => {
+        directionsService.route(
+          {
+            origin,
+            destination: destinationRef.current.value,
+            travelMode: mode,
+          },
+          (response, status) => {
+            if (status === "OK") {
+              resolve(response);
+              console.log("response");
+            } else {
+              reject(
+                new Error("Directions request failed with status: " + status)
+              );
+            }
+          }
+        );
+      });
+
+      if (results) {
+        setDirectionsResponse(results);
+        // Clear existing markers
+        markers.forEach((marker) => {
+          marker.setMap(null);
+        });
+
+        // Create new markers for the route
+        const routeMarkers = [
+          new window.google.maps.Marker({
+            position: results.routes[0].legs[0].start_location,
+            map: map,
+          }),
+          new window.google.maps.Marker({
+            position: results.routes[0].legs[0].end_location,
+            map: map,
+          }),
+        ];
+  
+        setMarkers(routeMarkers);
+      }
+
+    } catch (error) {
+      console.error("Error geocoding or calculating the route:", error);
     }
-
-    const results = await directionsService.route({
-      origin,
-      destination: destinationRef.current.value,
-      travelMode: mode,
-    });
-    setDirectionsResponse(results);
-    setDistance(results.routes[0].legs[0].distance.text);
-    setDuration(results.routes[0].legs[0].duration.text);
   }
-
+  // useEffect(() => {
+  //   setDirectionsResponse(null);
+  // }, [isRendered]);
   function clearRoute() {
     setDirectionsResponse(null);
-    setDistance("");
-    setDuration("");
-    originRef.current.value = "";
-    destinationRef.current.value = "";
+    centerToUserLocation();
   }
+
+
 
   function centerToUserLocation() {
     if (map && currentPosition) {
@@ -140,16 +185,17 @@ const Map = () => {
 
   return (
     <Container>
-      <Row>
+      <Row className="mt-4">
         <Col sm={6} className="input-container">
           <Autocomplete>
             <LocationInput
               useCurrentLocation={useCurrentLocation}
               currentPosition={currentPosition}
+              originRef={originRef}
             />
           </Autocomplete>
         </Col>
-        <Col md={5} className="input-container">
+        <Col sm={5} className="input-container">
           <Autocomplete>
             <Form.Control
               type="text"
@@ -158,82 +204,86 @@ const Map = () => {
             />
           </Autocomplete>
         </Col>
-        <Col sm={1} className="button-container">
-          <Button variant="primary" type="button" onClick={calculateRoute}>
+        <Col md={1} className="button-container">
+          <Button variant="dark" type="button" onClick={calculateRoute}>
             Go
           </Button>
         </Col>
       </Row>
 
-      <Row>
-        <Form.Group as={Col} md={2}>
-          <label>Mode of Travel:</label>
-          <select ref={travelModeRef}>
+      <Row className="mt-4">
+        <Form.Group as={Col} md={4}>
+          <Form.Label>Mode of Travel:</Form.Label>
+
+          <Form.Select ref={travelModeRef}>
+            <option value="TRANSIT">Transit</option>
             <option value="DRIVING">Driving</option>
             <option value="WALKING">Walking</option>
             <option value="BICYCLING">Bicycling</option>
-            <option value="TRANSIT">Transit</option>
-          </select>
+          </Form.Select>
         </Form.Group>
 
-        <Form.Group as={Col} md={2}>
-          <Button variant="primary" type="button" onClick={clearRoute}>
+        <Form.Group as={Col} md={8}>
+          <Button variant="dark" type="button" onClick={clearRoute}>
             Clear Route
           </Button>
-        </Form.Group>
-        <Form.Group as={Col} md={2}>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={centerToUserLocation}
-          >
-            Center to User
+
+          <Button variant="dark" type="button" onClick={centerToUserLocation}>
+            Center Map
           </Button>
         </Form.Group>
       </Row>
 
       <Row>
-        <Form.Group as={Col} md={2}>
-          <p>Distance: {distance} </p>
-          <p>Duration: {duration} </p>
-        </Form.Group>
+        <Col md={directionsResponse ? 6 : 12}>
+          <div style={{ width: "100%", height: "500px" }}>
+            <GoogleMap
+              center={currentPosition || center}
+              zoom={15}
+              mapContainerStyle={{ width: "100%", height: "500px" }}
+              options={{
+                zoomControl: true,
+                streetViewControl: true,
+                mapTypeControl: true,
+                fullscreenControl: true,
+              }}
+              onLoad={(map) => setMap(map)}
+            >
+              {useCurrentLocation && currentPosition && (
+                <Marker position={currentPosition} />
+              )}
+              {directionsResponse && (
+                <DirectionsRenderer directions={directionsResponse} />
+              )}
+            </GoogleMap>
+          </div>
+        </Col>
+        {directionsResponse && (
+          <Col md={6} className="text-left">
+            <div>
+              <h5>
+                Distance:{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}{" "}
+              </h5>
+              <h5>
+                Duration:{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}{" "}
+              </h5>
+              <h4>Directions:</h4>
+              <ol>
+                {directionsResponse.routes[0].legs[0].steps.map(
+                  (step, index) => (
+                    <li
+                      key={index}
+                      dangerouslySetInnerHTML={{ __html: step.instructions }}
+                    ></li>
+                  )
+                )}
+              </ol>
+            </div>
+          </Col>
+        )}
       </Row>
-
-      <div style={{ width: "100%", height: "500px" }}>
-        <GoogleMap
-          center={currentPosition || center}
-          zoom={15}
-          mapContainerStyle={{ width: "100%", height: "500px" }}
-          options={{
-            zoomControl: true,
-            streetViewControl: true,
-            mapTypeControl: true,
-            fullscreenControl: true,
-          }}
-          onLoad={(map) => setMap(map)}
-        >
-          {useCurrentLocation && currentPosition && (
-            <Marker position={currentPosition} />
-          )}
-          {directionsResponse && (
-            <DirectionsRenderer directions={directionsResponse} />
-          )}
-        </GoogleMap>
-      </div>
-
-      {directionsResponse && (
-        <div>
-          <h2>Written Directions:</h2>
-          <ol>
-            {directionsResponse.routes[0].legs[0].steps.map((step, index) => (
-              <li
-                key={index}
-                dangerouslySetInnerHTML={{ __html: step.instructions }}
-              ></li>
-            ))}
-          </ol>
-        </div>
-      )}
     </Container>
   );
 };
