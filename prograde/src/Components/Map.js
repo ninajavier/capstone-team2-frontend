@@ -53,8 +53,9 @@ const Map = () => {
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation, setCurrentLocation] = useState(true);
+  const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
+  const [geoAddress, setGeoAddress] = useState(null)
   let directionsService;
 
   useEffect(() => {
@@ -86,12 +87,12 @@ const Map = () => {
     }
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-    console.log(directionsService);
 
     const originAddress = originRef.current.value;
+    setGeoAddress(originRef.current.value);
 
     const geocoder = new window.google.maps.Geocoder();
-    console.log("hello");
+
 
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
@@ -105,7 +106,7 @@ const Map = () => {
       });
 
       const origin = geocodeResult;
-      console.log("geocodeResult");
+
 
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
@@ -129,6 +130,7 @@ const Map = () => {
 
       if (results) {
         setDirectionsResponse(results);
+        console.log("testing results");
         // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
@@ -149,18 +151,20 @@ const Map = () => {
         setMarkers(routeMarkers);
       }
 
+      console.log(markers);
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-  // useEffect(() => {
-  //   setDirectionsResponse(null);
-  // }, [isRendered]);
+  
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
+    destinationRef.current.value = "";
+    originRef.current.value = geoAddress;
+    console.log(geoAddress)
+   
   }
-
 
 
   function centerToUserLocation() {
