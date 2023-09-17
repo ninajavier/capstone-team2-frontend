@@ -10,24 +10,20 @@ const UpdateProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserDataFromBackend = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          const response = await fetch(`/api/users/${user.uid}`);
-          const data = await response.json();
-          setUserData(data.user);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching user data from backend:", error);
-          setError(error);
-          setLoading(false);
-        }
-      } else {
+    async function fetchUserDataFromBackend() {
+      try {
+        const url = '/path/to/your/api/endpoint';  // Replace with your actual API endpoint
+        const response = await fetch(url);
+        const data = await response.json();
+        setUserData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err);
         setLoading(false);
       }
-    };
-
+    }
+    
     fetchUserDataFromBackend();
   }, []);
 
