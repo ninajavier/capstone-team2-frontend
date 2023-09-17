@@ -30,6 +30,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Login setUser={setUser} />} />
+            <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="/community" element={<Community />} />
             <Route path="/find-route" element={<FindRoute />} />
