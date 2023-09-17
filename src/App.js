@@ -8,10 +8,12 @@ import Profile from "./Components/UserProfile";
 import Settings from "./Pages/Settings";
 import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
+import UpdateProfile from"./Pages/UpdateProfile"; 
 import ThreadList from "./Components/ThreadList";
 import AuthModal from "./Components/AuthModal";
 import { AuthProvider } from "./context/AuthContext";
-import { UserProvider } from "./context/UserContext";
+// import { UserProvider } from "./context/UserContext";
+import { UserProvider } from "./providers/UserProvider";
 
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
@@ -33,6 +35,7 @@ function App() {
             <Route path="/find-route" element={<FindRoute />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/update-profile" element={<UpdateProfile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/threads" element={<ThreadList />} />

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import AuthModal from "./AuthModal";
-import { useUser } from "../context/UserContext";
+// import { useUser } from "./provider/UserProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
@@ -10,7 +10,7 @@ const MyNavbar = () => {
   const progradeLogoPath = "./assets/ProgradeLogo.png";
 
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { user } = useUser();
+  const { user } = {}; //useUser();
 
   const openAuthModal = () => {
     setShowAuthModal(true);
