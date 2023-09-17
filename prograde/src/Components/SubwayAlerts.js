@@ -26,6 +26,7 @@ let affectedLines = null;
 function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState([]);
   const [checkedTrains, setCheckedTrains] = useState({});
+  console.log(" checked train", checkedTrains);
   useEffect(() => {
     const apiUrl = "http://localhost:8888/subway-alerts";
 
@@ -98,54 +99,73 @@ function SubwayAlerts() {
 
   const filterAlters = (
     <Container>
+      {console.log("swe", subwayAlerts.entity)}
       {subwayAlerts.entity ? (
         <ul>
           {subwayAlerts.entity.map((entity, index) => {
             const matchingRoutes = [];
 
             entity.alert.informedEntity.forEach((train) => {
+              // console.log(
+              //   "train ID",
+              //   train.routeId,
+              //   "CHECKED TRAIN",
+              //   checkedTrains
+              // );
               if (checkedTrains[train.routeId]) {
+                console.log(`Route ${train.routeId} exists in checkedTrains.`);
                 matchingRoutes.push(train.routeId);
+              } else {
+                console.log(
+                  `Route ${train.routeId} does NOT exist in checkedTrains.`
+                );
               }
             });
 
             if (matchingRoutes.length > 0) {
+              console.log("matching route", matchingRoutes);
               return (
-                <Card
-                  className="subway-alerts"
-                  key={generateUniqueKey(entity.id, index)}
-                >
-                  <Card.Header className="subway-alerts-header">
-                    PROGRADE LIVE ALERT{" "}
-                    <b>
-                      {matchingRoutes.map((route, index) => (
-                        <Badge className="train-badges" id={route} key={index}>
-                          {route}
-                        </Badge>
-                      ))}
-                      {console.log("affected lines", typeof affectedLines)}
-                    </b>
-                  </Card.Header>
-                  <Card.Title className="subway-alerts-title">
-                    {entity.alert.headerText.translation[0].text}
-                  </Card.Title>
-                  <Card.Body>
-                    {entity.alert.descriptionText &&
-                    entity.alert.descriptionText.translation &&
-                    entity.alert.descriptionText.translation[0]
-                      ? entity.alert.descriptionText.translation[0].text
-                      : null}
-                    <strong>Goes Into Affect on</strong>{" "}
-                    {ESTHandler(entity.alert.activePeriod[0].start)}
-                    <br />
-                    <strong>Current Train Lines Affected</strong>
-                    <ul>
-                      {matchingRoutes.map((route, index) => (
-                        <li key={index}>{route}</li>
-                      ))}
-                    </ul>
-                  </Card.Body>
-                </Card>
+                <div>
+                  <Card
+                    className="subway-alerts"
+                    key={generateUniqueKey(entity.id, index)}
+                  >
+                    <Card.Header className="subway-alerts-header">
+                      PROGRADE LIVE ALERT{" "}
+                      <b>
+                        {matchingRoutes.map((route, index) => (
+                          <Badge
+                            className="train-badges"
+                            id={route}
+                            key={index}
+                          >
+                            {route}
+                          </Badge>
+                        ))}
+                        {console.log("affected lines", typeof affectedLines)}
+                      </b>
+                    </Card.Header>
+                    <Card.Title className="subway-alerts-title">
+                      {entity.alert.headerText.translation[0].text}
+                    </Card.Title>
+                    <Card.Body>
+                      {entity.alert.descriptionText &&
+                      entity.alert.descriptionText.translation &&
+                      entity.alert.descriptionText.translation[0]
+                        ? entity.alert.descriptionText.translation[0].text
+                        : null}
+                      <strong>Goes Into Affect on</strong>{" "}
+                      {ESTHandler(entity.alert.activePeriod[0].start)}
+                      <br />
+                      <strong>Current Train Lines Affected</strong>
+                      <ul>
+                        {matchingRoutes.map((route, index) => (
+                          <li key={index}>{route}</li>
+                        ))}
+                      </ul>
+                    </Card.Body>
+                  </Card>
+                </div>
               );
             } else {
               return null; // No matching routes, don't render Card
