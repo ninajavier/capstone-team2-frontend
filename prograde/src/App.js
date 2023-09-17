@@ -1,7 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import "./App.css";
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
+import DateFilter from "./Components/DateFilter";
+
 function App() {
   return (
     <div>
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         <Route path="subway-alerts" element={<SubwayAlerts />} />
         <Route path="dropdown" element={<FilterDropdown />} />
+        <Route path="date" element={<DateFilter />} />
       </Routes>
     </div>
   );
