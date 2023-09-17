@@ -3,9 +3,9 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { auth, googleProvider, db } from "../config/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+// import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+// import { auth, googleProvider, db } from "../config/firebase";
+// import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 const AuthModal = ({ show, onClose }) => {
   const [email, setEmail] = useState("");
