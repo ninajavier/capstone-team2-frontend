@@ -7,6 +7,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const videos = [
     "assets/bkview.mp4",
+    "assets/bxview.mp4",
     "assets/qnsview.mp4",
     "assets/siview.mp4",
     "assets/mtnview.mp4",
