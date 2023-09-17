@@ -53,7 +53,7 @@ const Map = () => {
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation, setCurrentLocation] = useState(true);
+  const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
   let directionsService;
 
