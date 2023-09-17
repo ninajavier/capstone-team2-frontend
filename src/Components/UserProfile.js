@@ -17,39 +17,60 @@ const UserProfile = () => {
       if (user) {
         try {
           const response = await fetch(`/api/users/${user.uid}`);
-          const data = await response.json();
-
-          if (data.status === 200) {
-            setUserData(data.data);
-          } else {
-            console.error('Error fetching user data:', data.error);
+          if(!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
           }
-
+          const text = await response.text();
+          try {
+            const data = JSON.parse(text);
+            if (data.status === 200) {
+              setUserData(data.data);
+            } else {
+              console.error('Error fetching user data:', data.error);
+            }
+          } catch (e) {
+            console.error('Invalid JSON:', text);
+          }
+          
+          // Reintroduce fetching comments and threads with enhanced error handling here
+          
           const commentsResponse = await fetch(`/api/comments?userId=${user.uid}`);
-          const commentsData = await commentsResponse.json();
-          if (commentsData.status === 200) {
-            setUserComments(commentsData.data);
-          } else {
-            console.error('Error fetching user comments:', commentsData.error);
+          const commentsText = await commentsResponse.text();
+          try {
+            const commentsData = JSON.parse(commentsText);
+            if (commentsData.status === 200) {
+              setUserComments(commentsData.data);
+            } else {
+              console.error('Error fetching user comments:', commentsData.error);
+            }
+          } catch (e) {
+            console.error('Invalid JSON:', commentsText);
           }
-
+  
           const threadsResponse = await fetch(`/api/threads?userId=${user.uid}`);
-          const threadsData = await threadsResponse.json();
-          if (threadsData.status === 200) {
-            setUserThreads(threadsData.data);
-          } else {
-            console.error('Error fetching user threads:', threadsData.error);
+          const threadsText = await threadsResponse.text();
+          try {
+            const threadsData = JSON.parse(threadsText);
+            if (threadsData.status === 200) {
+              setUserThreads(threadsData.data);
+            } else {
+              console.error('Error fetching user threads:', threadsData.error);
+            }
+          } catch (e) {
+            console.error('Invalid JSON:', threadsText);
           }
-
+  
           setIsLoading(false);
+          
         } catch (error) {
-          console.error("Error fetching user data from backend:", error);
+          console.error('Fetch error:', error);
         }
       }
     };
-
+  
     fetchUserDataFromBackend();
   }, []);
+  
 
   const handleUpdateProfile = async () => {
     const user = auth.currentUser;
