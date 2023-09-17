@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -15,35 +15,32 @@ import {
   signOut,
 } from "firebase/auth";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
+import { UserContext } from "../providers/UserProvider";
 
-import { auth, googleProvider, db } from "../config/firebase";
+import { auth, googleProvider } from "../config/firebase";
 
 import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState({});
   const [userComments, setUserComments] = useState([]);
   const [userThreads, setUserThreads] = useState([]);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
-  useEffect(() => {
-    // Here you would check for a valid JWT in cookies/localStorage,
-    // and if one is found, fetch the user data from your backend
-  }, []);
-console.log(user)
+  useEffect(() => {}, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
         try {
           const response = await axios.get(`/api/users/${user.id}`);
-
           setUserProfile(response.data);
 
           const commentsResponse = await axios.get(
@@ -66,53 +63,54 @@ console.log(user)
 
   const handleSignIn = async () => {
     try {
-      const loginResponse = await signInWithEmailAndPassword(auth, email, password);
-
-      // redirect to landing page
-     navigate('/landing');
-      // setUser(response.data);
-
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/landing");
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
       setError(error.message);
-      // console.error("Error signing in:", error);
     }
   };
 
   const handleSignInWithGoogle = async () => {
     try {
-      // await signInWithPopup(auth, googleProvider);
-       signInWithPopup(auth, googleProvider).then((res) => {
-        const user = res.user;
-        setUser(user);
-        navigate('/landing');
-      })
-     
-
+      await signInWithPopup(auth, googleProvider);
+      navigate("/landing");
     } catch (error) {
-      console.error("Error signing in with Google:", error);
+      console.log(error.message);
+      setError(error.message);
     }
   };
 
   const handleSignOut = async () => {
     try {
-      await axios.post("/api/auth/logout");
-      setUser(null);
-      navigate('/');
-
+      await signOut(auth);
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
   return (
-    <Container fluid className="p-0">
-      <Row noGutters className="min-vh-100">
-        <Col
-          md={6}
-          className="d-flex align-items-center justify-content-center p-5"
-        >
-          <Card className="w-100 p-4">
+    <Container 
+    fluid 
+    className="d-flex flex-column justify-content-center p-0"
+    style={{ 
+      height: 'calc(100vh - 60px)',  // Adjust 60px to your navbar height
+      background: `url('./assets/commuteimage.png') no-repeat center center`, 
+      backgroundSize: 'cover' 
+    }}
+  >
+    <Row noGutters className="justify-content-center">
+      <Col 
+        xs={12} sm={10} md={8} lg={6} xl={4}
+        className="d-flex align-items-center p-5"
+      >
+        <Card 
+          className="w-100 p-4" 
+          style={{ 
+            backgroundColor: 'rgba(255,255,255,0.8)', 
+            backdropFilter: 'blur(10px)' 
+          }}
+          >
             <Card.Title className="text-center">
               <Image
                 src="./assets/ProgradeLogo.png"
@@ -127,6 +125,8 @@ console.log(user)
             {user ? (
               <>
                 <img src={userProfile.profilePhoto} alt="Profile" />
+                <div>{user.displayName}</div>
+                <div>{user.email}</div>
                 <h3>Your Comments:</h3>
                 <ul>
                   {userComments.map((comment, index) => (
@@ -177,9 +177,6 @@ console.log(user)
               </Form>
             )}
           </Card>
-        </Col>
-        <Col md={6} className="d-none d-md-block p-0">
-          <Image src="./assets/commute.jpg" alt="Commute Image" fluid />
         </Col>
       </Row>
     </Container>

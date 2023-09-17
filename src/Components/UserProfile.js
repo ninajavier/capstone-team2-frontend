@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../config/firebase'; 
 import { Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom'; 
+import 'bootstrap/dist/css/bootstrap.min.css'; 
+// import '@material/react-material-icon/dist/material-icon.css'; 
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(auth.currentUser || {});
@@ -16,14 +19,12 @@ const UserProfile = () => {
           const response = await fetch(`/api/users/${user.uid}`);
           const data = await response.json();
 
-          // Set user data
           if (data.status === 200) {
-            setUserData(data.data); // Updating to data.data to correctly access the user data based on your backend structure
+            setUserData(data.data);
           } else {
             console.error('Error fetching user data:', data.error);
           }
 
-          // Fetch user comments
           const commentsResponse = await fetch(`/api/comments?userId=${user.uid}`);
           const commentsData = await commentsResponse.json();
           if (commentsData.status === 200) {
@@ -32,7 +33,6 @@ const UserProfile = () => {
             console.error('Error fetching user comments:', commentsData.error);
           }
 
-          // Fetch user threads
           const threadsResponse = await fetch(`/api/threads?userId=${user.uid}`);
           const threadsData = await threadsResponse.json();
           if (threadsData.status === 200) {
@@ -77,53 +77,53 @@ const UserProfile = () => {
   return (
     <div className="UserProfile">
       <h1>Your Profile</h1>
-      <img src={userData.profilePhoto || 'defaultProfilePhotoURL'} alt="Profile" />
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1, paddingRight: '20px' }}>
+          <span className="material-icons" style={{ fontSize: '150px', borderRadius: '75px', color: '#bdbdbd' }}>
+            account_circle
+          </span>
+        </div>
+        
+        <div style={{ flex: 3 }}>
+          <Form>
+            <Form.Group controlId="bio">
+              <Form.Label>Bio</Form.Label>
+              <Form.Control
+                as="textarea"
+                value={userData.bio || ''}
+                onChange={(e) => setUserData(prevState => ({ ...prevState, bio: e.target.value }))}
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleUpdateProfile}>
+              Update Profile
+            </Button>
+          </Form>
+        </div>
+      </div>
 
-      <Form>
-        <Form.Group controlId="name">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={userData.name || ''}
-            onChange={(e) => setUserData(prevState => ({ ...prevState, name: e.target.value }))}
-          />
-        </Form.Group>
+      <div style={{ marginTop: '20px' }}>
+        <h3>Your Comments:</h3>
+        {isLoading ? <div>Loading comments...</div> : 
+        userComments.length > 0 ? 
+        <ul>
+          {userComments.map((comment, index) => (
+            <li key={index}>{comment.content}</li> 
+          ))}
+        </ul> : <p>No comments found</p>}
+        
+        <h3>Your Threads:</h3>
+        {isLoading ? <div>Loading threads...</div> : 
+        userThreads.length > 0 ? 
+        <ul>
+          {userThreads.map((thread, index) => (
+            <li key={index}>{thread.title}</li> 
+          ))}
+        </ul> : <p>No threads found</p>}
+      </div>
 
-        <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            value={userData.email || ''}
-            onChange={(e) => setUserData(prevState => ({ ...prevState, email: e.target.value }))}
-          />
-        </Form.Group>
-
-        {/* Add more fields as necessary, like profile photo URL, etc. */}
-
-        <Button variant="primary" onClick={handleUpdateProfile}>
-          Update Profile
-        </Button>
-      </Form>
-
-      {isLoading ? (
-        <div>Loading comments and threads...</div>
-      ) : (
-        <>
-          <h3>Your Comments:</h3>
-          <ul>
-            {userComments.map((comment, index) => (
-              <li key={index}>{comment.content}</li> 
-            ))}
-          </ul>
-
-          <h3>Your Threads:</h3>
-          <ul>
-            {userThreads.map((thread, index) => (
-              <li key={index}>{thread.content}</li> 
-            ))}
-          </ul>
-        </>
-      )}
+      <Button variant="link">
+        <Link to="/update-profile">Go to update profile page</Link>
+      </Button>
     </div>
   );
 }
