@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Badge } from "react-bootstrap";
+import "./styles.css";
 import axios from "axios";
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
@@ -21,6 +22,7 @@ export default function SubwayAlerts() {
   const generateUniqueKey = (id, index) => {
     return `${id}_${index}`;
   };
+  let affectedLines = null;
   useEffect(() => {
     const apiUrl = "http://localhost:8888/subway-alerts";
 
@@ -46,23 +48,44 @@ export default function SubwayAlerts() {
               key={generateUniqueKey(entity.id, index)}
             >
               {console.log(entity)}
-              <Card.Header>PROGRADE LIVE ALERT</Card.Header>{" "}
-              <Card.Title>
+              <Card.Header className="subway-alerts-header">
+                PROGRADE LIVE ALERT{" "}
+                <b>
+                  {
+                    (affectedLines = entity.alert.informedEntity.map(
+                      (train, index) => (
+                        <Badge
+                          className="train-badges"
+                          id={train.routeId}
+                          key={index}
+                        >
+                          {train.routeId}
+                        </Badge>
+                      )
+                    ))
+                  }
+                  {console.log("affected lines", typeof affectedLines)}
+                </b>
+              </Card.Header>{" "}
+              <Card.Title className="subway-alerts-title">
                 {entity.alert.headerText.translation[0].text}
               </Card.Title>
-              <br />
-              <strong>Goes Into Affect on</strong>{" "}
-              {ESTHandler(entity.alert.activePeriod[0].start)}
-              <br />
-              <strong>Current Train Lines Affected</strong>
-              <ul>
-                {entity.alert.informedEntity.map((informedEntity, index) => (
-                  <li key={index}>
-                    {informedEntity.routeId}
-                    {/* {informedEntity.stopId || "N/A"} */}
-                  </li>
-                ))}
-              </ul>
+              <Card.Body>
+                {entity.alert.descriptionText &&
+                entity.alert.descriptionText.translation &&
+                entity.alert.descriptionText.translation[0]
+                  ? entity.alert.descriptionText.translation[0].text
+                  : null}
+                <strong>Goes Into Affect on</strong>{" "}
+                {ESTHandler(entity.alert.activePeriod[0].start)}
+                <br />
+                <strong>Current Train Lines Affected</strong>
+                <ul>
+                  {entity.alert.informedEntity.map((informedEntity, index) => (
+                    <li key={index}>{informedEntity.routeId}</li>
+                  ))}
+                </ul>
+              </Card.Body>
             </Card>
           ))}
         </ul>
