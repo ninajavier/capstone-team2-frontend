@@ -5,8 +5,17 @@ export default function SubwayAlerts() {
   const ESTHandler = (UnixTimeStamp) => {
     let timeStamp = UnixTimeStamp;
 
+    const options = {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
     const date = new Date(timeStamp * 1000);
-    return date.toLocaleString("en-US");
+    return date.toLocaleString("en-US", options);
   };
 
   useEffect(() => {
@@ -34,7 +43,7 @@ export default function SubwayAlerts() {
               {entity.alert.headerText.translation[0].text}
               <br />
               <strong>Goes Into Affect on</strong>{" "}
-              {entity.alert.activePeriod[0].start}
+              {ESTHandler(entity.alert.activePeriod[0].start)}
               <br />
               <strong>Current Train Lines Affected</strong>
               <ul>
