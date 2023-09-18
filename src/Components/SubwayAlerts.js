@@ -20,6 +20,31 @@ export default function SubwayAlerts() {
   return (
     <div>
       <h1>Subway Alerts</h1>
+      {subwayAlerts.entity ? (
+        <ul>
+          {subwayAlerts.entity.map((entity) => (
+            <li key={entity.id}>
+              <strong>PROGRADE LIVE ALERT</strong>{" "}
+              {entity.alert.headerText.translation[0].text}
+              <br />
+              <strong>Goes Into Affect on</strong>{" "}
+              {entity.alert.activePeriod[0].start}
+              <br />
+              <strong>Current Train Lines Affected</strong>
+              <ul>
+                {entity.alert.informedEntity.map((informedEntity, index) => (
+                  <li key={index}>
+                    {informedEntity.routeId}
+                    {/* {informedEntity.stopId || "N/A"} */}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
