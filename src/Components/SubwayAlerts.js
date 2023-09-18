@@ -91,10 +91,6 @@ export default function SubwayAlerts() {
     </Container>
   );
 
-  const checkObject = (obj) => {
-    return Object.keys(obj).length === 0;
-  };
-
   const filterAlters = (
     <Container>
       {subwayAlerts.entity ? (
