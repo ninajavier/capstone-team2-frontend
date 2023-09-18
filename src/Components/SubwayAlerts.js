@@ -133,14 +133,18 @@ export default function SubwayAlerts() {
                     entity.alert.descriptionText.translation &&
                     entity.alert.descriptionText.translation[0]
                       ? entity.alert.descriptionText.translation[0].text
-                      : null}
-                    <strong>Goes Into Affect on</strong>{" "}
-                    {ESTHandler(entity.alert.activePeriod[0].start)}
+                      : null}{" "}
+                    <div style={{ marginTop: "1rem" }}>
+                      <strong>Starts on</strong>{" "}
+                      {ESTHandler(entity.alert.activePeriod[0].start)}
+                    </div>
                     <br />
-                    <strong>Current Train Lines Affected</strong>
                     <ul>
                       {matchingRoutes.map((route, index) => (
-                        <li key={index}>{route}</li>
+                        <strong>
+                          Current Train Line(s) Affected
+                          <ul key={index}>{route}</ul>
+                        </strong>
                       ))}
                     </ul>
                   </Card.Body>
