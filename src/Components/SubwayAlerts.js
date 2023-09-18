@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Badge } from "react-bootstrap";
 import "./styles.css";
 import axios from "axios";
+
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
   const ESTHandler = (UnixTimeStamp) => {
