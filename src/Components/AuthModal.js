@@ -1,143 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { auth, googleProvider, db } from "../config/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Modal, Button, Rating, TextareaAutosize, Box, Typography } from '@mui/material';
 
 const AuthModal = ({ show, onClose }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-  const [userProfile, setUserProfile] = useState({});
-  const [userComments, setUserComments] = useState([]);
-  const [userThreads, setUserThreads] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    // Add logic to check for a valid JWT in cookies/local storage and fetch user data from your backend
-  }, []);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
-        try {
-          const response = await axios.get(`/api/users/${user.id}`);
-          setUserProfile(response.data);
-
-          const commentsResponse = await axios.get(`/api/users/${user.id}/comments`);
-          setUserComments(commentsResponse.data);
-
-          const threadsResponse = await axios.get(`/api/users/${user.id}/threads`);
-          setUserThreads(threadsResponse.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
-
-  const navigate = useNavigate();
-
-  const handleSignIn = async () => {
-    try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      setUser(response.data);
-      onClose();
-      navigate('/landing');
-    } catch (error) {
-      console.error("Error signing in:", error);
-    }
+  const handleRatingChange = (event, newValue) => {
+    setRating(newValue);
   };
 
-  const handleSignInWithGoogle = async () => {
-    try {
-      // If you have a backend endpoint to initiate Google authentication, make a request to that endpoint here
-      const response = await axios.get('/api/auth/google');
-      setUser(response.data);
-      onClose();
-      navigate('/landing');
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-    }
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await axios.post('/api/auth/logout');
-      setUser(null);
-      onClose();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
+  const handleSubmit = () => {
+    // Perform any action you want with the rating and comment
+    // For example, send the data to your backend for storage
+
+    // Close the modal after submission
+    onClose();
+
+    // Set the submitted state to true
+    setSubmitted(true);
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>{user ? `Welcome, ${user.email}` : "Sign In"}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {user ? (
-          <>
-            <img src={userProfile.profilePhoto} alt="Profile" />
-            <h3>Your Comments:</h3>
-            <ul>
-              {userComments.map((comment, index) => (
-                <li key={index}>{comment.text}</li>
-              ))}
-            </ul>
-            <h3>Your Threads:</h3>
-            <ul>
-              {userThreads.map((thread, index) => (
-                <li key={index}>{thread.title}</li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <Form>
-            <Form.Group controlId="email">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
-        )}
-      </Modal.Body>
-      <Modal.Footer>
-        {user ? (
-          <Button variant="danger" onClick={handleSignOut}>
-            Logout
-          </Button>
+    <Modal open={show} onClose={onClose}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          p: 4,
+          borderRadius: 8,
+          maxWidth: 400,
+          textAlign: 'center',
+        }}
+      >
+        {submitted ? (
+          <div>
+            <Typography variant="h6">Enjoy Your Commute -- Stand Clear of the Closing Doors!</Typography>
+            <Typography variant="body1">Your feedback is greatly appreciated.</Typography>
+          </div>
         ) : (
           <>
-            <Button variant="secondary" onClick={handleSignIn}>
-              Sign In
-            </Button>
-            <Button variant="primary" onClick={handleSignInWithGoogle}>
-              Sign In with Google
+            <h2>Rate Prograde</h2>
+            <div>
+              <p>How's our app so far?</p>
+              <Rating
+                name="rating"
+                value={rating}
+                precision={0.5}
+                onChange={handleRatingChange}
+              />
+            </div>
+            <div>
+              <p>If you like it, leave a comment:</p>
+              <TextareaAutosize
+                aria-label="Comment"
+                rowsMin={3}
+                placeholder="Share your feedback..."
+                value={comment}
+                onChange={handleCommentChange}
+              />
+            </div>
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
+              Submit
             </Button>
           </>
         )}
-      </Modal.Footer>
+      </Box>
     </Modal>
   );
 };

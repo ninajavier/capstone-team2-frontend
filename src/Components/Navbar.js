@@ -75,7 +75,7 @@ const MyNavbar = () => {
               </>
             ) : (
               <Button variant="outline-success" onClick={openAuthModal}>
-                Login
+                Rate Prograde?
               </Button>
             )}
             <LinkContainer to="/profile" className="ml-3">
