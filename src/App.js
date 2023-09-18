@@ -11,6 +11,7 @@ import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import ThreadList from "./Components/ThreadList";
 import AuthModal from "./Components/AuthModal";
+import SubwayAlerts from "./Components/SubwayAlerts";
 import { AuthProvider } from "./context/AuthContext";
 // import { UserProvider } from "./context/UserContext";
 import { UserProvider } from "./providers/UserProvider";
