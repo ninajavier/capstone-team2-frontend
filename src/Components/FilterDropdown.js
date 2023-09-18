@@ -1,9 +1,17 @@
-import { Form, Dropdown } from "react-bootstrap";
+import { Form, Dropdown, Button } from "react-bootstrap";
 import "./styles.css";
-import { useState } from "react";
+
 import icons from "../Assets/index.js";
 
-const FilterDropdown = () => {
+const FilterDropdown = ({ checkedTrains, setCheckedTrains }) => {
+  console.log("checked trains ", checkedTrains);
+
+  const handleChange = (event) => {
+    setCheckedTrains({
+      ...checkedTrains,
+      [event.target.name]: event.target.checked,
+    });
+  };
   const submitHandler = (event) => {
     event.preventDefault();
   };
@@ -13,7 +21,9 @@ const FilterDropdown = () => {
   function isNumber(value) {
     return Number.isFinite(Number(value));
   }
-
+  const clearTrains = () => {
+    setCheckedTrains({});
+  };
   const labels = [
     "A",
     "B",
@@ -53,34 +63,45 @@ const FilterDropdown = () => {
   }
 
   return (
-    <Dropdown>
-      <Dropdown.Toggle id="dropdown-basic">Trains</Dropdown.Toggle>
-      <Dropdown.Menu className="multi-column-dropdown">
-        <Form onSubmit={submitHandler}>
-          <Form.Group className="trains-dropdown">
-            {labels.map((trainLabel, index) => {
-              const icon = getIconForLabel(trainLabel);
-              return (
-                <Dropdown.Item onClick={checkboxHandler} key={index}>
-                  <div className="icon-checkbox-wrapper">
-                    <Form.Check type="checkbox" onClick={checkboxHandler} />
-                    <img
-                      src={icon}
-                      alt={`${trainLabel} icon`}
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginLeft: "8px",
-                      }}
-                    />
-                  </div>
-                </Dropdown.Item>
-              );
-            })}
-          </Form.Group>
-        </Form>
-      </Dropdown.Menu>
-    </Dropdown>
+    <>
+      <Dropdown>
+        <Dropdown.Toggle id="dropdown-basic">Trains</Dropdown.Toggle>
+        <Dropdown.Menu className="multi-column-dropdown">
+          <Form onSubmit={submitHandler}>
+            <Form.Group className="trains-dropdown">
+              {labels.map((trainLabel, index) => {
+                const icon = getIconForLabel(trainLabel);
+                return (
+                  <Dropdown.Item onClick={checkboxHandler} key={index}>
+                    <div className="icon-checkbox-wrapper">
+                      <Form.Check
+                        name={trainLabel}
+                        type="checkbox"
+                        onClick={checkboxHandler}
+                        checked={checkedTrains[`${trainLabel}`] || false}
+                        onChange={handleChange}
+                      />
+                      <img
+                        src={icon}
+                        alt={`${trainLabel} icon`}
+                        style={{
+                          width: "24px",
+                          height: "24px",
+                          marginLeft: "8px",
+                        }}
+                      />
+                    </div>
+                  </Dropdown.Item>
+                );
+              })}
+              <Dropdown.Item>
+                <Button onClick={clearTrains}>Clear Trains</Button>
+              </Dropdown.Item>
+            </Form.Group>
+          </Form>
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
   );
 };
 
