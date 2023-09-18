@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
+  const ESTHandler = (UnixTimeStamp) => {
+    let timeStamp = UnixTimeStamp;
+
+    const date = new Date(timeStamp * 1000);
+    return date.toLocaleString("en-US");
+  };
 
   useEffect(() => {
     const apiUrl = "http://localhost:8888/subway-alerts";
