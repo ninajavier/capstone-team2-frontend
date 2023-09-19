@@ -100,7 +100,7 @@ const Login = () => {
       backgroundSize: 'cover' 
     }}
   >
-    <Row noGutters className="justify-content-center">
+    <Row nogutters={true} className="justify-content-center">
       <Col 
         xs={12} sm={10} md={8} lg={6} xl={4}
         className="d-flex align-items-center p-5"
