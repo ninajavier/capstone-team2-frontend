@@ -59,6 +59,7 @@ const Map = () => {
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
+      console.log('testing')
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
