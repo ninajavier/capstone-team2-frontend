@@ -8,9 +8,11 @@ import Profile from "./Components/UserProfile";
 import Settings from "./Pages/Settings";
 import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
-import UpdateProfile from"./Pages/UpdateProfile"; 
+import UpdateProfile from "./Pages/UpdateProfile";
 import ThreadList from "./Components/ThreadList";
 import AuthModal from "./Components/AuthModal";
+import SubwayAlerts from "./Components/SubwayAlerts";
+import FilterDropdown from "./Components/FilterDropdown";
 import { AuthProvider } from "./context/AuthContext";
 // import { UserProvider } from "./context/UserContext";
 import { UserProvider } from "./providers/UserProvider";
@@ -40,6 +42,8 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/threads" element={<ThreadList />} />
+            <Route path="subway-alerts" element={<SubwayAlerts />} />
+            <Route path="dropdown" element={<FilterDropdown />} />
           </Routes>
           <AuthModal />
         </UserProvider>
