@@ -153,9 +153,7 @@ const Map = () => {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-  // useEffect(() => {
-  //   setDirectionsResponse(null);
-  // }, [isRendered]);
+
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
