@@ -1,0 +1,45 @@
+.subway-alerts {
+  margin: 20px;
+}
+
+.subway-alerts-header {
+  padding: 20px;
+}
+.subway-alerts-title {
+  padding: 20px;
+}
+.multi-column-dropdown {
+  max-width: 400px;
+}
+.trains-dropdown {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.multi-column-dropdown .dropdown-item {
+  flex: 1 0 25%;
+  padding: 0;
+  box-sizing: border-box;
+}
+.dropdown-train-icon {
+  width: 24px;
+  height: 24px;
+}
+.icon-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+/* styles.css */
+.trains-dropdown .dropdown-item {
+  margin-bottom: 15px;
+}
+.multi-column-dropdown {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.trains-dropdown .dropdown-item {
+  margin-bottom: 8px;
+  break-inside: avoid;
+}
