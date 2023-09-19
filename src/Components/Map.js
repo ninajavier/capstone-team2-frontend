@@ -8,7 +8,7 @@ import {
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 
-const center = { lat: 48.8584, lng: 2.2945 };
+const center = { lat: 40.7128, lng: 74.0060 };
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   const [currentAddress, setCurrentAddress] = useState("");
