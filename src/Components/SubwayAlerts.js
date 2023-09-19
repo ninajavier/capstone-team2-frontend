@@ -28,7 +28,7 @@ export default function SubwayAlerts() {
   };
   let affectedLines = null;
   useEffect(() => {
-    const apiUrl = "http://localhost:8888/subway-alerts";
+    const apiUrl = `${process.env.REACT_APP_API_URL}subway-alerts`;
 
     axios
       .get(apiUrl)
