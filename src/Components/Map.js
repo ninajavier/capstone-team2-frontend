@@ -8,7 +8,7 @@ import {
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 
-const center = { lat: 48.8584, lng: 2.2945 };
+const center = { lat: 40.7128, lng: 74.0060 };
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   const [currentAddress, setCurrentAddress] = useState("");
@@ -53,7 +53,7 @@ const Map = () => {
   const travelModeRef = useRef();
   const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [useCurrentLocation, setCurrentLocation] = useState(true);
+  const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
   let directionsService;
 
@@ -153,9 +153,7 @@ const Map = () => {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-  // useEffect(() => {
-  //   setDirectionsResponse(null);
-  // }, [isRendered]);
+
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
