@@ -10,7 +10,7 @@ import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import ThreadList from "./Components/ThreadList";
-import AuthModal from "./Components/AuthModal";
+// import AuthModal from "./Components/AuthModal";
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
 import { AuthProvider } from "./context/AuthContext";
@@ -45,7 +45,7 @@ function App() {
             <Route path="subway-alerts" element={<SubwayAlerts />} />
             <Route path="dropdown" element={<FilterDropdown />} />
           </Routes>
-          <AuthModal />
+          {/* <AuthModal /> */}
         </UserProvider>
       </AuthProvider>
     </div>
