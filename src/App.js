@@ -19,6 +19,7 @@ import { UserProvider } from "./providers/UserProvider";
 
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import DateFilter from "./Components/DateFilter";
 
 function App() {
   const [user, setUser] = useState(null); // Initialize user state
@@ -44,6 +45,7 @@ function App() {
             <Route path="/threads" element={<ThreadList />} />
             <Route path="/subway-alerts" element={<SubwayAlerts />} />
             <Route path="/dropdown" element={<FilterDropdown />} />
+            <Route path="/date" element={<DateFilter />} />
           </Routes>
           {/* <AuthModal /> */}
         </UserProvider>
