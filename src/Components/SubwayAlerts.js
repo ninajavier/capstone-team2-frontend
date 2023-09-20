@@ -30,7 +30,8 @@ export default function SubwayAlerts() {
   };
   let affectedLines = null;
   useEffect(() => {
-    const apiUrl = `${process.env.REACT_APP_API_URL}subway-alerts`;
+    const apiUrl = `https://prograde.onrender.com/subway-alerts`;
+    console.log(apiUrl);
 
     axios
       .get(apiUrl)
