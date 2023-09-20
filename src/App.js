@@ -45,7 +45,6 @@ function App() {
             <Route path="/subway-alerts" element={<SubwayAlerts />} />
             <Route path="/dropdown" element={<FilterDropdown />} />
           </Routes>
-          {/* <AuthModal /> */}
         </UserProvider>
       </AuthProvider>
     </div>
