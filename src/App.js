@@ -42,8 +42,8 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/threads" element={<ThreadList />} />
-            <Route path="subway-alerts" element={<SubwayAlerts />} />
-            <Route path="dropdown" element={<FilterDropdown />} />
+            <Route path="/subway-alerts" element={<SubwayAlerts />} />
+            <Route path="/dropdown" element={<FilterDropdown />} />
           </Routes>
           {/* <AuthModal /> */}
         </UserProvider>
