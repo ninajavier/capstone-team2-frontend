@@ -8,7 +8,10 @@ import {
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 
-const center = { lat: 40.7128, lng: 74.0060 };
+const center = { 
+  lat: 40.7128, 
+  lng: -74.0060 
+};
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   const [currentAddress, setCurrentAddress] = useState("");
@@ -85,6 +88,7 @@ const Map = () => {
     if (destinationRef.current.value === "") {
       return;
     }
+    clearRoute();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
     console.log(directionsService);
@@ -158,6 +162,9 @@ const Map = () => {
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
+    // clear origin (or reset to user location)
+    // clear destination
+
   }
 
 
@@ -166,7 +173,7 @@ const Map = () => {
     if (map && currentPosition) {
       map.panTo(currentPosition);
       map.setZoom(15);
-    }
+    } 
   }
 
   if (loadError) {
@@ -223,9 +230,11 @@ const Map = () => {
         </Form.Group>
 
         <Form.Group as={Col} md={8}>
-          <Button variant="dark" type="button" onClick={clearRoute}>
+          {useCurrentLocation && currentPosition && (
+              <Button variant="dark" type="button" onClick={clearRoute}>
             Clear Route
           </Button>
+              )}
 
           <Button variant="dark" type="button" onClick={centerToUserLocation}>
             Center Map
