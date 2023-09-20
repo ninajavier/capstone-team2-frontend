@@ -4,6 +4,8 @@ import "./styles.css";
 import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
 
+// const apiUrl = process.env.REACT_APP_API_URL;
+
 const ESTHandler = (UnixTimeStamp) => {
   let timeStamp = UnixTimeStamp;
 
