@@ -4,6 +4,7 @@ const API = process.env.REACT_APP_API_URL;
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
+console.log(comments);
 
   useEffect(() => {
     const fetchCommentsAndThreads = async () => {
