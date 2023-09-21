@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../config/firebase'; 
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import axios from 'axios';
+import { Container, Row, Col, Card } from 'react-bootstrap';
+import { styled } from '@mui/system';
+import { useParams } from 'react-router-dom';
+
+
+const ThreadCard = styled(Card)(({ theme }) => ({
+  marginTop: '1rem',
+  padding: '1rem',
+  borderRadius: '10px',
+  background: 'rgba(255, 255, 255, 0.8)', // Slight opacity applied here
+}));
+
+const CommentList = styled('ul')(({ theme }) => ({
+  paddingLeft: '1rem',
+  opacity: 0.8, // Slight opacity applied here
+}));
+
+const CommentListItem = styled('li')(({ theme }) => ({
+  marginBottom: '0.5rem',
+}));
 
 const ThreadDetail = (props) => {
   const [thread, setThread] = useState({});
   const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const threadId = props.match.params.id;  // Assuming you're using react-router
+  const { id: threadId } = useParams();
 
   useEffect(() => {
     const fetchThreadDetail = async () => {
       try {
-        // Fetch thread details
-        const threadRef = doc(db, 'threads', threadId);
-        const threadDoc = await getDoc(threadRef);
-        if (threadDoc.exists) {
-          setThread(threadDoc.data());
-        }
-
-        // Fetch comments for the thread
-        const commentsRef = collection(db, "comments");
-        const commentsQuery = query(commentsRef, where("threadId", "==", threadId));
-        const commentsSnapshot = await getDocs(commentsQuery);
-        setComments(commentsSnapshot.docs.map(doc => doc.data()));
+        // Fetch thread details from your API
+        const response = await axios.get(`/api/threads/${threadId}`);
+        setThread(response.data);
 
         setIsLoading(false);
       } catch (error) {
@@ -34,21 +44,48 @@ const ThreadDetail = (props) => {
     fetchThreadDetail();
   }, [threadId]);
 
+  useEffect(() => {
+    const fetchExternalComments = async () => {
+      try {
+        const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${threadId}/comments`);
+        setComments(response.data);
+      } catch (error) {
+        console.error('Error fetching external comments:', error);
+      }
+    };
+
+    fetchExternalComments();
+  }, [threadId]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="ThreadDetail">
-      <h2>{thread.title}</h2>
-      <p>{thread.description}</p>
-      <h3>Comments:</h3>
-      <ul>
-        {comments.map((comment, index) => (
-          <li key={index}>{comment.text}</li>
-        ))}
-      </ul>
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <ThreadCard>
+            <Card.Body>
+              <Card.Title>{thread.title}</Card.Title>
+              <Card.Text>{thread.description}</Card.Text>
+            </Card.Body>
+          </ThreadCard>
+          <ThreadCard>
+            <Card.Body>
+              <Card.Title>Comments</Card.Title>
+              <CommentList>
+                {comments.map((comment, index) => (
+                  <CommentListItem key={index}>
+                    {comment.body}
+                  </CommentListItem>
+                ))}
+              </CommentList>
+            </Card.Body>
+          </ThreadCard>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

@@ -10,6 +10,8 @@ import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import ThreadList from "./Components/ThreadList";
+import ThreadDetail from "./Components/ThreadDetail";
+
 // import AuthModal from "./Components/AuthModal";
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
@@ -42,6 +44,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/threads" element={<ThreadList />} />
+            <Route path="/threads/:id" component={ThreadDetail} />
             <Route path="/subway-alerts" element={<SubwayAlerts />} />
             <Route path="/dropdown" element={<FilterDropdown />} />
           </Routes>

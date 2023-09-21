@@ -15,3 +15,7 @@ code {
   color: #273170;
   font-size: 70px;
 }
+.select-menu {
+  max-height: 150px;
+  overflow-y: auto;
+}
