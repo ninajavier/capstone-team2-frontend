@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../config/firebase'; 
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import { Card, Typography, TextareaAutosize } from '@mui/material';
+import { Button } from '@mui/material';
+ // Importing MUI components
+import 'bootstrap/dist/css/bootstrap.min.css';  
 // import '@material/react-material-icon/dist/material-icon.css'; 
 
 const UserProfile = () => {
@@ -96,17 +99,18 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="UserProfile">
-      <h1>Your Profile</h1>
-      <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, paddingRight: '20px' }}>
-          <span className="material-icons" style={{ fontSize: '150px', borderRadius: '75px', color: '#bdbdbd' }}>
+    <div className="UserProfile" style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
+      <Card style={{ width: '80%', padding: '20px', boxShadow: '0 3px 10px rgba(0,0,0,0.2)' }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Profile
+        </Typography>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+          <span className="material-icons" style={{ fontSize: '150px', borderRadius: '75px', color: '#bdbdbd', marginRight: '20px' }}>
             account_circle
           </span>
-        </div>
-        
-        <div style={{ flex: 3 }}>
-          <Form>
+          
+          <Form style={{ flex: 1 }}>
             <Form.Group controlId="bio">
               <Form.Label>Bio</Form.Label>
               <Form.Control
@@ -120,31 +124,33 @@ const UserProfile = () => {
             </Button>
           </Form>
         </div>
-      </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h3>Your Comments:</h3>
+        <Typography variant="h6" gutterBottom>
+          Your Comments:
+        </Typography>
         {isLoading ? <div>Loading comments...</div> : 
         userComments.length > 0 ? 
         <ul>
           {userComments.map((comment, index) => (
             <li key={index}>{comment.content}</li> 
           ))}
-        </ul> : <p>No comments found</p>}
+        </ul> : <Typography>No comments found</Typography>}
         
-        <h3>Your Threads:</h3>
+        <Typography variant="h6" gutterBottom>
+          Your Threads:
+        </Typography>
         {isLoading ? <div>Loading threads...</div> : 
         userThreads.length > 0 ? 
         <ul>
           {userThreads.map((thread, index) => (
             <li key={index}>{thread.title}</li> 
           ))}
-        </ul> : <p>No threads found</p>}
-      </div>
+        </ul> : <Typography>No threads found</Typography>}
 
-      <Button variant="link">
-        <Link to="/update-profile">Go to update profile page</Link>
-      </Button>
+        <Button variant="outline-primary">
+          <Link to="/update-profile">Go to update profile page</Link>
+        </Button>
+      </Card>
     </div>
   );
 }

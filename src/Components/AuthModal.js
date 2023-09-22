@@ -29,10 +29,10 @@ const AuthModal = ({ show, onClose }) => {
     <Modal open={show} onClose={onClose}>
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: 'fixed', // Change to 'fixed'
+          top: '50%', // Adjust this value as needed
+          right: '20px', // Adjust this value to control the distance from the right edge
+          transform: 'translateY(-50%)', // Center vertically
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           p: 4,
           borderRadius: 8,

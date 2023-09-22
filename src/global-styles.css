@@ -1,0 +1,19 @@
+/* Global button styling */
+button, .btn {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700; /* Bold weight */
+    color: #273170;
+    background-color: transparent; /* Make the background transparent */
+    border: none; /* Remove borders */
+    cursor: pointer; /* Add pointer cursor on hover */
+    position: relative; /* Required for the glow effect */
+    overflow: hidden; /* Hide overflowing glow */
+    transition: color 0.3s ease; /* Smooth color transition */
+  }
+  
+  /* Add a glow effect on hover */
+  button:hover, .btn:hover {
+    color: #ffffff; /* Change text color on hover */
+    text-shadow: 0 0 10px rgba(162, 134, 244, 0.8); /* Add glow effect */
+  }
+  

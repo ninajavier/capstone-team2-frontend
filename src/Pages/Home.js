@@ -20,7 +20,8 @@ const Home = () => {
       <Row className="mb-4">
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Community image" />
+          <Card.Img variant="top" src="/assets/paths.avif" alt="Community image" />
+
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">people</i> Community
@@ -37,7 +38,7 @@ const Home = () => {
 
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Profile image" />
+            <Card.Img variant="top" src="/assets/uptown.gif" alt="Profile image" />
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">account_circle</i> Your Profile
@@ -54,7 +55,7 @@ const Home = () => {
 
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Settings image" />
+            <Card.Img variant="top" src="/assets/vignelli-clip.gif" alt="Settings image" />
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">settings</i> Settings

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import AuthModal from "./AuthModal";
-// import { useUser } from "./provider/UserProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
@@ -64,21 +63,7 @@ const MyNavbar = () => {
                 Find Route
               </Nav.Link>
             </LinkContainer>
-            {user ? (
-              <>
-                <Navbar.Text className="mr-3">
-                  Signed in as: {user.email}
-                </Navbar.Text>
-                <Button variant="outline-info" onClick={handleSignOut}>
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <Button variant="outline-success" onClick={openAuthModal}>
-                Rate Prograde?
-              </Button>
-            )}
-            <LinkContainer to="/profile" className="ml-3">
+            <LinkContainer to="/profile">
               <Nav.Link>
                 <i className="material-icons">person</i>
                 Profile
@@ -96,6 +81,20 @@ const MyNavbar = () => {
                 Station Info
               </Nav.Link>
             </LinkContainer>
+            {user ? (
+              <>
+                <Navbar.Text className="mr-3">
+                  Signed in as: {user.email}
+                </Navbar.Text>
+                <Button variant="outline-info" onClick={handleSignOut}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline-success" onClick={openAuthModal}>
+                Rate Prograde?
+              </Button>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

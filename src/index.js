@@ -6,6 +6,7 @@ import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 import 'material-icons/iconfont/material-icons.css';
+import './global-styles.css'; // Import the global CSS file
 
 
 
