@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Dropdown, Card, Button, Form } from 'react-bootstrap';
-import Comments from '../Components/Comments';
+import Comments from '../Components/Threads';
 // import ThreadDetail from '../Components/ThreadDetail';
 
 const Community = () => {

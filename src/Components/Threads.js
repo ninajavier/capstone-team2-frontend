@@ -24,34 +24,34 @@ const Icon = styled(ChatBubbleOutline)(({ theme }) => ({
   marginRight: '0.5rem',
 }));
 
-const Comments = () => {
-  const [comments, setComments] = useState([]);
+const Threads = () => {
+  const [threads, setThreads] = useState([]);
   const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
     "Select Train Line", "1", "2", "3", "4", "5", "6", "7", "A", "C", "E", "B", "D", "F", "M", "N", "Q", "R", "W", "G", "J", "Z", "L", "S"
   ];
 
   useEffect(() => {
-    const fetchCommentsAndThreads = async () => {
+    const fetchThreadsAndComments = async () => {
       try {
         console.log("testing!", API)
         const response = await axios.get(`${API}/api/threads`);
         console.log(response);
-        setComments(response.data.data);
+        setThreads(response.data.data);
       } catch (error) {
-        console.error('Error fetching comments:', error);
+        console.error('Error fetching threads:', error);
       }
     };
 
-    fetchCommentsAndThreads();
+    fetchThreadsAndComments();
   }, [] );
 
   return (
     <Container>
       <Row>
         <Col>
-          <h3>Let's Display Progrades Below!</h3>
-          {comments.map((comment, index) => (
+          <h3>Live Thread Feed!</h3>
+          {threads.map((comment, index) => (
             <CommentCard key={index}>
               <Card.Body>
                 {/* Avatar and date */}
@@ -90,4 +90,4 @@ const Comments = () => {
   );
 };
 
-export default Comments;
+export default Threads;
