@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Rating, TextareaAutosize, Box, Typography } from '@mui/material';
 
-const AuthModal = ({ show, onClose }) => {
+const RatingModal = ({ show, onClose }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -77,4 +77,4 @@ const AuthModal = ({ show, onClose }) => {
   );
 };
 
-export default AuthModal;
+export default RatingModal;

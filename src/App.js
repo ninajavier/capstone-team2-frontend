@@ -12,7 +12,6 @@ import UpdateProfile from "./Pages/UpdateProfile";
 import ThreadList from "./Components/ThreadList";
 import ThreadDetail from "./Components/ThreadDetail";
 
-// import AuthModal from "./Components/AuthModal";
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
 import { AuthProvider } from "./context/AuthContext";
