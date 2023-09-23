@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Card, Row, Col, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import AboutPage from '../Components/AboutPage'; // Import the AboutPage component
+
 
 const Home = () => {
   return (
@@ -70,6 +72,8 @@ const Home = () => {
           </Card>
         </Col>
       </Row>
+      <AboutPage />
+
     </div>
   )
 }

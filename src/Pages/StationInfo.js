@@ -32,9 +32,11 @@ const StationInfo = () => {
                       Learn More
                     </Button>
                   ) : (
-                    <Button variant="primary" block>
-                      Learn More
-                    </Button>
+                    <img
+                      src="/assets/comingsoon.png"
+                      alt={`${transport} Coming Soon`}
+                      style={{ width: "100%", height: "auto" }}
+                    />
                   )}
                 </Card.Body>
               </Card>

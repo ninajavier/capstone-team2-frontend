@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Dropdown, Card, Button, Form } from 'react-bootstrap';
 import Comments from '../Components/Comments';
-import ThreadDetail from '../Components/ThreadDetail';
+// import ThreadDetail from '../Components/ThreadDetail';
 
 const Community = () => {
   const [filter, setFilter] = useState('Location');
@@ -64,7 +64,7 @@ const Community = () => {
       <Row>
         <Col>
           <Comments />
-          <ThreadDetail />
+          {/* <ThreadDetail /> */}
         </Col>
       </Row>
     </Container>

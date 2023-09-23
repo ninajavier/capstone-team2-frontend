@@ -26,7 +26,7 @@ const Icon = styled(ChatBubbleOutline)(({ theme }) => ({
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
-
+  const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
     "Select Train Line", "1", "2", "3", "4", "5", "6", "7", "A", "C", "E", "B", "D", "F", "M", "N", "Q", "R", "W", "G", "J", "Z", "L", "S"
   ];
@@ -34,15 +34,17 @@ const Comments = () => {
   useEffect(() => {
     const fetchCommentsAndThreads = async () => {
       try {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/users/1/posts');
-        setComments(response.data);
+        console.log("testing!", API)
+        const response = await axios.get(`${API}/api/threads`);
+        console.log(response);
+        setComments(response.data.data);
       } catch (error) {
         console.error('Error fetching comments:', error);
       }
     };
 
     fetchCommentsAndThreads();
-  }, []);
+  }, [] );
 
   return (
     <Container>
