@@ -1,29 +1,22 @@
 import React, { useState } from "react";
 import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import RatingModal
- from "./RatingModal";
+import RatingModal from "./RatingModal";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
 const MyNavbar = () => {
   const progradeLogoPath = "./assets/ProgradeLogo.png";
 
-  const [showRatingModal
-    , setShowRatingModal
-  ] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { user } = {}; //useUser();
 
-  const openRatingModal
-   = () => {
-    setShowRatingModal
-    (true);
+  const openAuthModal = () => {
+    setShowAuthModal(true);
   };
 
-  const closeRatingModal
-   = () => {
-    setShowRatingModal
-    (false);
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
   };
 
   const handleSignOut = async () => {
@@ -35,15 +28,15 @@ const MyNavbar = () => {
   };
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" style={{ height: '120px' }}>
+    <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
         <LinkContainer to="/">
-          <Navbar.Brand style={{ fontSize: '36px' }}>
+          <Navbar.Brand>
             <Image
               src={progradeLogoPath}
               roundedCircle
-              width="80"
-              height="80"
+              width="40"
+              height="40"
               className="mr-2"
             />
             Prograde
@@ -90,7 +83,7 @@ const MyNavbar = () => {
             </LinkContainer>
             {user ? (
               <>
-                <Navbar.Text className="mr-3" style={{ fontSize: '20px' }}>
+                <Navbar.Text className="mr-3">
                   Signed in as: {user.email}
                 </Navbar.Text>
                 <Button variant="outline-info" onClick={handleSignOut}>
@@ -98,8 +91,7 @@ const MyNavbar = () => {
                 </Button>
               </>
             ) : (
-              <Button variant="outline-success" onClick={openRatingModal
-              }>
+              <Button variant="outline-success" onClick={openAuthModal}>
                 Rate Prograde?
               </Button>
             )}
@@ -107,11 +99,8 @@ const MyNavbar = () => {
         </Navbar.Collapse>
       </Container>
       <RatingModal
-      
-        show={showRatingModal
-        }
-        onClose={closeRatingModal
-        }
+        show={showAuthModal}
+        onClose={closeAuthModal}
         isAuthenticated={!!user}
       />
     </Navbar>
