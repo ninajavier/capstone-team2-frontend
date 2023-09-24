@@ -26,6 +26,7 @@ const Icon = styled(ChatBubbleOutline)(({ theme }) => ({
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
+console.log(comments);
 
   useEffect(() => {
     // Fetch comments from an API endpoint or any other source
@@ -33,6 +34,7 @@ const Comments = () => {
       try {
         const response = await axios.get('your-comment-api-url');
         setComments(response.data);
+        console.log(response)
       } catch (error) {
         console.error('Error fetching comments:', error);
       }

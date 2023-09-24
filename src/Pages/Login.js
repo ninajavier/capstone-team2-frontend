@@ -36,6 +36,7 @@ const Login = () => {
   const user = useContext(UserContext);
 
   useEffect(() => {}, []);
+  console.log(userComments, userThreads);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -129,17 +130,17 @@ const Login = () => {
                 <div>{user.displayName}</div>
                 <div>{user.email}</div>
                 <h3>Your Comments:</h3>
-                <ul>
+                {/* <ul>
                   {userComments.map((comment, index) => (
                     <li key={index}>{comment.text}</li>
                   ))}
-                </ul>
+                </ul> */}
                 <h3>Your Threads:</h3>
-                <ul>
+                {/* <ul>
                   {userThreads.map((thread, index) => (
                     <li key={index}>{thread.title}</li>
                   ))}
-                </ul>
+                </ul> */}
                 <Button variant="danger" onClick={handleSignOut}>
                   Logout
                 </Button>
