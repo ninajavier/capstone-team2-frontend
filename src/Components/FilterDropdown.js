@@ -49,6 +49,8 @@ const FilterDropdown = ({ checkedTrains, setCheckedTrains }) => {
     "7",
   ];
   // REMVOING  "LIRR", "MNR","SIR",
+
+  //not sure how label becomes an param but i undertsnad what the function does
   function getIconKeyFromLabel(label) {
     if (isNumber(label)) {
       return `_${label}_digit`;
@@ -61,6 +63,7 @@ const FilterDropdown = ({ checkedTrains, setCheckedTrains }) => {
     const key = getIconKeyFromLabel(label);
     return icons[key];
   }
+  // code seems redudent you could return
 
   return (
     <>
@@ -70,7 +73,7 @@ const FilterDropdown = ({ checkedTrains, setCheckedTrains }) => {
           <Form onSubmit={submitHandler}>
             <Form.Group className="trains-dropdown">
               {labels.map((trainLabel, index) => {
-                const icon = getIconForLabel(trainLabel);
+                const icon = getIconForLabel(trainLabel); //not sure
                 return (
                   <Dropdown.Item onClick={checkboxHandler} key={index}>
                     <div className="icon-checkbox-wrapper">
@@ -95,7 +98,13 @@ const FilterDropdown = ({ checkedTrains, setCheckedTrains }) => {
                 );
               })}
               <Dropdown.Item>
-                <Button onClick={clearTrains}>Clear Trains</Button>
+                <Button
+                  className="clear-trains"
+                  size="sm"
+                  onClick={clearTrains}
+                >
+                  Clear Trains
+                </Button>
               </Dropdown.Item>
             </Form.Group>
           </Form>
