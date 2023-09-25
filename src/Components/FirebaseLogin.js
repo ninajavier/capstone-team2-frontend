@@ -8,13 +8,17 @@ import {
   Card,
   Image,
 } from "react-bootstrap";
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../providers/UserProvider";
 import { auth, googleProvider } from "../config/firebase";
 import axios from "axios";
 
-const Login = () => {
+const FirebaseLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userProfile, setUserProfile] = useState({});
@@ -121,11 +125,16 @@ const Login = () => {
             {error && <div className="login-error">{error}</div>}
             {user ? (
               <>
-                <img src={userProfile.profilePhoto} alt="Profile" />
+                <img
+                  src={`https://source.unsplash.com/random/50x50/?portrait&`}
+                  alt="avatar"
+                  style={{ borderRadius: "50%", marginRight: "10px" }}
+                />
+                <div><strong>Welcome Back</strong></div>
                 <div>{user.displayName}</div>
                 <div>{user.email}</div>
-                <h3>Your Threads:</h3>
-                <h3>Your Comments:</h3>
+                {/* <h3>Your Threads:</h3>
+                <h3>Your Comments:</h3> */}
                 <Button variant="danger" onClick={handleSignOut}>
                   Logout
                 </Button>
@@ -172,4 +181,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default FirebaseLogin;

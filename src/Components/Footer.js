@@ -58,6 +58,7 @@ const Footer = () => {
               ...squareStyle,
               backgroundColor: color,
             }}
+            
           ></div>
         ))}
       </div>
