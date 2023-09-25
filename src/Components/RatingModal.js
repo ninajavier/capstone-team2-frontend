@@ -26,13 +26,9 @@ const RatingModal = ({ show, onClose }) => {
   };
 
   return (
-    <Modal open={show} onClose={onClose}>
+    <Modal open={show} onClose={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Box
         sx={{
-          position: 'fixed', // Change to 'fixed'
-          top: '50%', // Adjust this value as needed
-          right: '20px', // Adjust this value to control the distance from the right edge
-          transform: 'translateY(-50%)', // Center vertically
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           p: 4,
           borderRadius: 8,

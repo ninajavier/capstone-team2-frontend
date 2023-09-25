@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Button } from "react-bootstrap";
+import FirebaseLogin from "../Components/FirebaseLogin";
+import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -17,8 +18,17 @@ const LandingPage = () => {
   const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
   return (
-    <div className="position-relative" style={{ height: "calc(100vh - 60px)" }}>
-      {/* Adjust 60px to your navbar height */}
+    <div
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {/* Video background */}
       <video
         className="position-fixed top-0 start-0 w-100 h-100 object-cover"
         playsInline
@@ -30,22 +40,23 @@ const LandingPage = () => {
         <source src={randomVideo} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <Container
+      <Container fluid
         className="position-absolute top-50 start-50 translate-middle d-flex flex-column justify-content-center align-items-center bg-opacity-75 bg-dark text-white p-4"
         style={{
           borderRadius: "15px",
-          maxWidth: "600px",
+          maxWidth: "1200px",
           textAlign: "center",
           zIndex: 1,
         }}
       >
         <h1>Welcome to Prograde!</h1>
-        <p>
-          Embark on a transformative journey with Prograde — a hub where productivity meets community engagement. Designed with NYC transit users in mind, our platform revolutionizes the way you receive service updates, offering real-time, locally sourced information to streamline your commuting experience. Immerse yourself in a space where learning is intuitive, and growth is inevitable. Dive in to witness the future of community-powered transit experience.
-        </p>
-        <Button variant="primary" onClick={() => navigate("/community")}>
-          Check Out the Community
-        </Button>
+        <h5>
+        "Welcome to Prograde, the ultimate commuter-based social network designed for NYC transit users. Experience a revolutionary platform that enhances your daily commute by providing real-time, locally sourced service updates. Dive into an intuitive space where productivity meets community engagement, making learning effortless and growth inevitable. Join us and be part of the future of community-powered transit experiences."
+        </h5>
+
+        {/* FirebaseLogin component */}
+        <FirebaseLogin />
+
       </Container>
     </div>
   );

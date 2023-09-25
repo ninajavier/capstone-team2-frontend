@@ -86,22 +86,27 @@ const Login = () => {
   };
 
   return (
-    <Container
-      fluid
-      className="d-flex flex-column justify-content-center p-0"
-      style={{
-        height: "calc(100vh - 60px)", // Adjust 60px to your navbar height
-        background: `url('./assets/commuteimage.png') no-repeat center center`,
-        backgroundSize: "cover",
-      }}
-    >
-      <Row nogutters={true} className="justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6} xl={4} className="d-flex align-items-center p-5">
+    <Container fluid>
+      <Row className="justify-content-center">
+        <Col
+          xs={12}
+          sm={10}
+          md={8}
+          lg={6}
+          xl={4}
+          className="d-flex align-items-center p-5"
+        >
           <Card
-            className="w-100 p-4"
+            className="w-100 p-5"
             style={{
-              backgroundColor: "rgba(255,255,255,0.8)",
-              backdropFilter: "blur(10px)",
+              borderRadius: "50%", // Make the card circular
+              width: "400px", // Adjust the size as needed
+              height: "400px", // Adjust the size as needed
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "space-evenly", // Add spacing around the buttons
             }}
           >
             <Card.Title className="text-center">
@@ -112,7 +117,6 @@ const Login = () => {
                 height="100"
                 className="mb-3"
               />
-              <strong>Welcome to Prograde</strong>
             </Card.Title>
             {error && <div className="login-error">{error}</div>}
             {user ? (
