@@ -13,6 +13,7 @@ import { styled } from "@mui/system";
 import { ChatBubbleOutline } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
+import CommentList from './CommentList'; // Import the CommentList component
 
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
@@ -30,24 +31,6 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   fontSize: "1rem",
   opacity: 0.7,
 }));
-
-const CommentList = ({ comments }) => {
-  return (
-    <div>
-      {comments ? (
-        comments.map((comment, index) => (
-          <div key={index}>
-            <p>{comment.text}</p>
-            {/* Add any other comment details you want to display */}
-          </div>
-        ))
-      ) : (
-        <p>No comments available</p>
-      )}
-    </div>
-  );
-};
-
 
 const Threads = () => {
   const [threads, setThreads] = useState([]);
@@ -91,35 +74,44 @@ const Threads = () => {
 
   useEffect(() => {
     const fetchCommentsForThread = async (threadId) => {
-      // Fetch comments for a specific thread (similar to your previous code)
+      try {
+        const response = await axios.get(`${API}/api/threads/${threadId}/comments`);
+        return response.data.comments; // Assuming the comments are in response.data.comments
+      } catch (error) {
+        console.error(`Error fetching comments for thread ${threadId}:`, error);
+        return []; // Return an empty array if there's an error
+      }
     };
-
+  
     const fetchThreadsAndComments = async () => {
       try {
         const response = await axios.get(`${API}/api/threads`);
         const threadsData = response.data.data;
-
+    
         // Fetch comments for each thread
         const threadsWithComments = await Promise.all(
           threadsData.map(async (thread) => {
-            const comments = await fetchCommentsForThread(thread.id);
+            const commentsResponse = await axios.get(`${API}/api/threads/${thread.id}/comments`);
+            const comments = commentsResponse.data.data;
             return { ...thread, comments };
           })
         );
-
+    
         // Sort threads by created_at in reverse order (most recent first)
         const sortedThreads = threadsWithComments.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-
+    
         setThreads(sortedThreads);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
     };
-
+    
+  
     fetchThreadsAndComments();
   }, [API]);
+  
 
   const filteredThreads = selectedStation
     ? threads.filter((thread) => thread.station === selectedStation)
@@ -260,7 +252,7 @@ const Threads = () => {
                   ))}
                 </Card.Text>
 
-                <CommentList comments={thread.comments} />
+                <CommentList comments={thread.comments} /> {/* Add this line */}
               </Card.Body>
             </CommentCard>
           ))}
