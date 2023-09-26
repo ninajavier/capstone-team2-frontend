@@ -3,7 +3,7 @@ import { Card, Badge, Container, Alert, Spinner } from "react-bootstrap";
 import "./styles.css";
 import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
-
+import icons from "../Assets";
 // const apiUrl = process.env.REACT_APP_API_URL;
 
 const ESTHandler = (UnixTimeStamp) => {
@@ -65,7 +65,18 @@ export default function SubwayAlerts() {
             if (matchingAlerts.length > 0) {
               return (
                 <div key={selectedTrain}>
-                  <h2>Alerts for Train:{selectedTrain}</h2>
+                  <h2>
+                    Alerts for Train:{" "}
+                    <img
+                      className="card-subway-icons"
+                      src={
+                        isNaN(selectedTrain)
+                          ? icons[`${selectedTrain.toLocaleLowerCase()}_letter`]
+                          : icons[`_${selectedTrain}_digit`]
+                      }
+                    />
+                    {console.log(icons)}
+                  </h2>
                   {console.log(
                     "selected train",
                     selectedTrain,
