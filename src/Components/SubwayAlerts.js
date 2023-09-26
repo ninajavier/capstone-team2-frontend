@@ -201,28 +201,32 @@ export default function SubwayAlerts() {
                             </b>
                           </Card.Header>
                           <Card.Title className="subway-alerts-title">
-                            {entity.alert.headerText.translation[0].text}
+                            {
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html:
+                                    entity.alert.headerText.translation[1].text,
+                                }}
+                              ></div>
+                            }
                           </Card.Title>
                           <Card.Body>
                             {entity.alert.descriptionText &&
                             entity.alert.descriptionText.translation &&
-                            entity.alert.descriptionText.translation[0]
-                              ? entity.alert.descriptionText.translation[0].text
-                              : null}
+                            entity.alert.descriptionText.translation[1] ? (
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html:
+                                    entity.alert.descriptionText.translation[1]
+                                      .text,
+                                }}
+                              ></div>
+                            ) : null}
                             <div style={{ marginTop: "1rem" }}>
                               <strong>Starts on</strong>{" "}
                               {ESTHandler(entity.alert.activePeriod[0].start)}
                             </div>
                             <br />
-
-                            {/* <ul>
-                              {entity.alert.informedEntity.map(
-                                (informedEntity, index) => (
-                                  
-                                  <li key={index}>{informedEntity.routeId} </li>
-                                )
-                              )}
-                            </ul> */}
                           </Card.Body>
                         </Card>
                       </li>

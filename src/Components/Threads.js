@@ -48,7 +48,6 @@ const CommentList = ({ comments }) => {
   );
 };
 
-
 const Threads = () => {
   const [threads, setThreads] = useState([]);
   const [selectedStation, setSelectedStation] = useState("");
@@ -228,7 +227,10 @@ const Threads = () => {
                   <div>
                     <CommentText>{thread.title}</CommentText>
                     <small>
-                      {format(new Date(thread.created_at), "yyyy-MM-dd HH:mm:ss")}
+                      {format(
+                        new Date(thread.created_at),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                     </small>
                   </div>
                   <div style={{ marginLeft: "auto", display: "flex" }}>
