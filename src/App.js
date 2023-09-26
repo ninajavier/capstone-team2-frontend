@@ -20,7 +20,8 @@ import { UserProvider } from "./providers/UserProvider";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import DateFilter from "./Components/DateFilter";
-
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 function App() {
   const [user, setUser] = useState(null); // Initialize user state
 
@@ -31,19 +32,21 @@ function App() {
           {" "}
           {/* Wrap components with UserContext.Provider */}
           <Navbar />
-          <Routes>
-            <Route path="/" element={<LandingPage setUser={setUser} />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/find-route" element={<FindRoute />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/update-profile" element={<UpdateProfile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/station-info" element={<StationInfo />} />
-            <Route path="/subway-alerts" element={<SubwayAlerts />} />
-            <Route path="/dropdown" element={<FilterDropdown />} />
-            <Route path="/date" element={<DateFilter />} />
-          </Routes>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Routes>
+              <Route path="/" element={<LandingPage setUser={setUser} />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/find-route" element={<FindRoute />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/update-profile" element={<UpdateProfile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/station-info" element={<StationInfo />} />
+              <Route path="/subway-alerts" element={<SubwayAlerts />} />
+              <Route path="/dropdown" element={<FilterDropdown />} />
+              <Route path="/date" element={<DateFilter />} />
+            </Routes>
+          </LocalizationProvider>
           <Footer />
         </UserProvider>
       </AuthProvider>
