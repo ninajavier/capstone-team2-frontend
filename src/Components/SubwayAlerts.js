@@ -1,10 +1,68 @@
+import ReactDOM from "react-dom";
 import React, { useState, useEffect } from "react";
+
 import { Card, Badge, Container, Alert, Spinner } from "react-bootstrap";
 import "./styles.css";
 import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
 import icons from "../Assets";
-// const apiUrl = process.env.REACT_APP_API_URL;
+import DateFilter from "./DateFilter";
+import AccessibleIcon from "@mui/icons-material/Accessible";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+
+function processDescriptionText(text) {
+  //ACESS ICONS
+  text = text.replace(
+    /\[accessibility icon\]/g,
+    '<span class="icon-accessibility-placeholder"></span>'
+  );
+  //BUS ICON
+  text = text.replace(
+    /\[shuttle bus icon\]/g,
+    '<span class="icon-shuttle-bus-placeholder"></span>'
+  );
+  // TRAINS ICONS
+  const trainLines = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "j",
+    "l",
+    "m",
+    "n",
+    "q",
+    "r",
+    "s",
+    "w",
+    "z",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+  ];
+  trainLines.forEach((train) => {
+    const pattern = new RegExp(`\\[${train}\\]`, "gi");
+    let replacement;
+    if (isNaN(train)) {
+      replacement = `<img class="train-render-icon" src=${
+        icons[train.toLowerCase() + "_letter"]
+      } alt='${train} train icon' />`;
+    } else {
+      replacement = `<img class="train-render-icon" src=${
+        icons["_" + train + "_digit"]
+      } alt='${train} train icon' />`;
+    }
+    text = text.replace(pattern, replacement);
+  });
+  return text;
+}
 
 const ESTHandler = (UnixTimeStamp) => {
   let timeStamp = UnixTimeStamp;
@@ -42,6 +100,7 @@ export default function SubwayAlerts() {
         console.error("Error fetching service alerts:", error);
       });
   }, []);
+
   const loadingPage = (
     <div className="d-flex justify-content-center align-items-center">
       <Spinner animation="border" variant="primary" />
@@ -106,8 +165,9 @@ export default function SubwayAlerts() {
                             {
                               <div
                                 dangerouslySetInnerHTML={{
-                                  __html:
-                                    entity.alert.headerText.translation[1].text,
+                                  __html: processDescriptionText(
+                                    entity.alert.headerText.translation[1].text
+                                  ),
                                 }}
                               ></div>
                             }
@@ -118,9 +178,10 @@ export default function SubwayAlerts() {
                             entity.alert.descriptionText.translation[1] ? (
                               <div
                                 dangerouslySetInnerHTML={{
-                                  __html:
+                                  __html: processDescriptionText(
                                     entity.alert.descriptionText.translation[1]
-                                      .text,
+                                      .text
+                                  ),
                                 }}
                               ></div>
                             ) : null}
@@ -158,6 +219,7 @@ export default function SubwayAlerts() {
             checkedTrains={checkedTrains}
             setCheckedTrains={setCheckedTrains}
           />
+          <DateFilter />
         </Container>
       </div>
       {subwayAlerts.entity
