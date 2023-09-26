@@ -1,3 +1,19 @@
+button, .btn {  /* This targets both plain buttons and potential classes named 'btn' */
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700; /* Bold weight */
+  color: #273170;
+}
+
+p {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 500; /* Medium weight */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 900; /* Black weight */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,7 +27,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 .material-icons {
   color: #273170;
   font-size: 70px;
 }
+
+.select-menu {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+

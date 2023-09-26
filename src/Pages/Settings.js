@@ -1,5 +1,28 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Collapse,
+} from '@mui/material';
+import {
+  AccountCircle,
+  Notifications,
+  Visibility,
+  Security,
+  HelpOutline,
+  Edit,
+  Lock,
+  Email,
+  Sms,
+  Fingerprint,
+  LiveHelp,
+  Feedback,
+} from '@mui/icons-material';
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -22,57 +45,193 @@ const Settings = () => {
   return (
     <div style={{ padding: '20px', display: 'flex' }}>
       <aside style={{ width: '250px', borderRight: '1px solid #ccc' }}>
-        {/* User Profile */}
-        <h2 onClick={() => toggleDropdown('user-profile')} style={{ padding: '10px', cursor: 'pointer' }}>
-          <i className="material-icons">account_circle</i> User Profile
-        </h2>
-        <div style={{ paddingLeft: '20px', display: activeDropdown === 'user-profile' ? 'block' : 'none' }}>
-          <p onClick={() => handleClick('user-profile/edit-profile')} style={{ backgroundColor: isActive('edit-profile') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">edit</i> Edit Profile
-          </p>
-          <p onClick={() => handleClick('user-profile/change-password')} style={{ backgroundColor: isActive('change-password') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">lock</i> Change Password
-          </p>
-        </div>
+        <List>
+          <ListItem
+            button
+            onClick={() => toggleDropdown('user-profile')}
+            style={{
+              backgroundColor: isActive('user-profile') ? '#f0f0f0' : 'transparent',
+            }}
+          >
+            <ListItemIcon>
+              <AccountCircle />
+            </ListItemIcon>
+            <ListItemText primary="User Profile" />
+          </ListItem>
+          <Collapse
+            in={activeDropdown === 'user-profile'}
+            timeout="auto"
+            unmountOnExit
+          >
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                onClick={() => handleClick('user-profile/edit-profile')}
+                style={{
+                  backgroundColor: isActive('edit-profile') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Edit />
+                </ListItemIcon>
+                <ListItemText primary="Edit Profile" />
+              </ListItem>
+              <ListItem
+                button
+                onClick={() => handleClick('user-profile/change-password')}
+                style={{
+                  backgroundColor: isActive('change-password') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Lock />
+                </ListItemIcon>
+                <ListItemText primary="Change Password" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <Divider />
 
-        {/* Notifications */}
-        <h2 onClick={() => toggleDropdown('notifications')} style={{ padding: '10px', cursor: 'pointer' }}>
-          <i className="material-icons">notifications</i> Notifications
-        </h2>
-        <div style={{ paddingLeft: '20px', display: activeDropdown === 'notifications' ? 'block' : 'none' }}>
-          <p onClick={() => handleClick('notifications/email-notifications')} style={{ backgroundColor: isActive('email-notifications') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">email</i> Email Notifications
-          </p>
-          <p onClick={() => handleClick('notifications/sms-notifications')} style={{ backgroundColor: isActive('sms-notifications') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">sms</i> SMS Notifications
-          </p>
-        </div>
+          {/* Notifications */}
+          <ListItem
+            button
+            onClick={() => toggleDropdown('notifications')}
+            style={{
+              backgroundColor: isActive('notifications') ? '#f0f0f0' : 'transparent',
+            }}
+          >
+            <ListItemIcon>
+              <Notifications />
+            </ListItemIcon>
+            <ListItemText primary="Notifications" />
+          </ListItem>
+          <Collapse
+            in={activeDropdown === 'notifications'}
+            timeout="auto"
+            unmountOnExit
+          >
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                onClick={() => handleClick('notifications/email-notifications')}
+                style={{
+                  backgroundColor: isActive('email-notifications') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Email />
+                </ListItemIcon>
+                <ListItemText primary="Email Notifications" />
+              </ListItem>
+              <ListItem
+                button
+                onClick={() => handleClick('notifications/sms-notifications')}
+                style={{
+                  backgroundColor: isActive('sms-notifications') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Sms />
+                </ListItemIcon>
+                <ListItemText primary="SMS Notifications" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <Divider />
 
-        {/* Privacy */}
-        <h2 onClick={() => toggleDropdown('privacy')} style={{ padding: '10px', cursor: 'pointer' }}>
-          <i className="material-icons">privacy_tip</i> Privacy
-        </h2>
-        <div style={{ paddingLeft: '20px', display: activeDropdown === 'privacy' ? 'block' : 'none' }}>
-          <p onClick={() => handleClick('privacy/visibility')} style={{ backgroundColor: isActive('visibility') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">visibility_off</i> Visibility
-          </p>
-          <p onClick={() => handleClick('privacy/security')} style={{ backgroundColor: isActive('security') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">fingerprint</i> Security
-          </p>
-        </div>
+          {/* Privacy */}
+          <ListItem
+            button
+            onClick={() => toggleDropdown('privacy')}
+            style={{
+              backgroundColor: isActive('privacy') ? '#f0f0f0' : 'transparent',
+            }}
+          >
+            <ListItemIcon>
+              <Visibility />
+            </ListItemIcon>
+            <ListItemText primary="Privacy" />
+          </ListItem>
+          <Collapse
+            in={activeDropdown === 'privacy'}
+            timeout="auto"
+            unmountOnExit
+          >
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                onClick={() => handleClick('privacy/visibility')}
+                style={{
+                  backgroundColor: isActive('visibility') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Visibility />
+                </ListItemIcon>
+                <ListItemText primary="Visibility" />
+              </ListItem>
+              <ListItem
+                button
+                onClick={() => handleClick('privacy/security')}
+                style={{
+                  backgroundColor: isActive('security') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Fingerprint />
+                </ListItemIcon>
+                <ListItemText primary="Security" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <Divider />
 
-        {/* Support */}
-        <h2 onClick={() => toggleDropdown('support')} style={{ padding: '10px', cursor: 'pointer' }}>
-          <i className="material-icons">help_outline</i> Support
-        </h2>
-        <div style={{ paddingLeft: '20px', display: activeDropdown === 'support' ? 'block' : 'none' }}>
-          <p onClick={() => handleClick('support/help-center')} style={{ backgroundColor: isActive('help-center') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">live_help</i> Help Center
-          </p>
-          <p onClick={() => handleClick('support/send-feedback')} style={{ backgroundColor: isActive('send-feedback') ? '#f0f0f0' : 'transparent', padding: '10px', cursor: 'pointer' }}>
-            <i className="material-icons">feedback</i> Send Feedback
-          </p>
-        </div>
+          {/* Support */}
+          <ListItem
+            button
+            onClick={() => toggleDropdown('support')}
+            style={{
+              backgroundColor: isActive('support') ? '#f0f0f0' : 'transparent',
+            }}
+          >
+            <ListItemIcon>
+              <HelpOutline />
+            </ListItemIcon>
+            <ListItemText primary="Support" />
+          </ListItem>
+          <Collapse
+            in={activeDropdown === 'support'}
+            timeout="auto"
+            unmountOnExit
+          >
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                onClick={() => handleClick('support/help-center')}
+                style={{
+                  backgroundColor: isActive('help-center') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <LiveHelp />
+                </ListItemIcon>
+                <ListItemText primary="Help Center" />
+              </ListItem>
+              <ListItem
+                button
+                onClick={() => handleClick('support/send-feedback')}
+                style={{
+                  backgroundColor: isActive('send-feedback') ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <ListItemIcon>
+                  <Feedback />
+                </ListItemIcon>
+                <ListItemText primary="Send Feedback" />
+              </ListItem>
+            </List>
+          </Collapse>
+        </List>
       </aside>
       <div style={{ flex: 1, marginLeft: '20px' }}>
         <Routes>
@@ -83,8 +242,8 @@ const Settings = () => {
           <Route path="notifications/email-notifications" element={<EmailNotifications />} />
           <Route path="notifications/sms-notifications" element={<SmsNotifications />} />
           {/* Privacy */}
-          <Route path="privacy/visibility" element={<Visibility />} />
-          <Route path="privacy/security" element={<Security />} />
+          <Route path="privacy/visibility" element={<VisibilitySettings />} />
+          <Route path="privacy/security" element={<SecuritySettings />} />
           {/* Support */}
           <Route path="support/help-center" element={<HelpCenter />} />
           <Route path="support/send-feedback" element={<SendFeedback />} />
@@ -94,7 +253,7 @@ const Settings = () => {
   );
 };
 
-// ... Create separate components for each route ...
+// Separate components for each route
 
 const EditProfile = () => (
   <div>
@@ -124,16 +283,16 @@ const SmsNotifications = () => (
   </div>
 );
 
-const Visibility = () => (
+const VisibilitySettings = () => (
   <div>
-    <h2>Visibility</h2>
+    <h2>Visibility Settings</h2>
     {/* ... visibility settings content ... */}
   </div>
 );
 
-const Security = () => (
+const SecuritySettings = () => (
   <div>
-    <h2>Security</h2>
+    <h2>Security Settings</h2>
     {/* ... security settings content ... */}
   </div>
 );

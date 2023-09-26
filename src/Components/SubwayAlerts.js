@@ -5,6 +5,7 @@ import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
 
 // const apiUrl = process.env.REACT_APP_API_URL;
+
 const ESTHandler = (UnixTimeStamp) => {
   let timeStamp = UnixTimeStamp;
 
@@ -20,6 +21,7 @@ const ESTHandler = (UnixTimeStamp) => {
   const date = new Date(timeStamp * 1000);
   return date.toLocaleString("en-US", options);
 };
+
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
   const [checkedTrains, setCheckedTrains] = useState({});
@@ -27,10 +29,9 @@ export default function SubwayAlerts() {
   const generateUniqueKey = (id, index) => {
     return `${id}_${index}`;
   };
-  let affectedLines = null;
+
   useEffect(() => {
     const apiUrl = `https://prograde.onrender.com/subway-alerts`;
-    console.log(apiUrl);
 
     axios
       .get(apiUrl)
