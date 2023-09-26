@@ -87,7 +87,12 @@ export default function SubwayAlerts() {
   const generateUniqueKey = (id, index) => {
     return `${id}_${index}`;
   };
-
+  const replaceWithIcon = (className, iconOrImage) => {
+    const placeholders = document.querySelectorAll(`.${className}`);
+    placeholders.forEach((placeholder) => {
+      ReactDOM.render(iconOrImage, placeholder);
+    });
+  };
   useEffect(() => {
     const apiUrl = `https://prograde.onrender.com/subway-alerts`;
 
@@ -99,7 +104,10 @@ export default function SubwayAlerts() {
       .catch((error) => {
         console.error("Error fetching service alerts:", error);
       });
-  }, []);
+    replaceWithIcon("icon-accessibility-placeholder", <AccessibleIcon />);
+
+    replaceWithIcon("icon-shuttle-bus-placeholder", <DirectionsBusIcon />);
+  }, [subwayAlerts]);
 
   const loadingPage = (
     <div className="d-flex justify-content-center align-items-center">
