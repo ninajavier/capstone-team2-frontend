@@ -42,6 +42,7 @@ function App() {
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/subway-alerts" element={<SubwayAlerts />} />
             <Route path="/dropdown" element={<FilterDropdown />} />
+            <Route path="/date" element={<DateFilter />} />
           </Routes>
           <Footer />
         </UserProvider>
