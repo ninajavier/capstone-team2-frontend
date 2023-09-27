@@ -8,37 +8,32 @@ import {
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 
-const center = { 
-  lat: 40.7128, 
-  lng: -74.0060 
+const center = {
+  lat: 40.7128,
+  lng: -74.006,
 };
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
-  const [currentAddress, setCurrentAddress] = useState("");
-
   useEffect(() => {
     if (useCurrentLocation && currentPosition) {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: currentPosition }, (results, status) => {
         if (status === "OK" && results[0]) {
-          setCurrentAddress(results[0].formatted_address);
+          originRef.current.value = results[0].formatted_address;
         } else {
           console.error("Geocoder failed due to: " + status);
         }
       });
     } else {
-      setCurrentAddress("");
+      originRef.current.value = "";
     }
-  }, [useCurrentLocation, currentPosition]);
+  }, [useCurrentLocation, currentPosition, originRef]);
 
   return (
     <Form.Group as={Col} md={12}>
-      <Form.Control
-        type="text"
-        value={currentAddress}
-        ref={originRef}
-        onChange={(e) => setCurrentAddress(e.target.value)}
-      />
+      <Autocomplete>
+        <Form.Control type="text" placeholder="Origin" ref={originRef} />
+      </Autocomplete>
     </Form.Group>
   );
 };
@@ -58,11 +53,11 @@ const Map = () => {
   const [watchId, setWatchId] = useState(null);
   const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
+  const [geoAddress, setGeoAddress] = useState("");
   let directionsService;
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
-      console.log('testing')
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -84,19 +79,22 @@ const Map = () => {
     };
   }, [watchId]);
 
+  if ("gelocation" in navigator) {
+    setGeoAddress(originRef.current.value);
+  }
+
   async function calculateRoute() {
     if (destinationRef.current.value === "") {
       return;
     }
-    clearRoute();
+    setDirectionsResponse(null);
+    centerToUserLocation();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-    console.log(directionsService);
 
     const originAddress = originRef.current.value;
 
     const geocoder = new window.google.maps.Geocoder();
-    console.log("hello");
 
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
@@ -110,19 +108,37 @@ const Map = () => {
       });
 
       const origin = geocodeResult;
-      console.log("geocodeResult");
 
       const results = await new Promise((resolve, reject) => {
+        // directionsService.route(
+        //   {
+        //     origin,
+        //     destination: destinationRef.current.value,
+        //     travelMode: mode,
+        //   },
+        //   (response, status) => {
+        //     if (status === "OK") {
+        //       resolve(response);
+        //     } else {
+        //       reject(
+        //         new Error("Directions request failed with status: " + status)
+        //       );
+        //     }
+        //   }
+        // );
         directionsService.route(
           {
             origin,
             destination: destinationRef.current.value,
             travelMode: mode,
+            // transitOptions: {
+            //   departureTime: selectedTime, // Include selected time for transit
+            //   routingPreference: "less_walking", // Adjust based on preference
+            // },
           },
           (response, status) => {
             if (status === "OK") {
               resolve(response);
-              console.log("response");
             } else {
               reject(
                 new Error("Directions request failed with status: " + status)
@@ -134,6 +150,7 @@ const Map = () => {
 
       if (results) {
         setDirectionsResponse(results);
+        console.log(directionsResponse);
         // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
@@ -150,10 +167,9 @@ const Map = () => {
             map: map,
           }),
         ];
-  
+
         setMarkers(routeMarkers);
       }
-
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
@@ -162,18 +178,15 @@ const Map = () => {
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
-    // clear origin (or reset to user location)
-    // clear destination
-
+    originRef.current.value = currentPosition ? geoAddress : "";
+    destinationRef.current.value = "";
   }
-
-
-
+  console.log(geoAddress);
   function centerToUserLocation() {
     if (map && currentPosition) {
       map.panTo(currentPosition);
       map.setZoom(15);
-    } 
+    }
   }
 
   if (loadError) {
@@ -193,13 +206,11 @@ const Map = () => {
     <Container>
       <Row className="mt-4">
         <Col sm={6} className="input-container">
-          <Autocomplete>
-            <LocationInput
-              useCurrentLocation={useCurrentLocation}
-              currentPosition={currentPosition}
-              originRef={originRef}
-            />
-          </Autocomplete>
+          <LocationInput
+            useCurrentLocation={useCurrentLocation}
+            currentPosition={currentPosition}
+            originRef={originRef}
+          />
         </Col>
         <Col sm={5} className="input-container">
           <Autocomplete>
@@ -231,10 +242,10 @@ const Map = () => {
 
         <Form.Group as={Col} md={8}>
           {useCurrentLocation && currentPosition && (
-              <Button variant="dark" type="button" onClick={clearRoute}>
-            Clear Route
-          </Button>
-              )}
+            <Button variant="dark" type="button" onClick={clearRoute}>
+              Clear Route
+            </Button>
+          )}
 
           <Button variant="dark" type="button" onClick={centerToUserLocation}>
             Center Map
@@ -266,7 +277,7 @@ const Map = () => {
             </GoogleMap>
           </div>
         </Col>
-        {directionsResponse && (
+        {/* {directionsResponse && (
           <Col md={6} className="text-left">
             <div>
               <h5>
@@ -285,6 +296,57 @@ const Map = () => {
                       key={index}
                       dangerouslySetInnerHTML={{ __html: step.instructions }}
                     ></li>
+                  )
+                )}
+              </ol>
+            </div>
+          </Col>
+        )} */}
+        {directionsResponse && (
+          <Col md={6} className="text-left">
+            <div>
+              <h5>
+                Distance:{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}
+              </h5>
+              <h5>
+                Duration:{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
+              </h5>
+              <h4>Directions:</h4>
+              <ol>
+                {directionsResponse.routes[0].legs[0].steps.map(
+                  (step, index) => (
+                    <li key={index}>
+                      {step.transit ? (
+                        <div>
+                          <div>
+                            <img
+                              className="map-transit-icons"
+                              src={step.transit.line.vehicle.icon}
+                              alt={step.transit.line.vehicle.name}
+                            />
+                            <img
+                              className="map-transit-icons"
+                              src={step.transit.line.icon}
+                              alt={step.transit.line.name}
+                            />
+                            {step.transit.line.name}
+                          </div>
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: step.instructions,
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: step.instructions,
+                          }}
+                        />
+                      )}
+                    </li>
                   )
                 )}
               </ol>
