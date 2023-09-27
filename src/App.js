@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+
 import Home from "./Pages/Home";
 import Community from "./Pages/Community";
 import FindRoute from "./Pages/FindRoute";
-import Login from "./Pages/Login";
 import Profile from "./Components/UserProfile";
 import Settings from "./Pages/Settings";
 import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
+import NotFoundPage from "./Pages/NotFoundPage";
+import Developers from "./Pages/Developers"; // Import the MeetTheDevelopers component
+
 
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
@@ -30,19 +34,20 @@ function App() {
           {/* Wrap components with UserContext.Provider */}
           <Navbar />
           <Routes>
-            <Route path="/" element={<Login setUser={setUser} />} />
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<LandingPage setUser={setUser} />} />
             <Route path="/home" element={<Home />} />
             <Route path="/community" element={<Community />} />
             <Route path="/find-route" element={<FindRoute />} />
-            <Route path="/landing" element={<LandingPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/update-profile" element={<UpdateProfile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/station-info" element={<StationInfo />} />
             <Route path="/subway-alerts" element={<SubwayAlerts />} />
             <Route path="/dropdown" element={<FilterDropdown />} />
+            <Route path="/developers" element={<Developers />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          <Footer />
         </UserProvider>
       </AuthProvider>
     </div>
