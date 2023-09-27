@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <div className="container mt-4">
       <Container fluid className="py-5 bg-light text-center">
-        <h1>Welcome To Prograde HomePage!</h1>
+        <h1>Welcome To Prograde</h1>
         <p>
           Navigating NYC has never been easier. Get real-time updates, connect with the community, and find the best routes for your journey.
         </p>

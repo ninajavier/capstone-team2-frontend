@@ -12,23 +12,23 @@ const developers = [
   {
     name: 'Laura',
     role: 'Product Owner',
-    imageUrl: 'https://avatars.githubusercontent.com/u/107360787?v=4', // Replace with actual image URL
+    imageUrl: 'placeholder_image_url_for_laura.jpg', // Replace with actual image URL
     description: 'Laura is our product owner, ensuring ethical practices. She handles our MTA API data, leads retrospectives, and maintains our app\'s vision.',
-    githubUrl: 'https://github.com/laura-williams-1', // Replace with actual GitHub URL
+    githubUrl: 'https://github.com/laura-github', // Replace with actual GitHub URL
   },
   {
     name: 'Christina',
     role: 'Project Manager & Scrum Master',
-    imageUrl: 'https://avatars.githubusercontent.com/u/113807743?v=4', // Replace with actual image URL
+    imageUrl: 'placeholder_image_url_for_christina.jpg', // Replace with actual image URL
     description: 'Christina is our project manager and scrum master. She manages Google Authentication, Firebase, and oversees the backend and app styling.',
     githubUrl: 'https://github.com/christina-github', // Replace with actual GitHub URL
   },
   {
     name: 'Nina',
     role: 'Lead Developer',
-    imageUrl: 'https://avatars.githubusercontent.com/u/115429067?v=4', // Replace with actual image URL
+    imageUrl: 'placeholder_image_url_for_nina.jpg', // Replace with actual image URL
     description: 'Nina is our lead developer. She created repositories, resolves merge conflicts, handles Google Maps API, and manages our deployments on various platforms.',
-    githubUrl: 'https://github.com/ninajavier', // Replace with actual GitHub URL
+    githubUrl: 'https://github.com/nina-github', // Replace with actual GitHub URL
   },
 ];
 

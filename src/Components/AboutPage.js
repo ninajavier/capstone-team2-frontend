@@ -17,8 +17,7 @@ const About = () => {
           </video>
           <CardContent>
             <Typography variant="h4" gutterBottom>
-              Welcome to PROGRADE
-            </Typography>
+Where Commuters Converse            </Typography>
             <Typography variant="body1">
               Elevate your daily commute with Prograde, where real-time transit
               information meets community engagement. We are here to make your
