@@ -35,7 +35,7 @@ const StationInfo = () => {
                     <img
                       src="/assets/comingsoon.png"
                       alt={`${transport} Coming Soon`}
-                      style={{ width: "100%", height: "auto" }}
+                      style={{ width: "30%", height: "auto" }}
                     />
                   )}
                 </Card.Body>
