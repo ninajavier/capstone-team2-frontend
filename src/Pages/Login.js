@@ -8,19 +8,10 @@ import {
   Card,
   Image,
 } from "react-bootstrap";
-
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
-
+import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
 import { UserContext } from "../providers/UserProvider";
-
 import { auth, googleProvider } from "../config/firebase";
-
 import axios from "axios";
 
 const Login = () => {
@@ -35,6 +26,7 @@ const Login = () => {
   const user = useContext(UserContext);
 
   useEffect(() => {}, []);
+  console.log(userComments, userThreads);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,6 +44,10 @@ const Login = () => {
             `/api/users/${user.id}/threads`
           );
           setUserThreads(threadsResponse.data);
+
+          // Fetch the user's profile photo from Firebase and update the state
+          const photoURL = user.photoURL; // Assuming Firebase provides the photo URL
+          setUserProfile({ ...userProfile, profilePhoto: photoURL });
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -64,7 +60,7 @@ const Login = () => {
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/landing");
+      navigate("/community"); // Redirect to the Community page on successful login
     } catch (error) {
       console.log(error.message);
       setError(error.message);
@@ -74,7 +70,7 @@ const Login = () => {
   const handleSignInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/landing");
+      navigate("/community"); // Redirect to the Community page on successful login with Google
     } catch (error) {
       console.log(error.message);
       setError(error.message);
@@ -90,36 +86,33 @@ const Login = () => {
   };
 
   return (
-    <Container 
-    fluid 
-    className="d-flex flex-column justify-content-center p-0"
-    style={{ 
-      height: 'calc(100vh - 60px)',  // Adjust 60px to your navbar height
-      background: `url('./assets/commuteimage.png') no-repeat center center`, 
-      backgroundSize: 'cover' 
-    }}
-  >
-    <Row noGutters className="justify-content-center">
-      <Col 
-        xs={12} sm={10} md={8} lg={6} xl={4}
-        className="d-flex align-items-center p-5"
-      >
-        <Card 
-          className="w-100 p-4" 
-          style={{ 
-            backgroundColor: 'rgba(255,255,255,0.8)', 
-            backdropFilter: 'blur(10px)' 
-          }}
+    <Container
+      fluid
+      className="d-flex flex-column justify-content-center p-0"
+      style={{
+        height: "calc(100vh - 60px)", // Adjust 60px to your navbar height
+        background: `url('./assets/commuteimage.png') no-repeat center center`,
+        backgroundSize: "cover",
+      }}
+    >
+      <Row nogutters={true} className="justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6} xl={4} className="d-flex align-items-center p-5">
+          <Card
+            className="w-100 p-4"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.8)",
+              backdropFilter: "blur(10px)",
+            }}
           >
             <Card.Title className="text-center">
               <Image
                 src="./assets/ProgradeLogo.png"
                 roundedCircle
-                width="80"
-                height="80"
+                width="100"
+                height="100"
                 className="mb-3"
               />
-              Welcome to Prograde
+              <strong>Welcome to Prograde</strong>
             </Card.Title>
             {error && <div className="login-error">{error}</div>}
             {user ? (
@@ -127,54 +120,46 @@ const Login = () => {
                 <img src={userProfile.profilePhoto} alt="Profile" />
                 <div>{user.displayName}</div>
                 <div>{user.email}</div>
-                <h3>Your Comments:</h3>
-                <ul>
-                  {userComments.map((comment, index) => (
-                    <li key={index}>{comment.text}</li>
-                  ))}
-                </ul>
                 <h3>Your Threads:</h3>
-                <ul>
-                  {userThreads.map((thread, index) => (
-                    <li key={index}>{thread.title}</li>
-                  ))}
-                </ul>
+                <h3>Your Comments:</h3>
                 <Button variant="danger" onClick={handleSignOut}>
                   Logout
                 </Button>
               </>
             ) : (
-              <Form>
-                <Form.Group controlId="email">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Form.Group>
+              <>
+                <Form>
+                  <Form.Group controlId="email">
+                    <Form.Label>Email address</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="Enter email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Form.Group>
 
-                <Form.Group controlId="password">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Form.Group>
-                <Button variant="secondary" onClick={handleSignIn}>
-                  Sign In
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleSignInWithGoogle}
-                  className="ml-2"
-                >
-                  Sign In with Google
-                </Button>
-              </Form>
+                  <Form.Group controlId="password">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button variant="secondary" onClick={handleSignIn}>
+                    Sign In
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={handleSignInWithGoogle}
+                    className="ml-2"
+                  >
+                    Sign In with Google
+                  </Button>
+                </Form>
+              </>
             )}
           </Card>
         </Col>

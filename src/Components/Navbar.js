@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, Image, Button, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import AuthModal from "./AuthModal";
-// import { useUser } from "./provider/UserProvider";
+import RatingModal from "./RatingModal";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
 const MyNavbar = () => {
-  const progradeLogoPath = "./assets/ProgradeLogo.png";
+  const progradeLogoPath = "./assets/ProgradeTrain.png";
 
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user } = {}; //useUser();
@@ -28,41 +27,70 @@ const MyNavbar = () => {
     }
   };
 
+  const navbarStyle = {
+    backgroundColor: "#000", // "#273170" Set the background color
+    minHeight: "100px", // Set the minimum height to make it larger
+    fontSize: "20px", // Set the font size
+    fontWeight: 250, // Add any other inline styles you want here
+  };
+
+  // Customize the button style to remove the green outline
+  const buttonStyle = {
+    backgroundColor: "transparent",
+    color: "#fff",
+    border: "none",
+    fontSize: "20px",
+    fontWeight: "bold",
+  };
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
+    <Navbar
+      style={navbarStyle}
+      variant="dark"
+      expand="lg"
+      className="justify-content-center"
+    >
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand>
             <Image
               src={progradeLogoPath}
               roundedCircle
-              width="40"
-              height="40"
+              width="100"
+              height="50"
               className="mr-2"
             />
-            Prograde
+            <strong>Prograde</strong>
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
+          <Nav className="ml-auto">
             <LinkContainer to="/home">
-              <Nav.Link>
-                <i className="material-icons">home</i>
-                Home
-              </Nav.Link>
+              <Nav.Link className="navbar-link">Home</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/community">
-              <Nav.Link>
-                <i className="material-icons">group</i>
-                Community
-              </Nav.Link>
+              <Nav.Link className="navbar-link">Community</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/find-route">
-              <Nav.Link>
-                <i className="material-icons">directions</i>
-                Find Route
-              </Nav.Link>
+              <Nav.Link className="navbar-link">Find Route</Nav.Link>
+            </LinkContainer>
+            <NavDropdown title="About Us" id="basic-nav-dropdown" className="navbar-link">
+              <LinkContainer to="/build">
+                <NavDropdown.Item>Github Repositories</NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to="/developers">
+                <NavDropdown.Item>Meet the Developers</NavDropdown.Item>
+              </LinkContainer>
+            </NavDropdown>
+            <LinkContainer to="/profile">
+              <Nav.Link className="navbar-link">Profile</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/settings">
+              <Nav.Link className="navbar-link">Settings</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/station-info">
+              <Nav.Link className="navbar-link">Station Info</Nav.Link>
             </LinkContainer>
             {user ? (
               <>
@@ -74,32 +102,18 @@ const MyNavbar = () => {
                 </Button>
               </>
             ) : (
-              <Button variant="outline-success" onClick={openAuthModal}>
-                Login
+              <Button
+                style={buttonStyle} // Apply the button style here
+                onClick={openAuthModal}
+                className="navbar-link"
+              >
+                Rate Prograde
               </Button>
             )}
-            <LinkContainer to="/profile" className="ml-3">
-              <Nav.Link>
-                <i className="material-icons">person</i>
-                Profile
-              </Nav.Link>
-            </LinkContainer>
-            <LinkContainer to="/settings">
-              <Nav.Link>
-                <i className="material-icons">settings</i>
-                Settings
-              </Nav.Link>
-            </LinkContainer>
-            <LinkContainer to="/station-info">
-              <Nav.Link>
-                <i className="material-icons">info</i>
-                Station Info
-              </Nav.Link>
-            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Container>
-      <AuthModal
+      <RatingModal
         show={showAuthModal}
         onClose={closeAuthModal}
         isAuthenticated={!!user}

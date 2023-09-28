@@ -1,12 +1,14 @@
 import React from 'react';
 import { Button, Card, Row, Col, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import AboutPage from '../Components/AboutPage'; // Import the AboutPage component
+
 
 const Home = () => {
   return (
     <div className="container mt-4">
       <Container fluid className="py-5 bg-light text-center">
-        <h1>Welcome To Prograde HomePage!</h1>
+        <h1>Welcome To Prograde</h1>
         <p>
           Navigating NYC has never been easier. Get real-time updates, connect with the community, and find the best routes for your journey.
         </p>
@@ -20,7 +22,8 @@ const Home = () => {
       <Row className="mb-4">
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Community image" />
+          <Card.Img variant="top" src="/assets/paths.avif" alt="Community image" />
+
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">people</i> Community
@@ -37,7 +40,7 @@ const Home = () => {
 
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Profile image" />
+            <Card.Img variant="top" src="/assets/uptown.gif" alt="Profile image" />
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">account_circle</i> Your Profile
@@ -54,7 +57,7 @@ const Home = () => {
 
         <Col md={4}>
           <Card className="h-100">
-            <Card.Img variant="top" src="https://via.placeholder.com/150" alt="Settings image" />
+            <Card.Img variant="top" src="/assets/vignelli-clip.gif" alt="Settings image" />
             <Card.Body>
               <Card.Title>
                 <i className="material-icons">settings</i> Settings
@@ -69,6 +72,8 @@ const Home = () => {
           </Card>
         </Col>
       </Row>
+      <AboutPage />
+
     </div>
   )
 }
