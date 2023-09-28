@@ -55,6 +55,7 @@ const Map = () => {
   const [markers, setMarkers] = useState([]);
   const [geoAddress, setGeoAddress] = useState("");
   let directionsService;
+  const departureTimeRef = useRef(null);
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
@@ -62,6 +63,11 @@ const Map = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setCurrentPosition({ lat: latitude, lng: longitude });
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, "0");
+          const minutes = now.getMinutes().toString().padStart(2, "0");
+          const currentTime = `${hours}:${minutes}`;
+          departureTimeRef.current.value = currentTime;
         },
         (error) => {
           console.error("Error getting user's location:", error);
@@ -109,32 +115,27 @@ const Map = () => {
 
       const origin = geocodeResult;
 
+      const departureTime = departureTimeRef.current.value;
+
+      if (!departureTime) {
+        alert("Please enter a departure time.");
+        return;
+      }
+
+      const selectedTime = new Date();
+      selectedTime.setHours(departureTime.split(":")[0]);
+      selectedTime.setMinutes(departureTime.split(":")[1]);
+
       const results = await new Promise((resolve, reject) => {
-        // directionsService.route(
-        //   {
-        //     origin,
-        //     destination: destinationRef.current.value,
-        //     travelMode: mode,
-        //   },
-        //   (response, status) => {
-        //     if (status === "OK") {
-        //       resolve(response);
-        //     } else {
-        //       reject(
-        //         new Error("Directions request failed with status: " + status)
-        //       );
-        //     }
-        //   }
-        // );
         directionsService.route(
           {
             origin,
             destination: destinationRef.current.value,
             travelMode: mode,
-            // transitOptions: {
-            //   departureTime: selectedTime, // Include selected time for transit
-            //   routingPreference: "less_walking", // Adjust based on preference
-            // },
+            transitOptions: {
+              departureTime: selectedTime,
+              routingPreference: "FEWER_TRANSFERS",
+            },
           },
           (response, status) => {
             if (status === "OK") {
@@ -175,11 +176,20 @@ const Map = () => {
     }
   }
 
+  const updateDepartureTimeToCurrent = () => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const currentTime = `${hours}:${minutes}`;
+    departureTimeRef.current.value = currentTime;
+  };
+
   function clearRoute() {
     setDirectionsResponse(null);
     centerToUserLocation();
     originRef.current.value = currentPosition ? geoAddress : "";
     destinationRef.current.value = "";
+    updateDepartureTimeToCurrent();
   }
   console.log(geoAddress);
   function centerToUserLocation() {
@@ -240,6 +250,11 @@ const Map = () => {
           </Form.Select>
         </Form.Group>
 
+        <Form.Group as={Col} md={4}>
+          <Form.Label>Departure Time:</Form.Label>
+          <Form.Control type="time" ref={departureTimeRef} />
+        </Form.Group>
+
         <Form.Group as={Col} md={8}>
           {useCurrentLocation && currentPosition && (
             <Button variant="dark" type="button" onClick={clearRoute}>
@@ -277,31 +292,7 @@ const Map = () => {
             </GoogleMap>
           </div>
         </Col>
-        {/* {directionsResponse && (
-          <Col md={6} className="text-left">
-            <div>
-              <h5>
-                Distance:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}{" "}
-              </h5>
-              <h5>
-                Duration:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}{" "}
-              </h5>
-              <h4>Directions:</h4>
-              <ol>
-                {directionsResponse.routes[0].legs[0].steps.map(
-                  (step, index) => (
-                    <li
-                      key={index}
-                      dangerouslySetInnerHTML={{ __html: step.instructions }}
-                    ></li>
-                  )
-                )}
-              </ol>
-            </div>
-          </Col>
-        )} */}
+
         {directionsResponse && (
           <Col md={6} className="text-left">
             <div>
@@ -312,6 +303,11 @@ const Map = () => {
               <h5>
                 Duration:{" "}
                 {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
+              </h5>
+              <h5>Departure Time: {departureTimeRef.current.value}</h5>
+              <h5>
+                Arrival Time:{" "}
+                {directionsResponse.routes[0].legs[0].arrival_time.text}
               </h5>
               <h4>Directions:</h4>
               <ol>
