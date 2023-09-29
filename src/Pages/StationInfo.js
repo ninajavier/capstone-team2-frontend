@@ -7,9 +7,9 @@ const StationInfo = () => {
       <Row className="justify-content-center mt-4">
         <Col xs={12} className="text-center">
           <h1>
-            <i className="material-icons">train</i> Welcome To Prograde Station
-            Info!
+            <i className="material-icons">train</i> Welcome To Prograde Service Alerts!
           </h1>
+          <p>We are developing to better your commute -- Check out our resources below:</p>
         </Col>
       </Row>
 

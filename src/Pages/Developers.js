@@ -44,7 +44,7 @@ const MeetTheDevelopers = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" align="center" gutterBottom>
-        Meet the Developers
+        <h1>Meet the Developers</h1>
       </Typography>
       <Grid container spacing={3}>
         {developers.map((developer, index) => (
