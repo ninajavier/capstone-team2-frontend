@@ -67,7 +67,7 @@ const MyNavbar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <LinkContainer to="/">
+            <LinkContainer to="/home">
               <Nav.Link className="navbar-link"><h5>Home</h5></Nav.Link>
             </LinkContainer>
             <NavDropdown title={<h5>About Us</h5>} id="basic-nav-dropdown" className="navbar-link">
@@ -106,9 +106,6 @@ const MyNavbar = () => {
                 <Navbar.Text className="mr-3">
                   Signed in as: {user.email}
                 </Navbar.Text>
-                <Button variant="outline-info" onClick={handleSignOut}>
-                  Logout
-                </Button>
               </>
             ) : (
               <Button
@@ -121,6 +118,13 @@ const MyNavbar = () => {
             )}
           </Nav>
         </Navbar.Collapse>
+        {user && (
+          <div className="d-flex justify-content-center">
+            <Button variant="outline-info" onClick={handleSignOut}>
+              Logout
+            </Button>
+          </div>
+        )}
       </Container>
       <RatingModal
         show={showAuthModal}
