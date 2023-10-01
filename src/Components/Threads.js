@@ -16,7 +16,6 @@ import { format } from "date-fns";
 import CommentList from './CommentList'; // Import the CommentList component
 import icons from "../Assets";
 
-
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
@@ -34,16 +33,19 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   opacity: 0.7,
 }));
 
-
 const Threads = () => {
   const [threads, setThreads] = useState([]);
   const [selectedTrainLine, setSelectedTrainLine] = useState("");
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
   const [showEditThreadModal, setShowEditThreadModal] = useState(false);
   const [newThread, setNewThread] = useState({
-    trainLine: "",
+    train_line: "Select Train Line",
+    station: "",
     title: "",
     body: "",
+    rating: 1, // Default rating
+    is_favorite: false, // Default is_favorite
+    tags: [],
   });
   const [editingThread, setEditingThread] = useState(null);
   const [showComments, setShowComments] = useState(false);
@@ -111,7 +113,6 @@ const Threads = () => {
       }
     };
     
-  
     fetchThreadsAndComments();
   }, [API]);
 
@@ -121,7 +122,7 @@ const Threads = () => {
   };
 
   const filteredThreads = selectedTrainLine
-    ? threads.filter((thread) => thread.trainLine === selectedTrainLine)
+    ? threads.filter((thread) => thread.train_line === selectedTrainLine)
     : threads;
 
   const openNewThreadModal = () => {
@@ -146,9 +147,13 @@ const Threads = () => {
       const response = await axios.post(`${API}/api/threads`, newThread);
       setThreads([...threads, response.data.data]);
       setNewThread({
-        trainLine: "",
+        train_line: "Select Train Line",
+        station: "",
         title: "",
         body: "",
+        rating: 1,
+        is_favorite: false,
+        tags: [],
       });
       closeNewThreadModal();
     } catch (error) {
@@ -279,12 +284,12 @@ const Threads = () => {
           <Modal.Title>Create New Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="trainLine">
+          <Form.Group controlId="train_line">
             <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={newThread.trainLine}
+              value={newThread.train_line}
               onChange={(e) =>
-                setNewThread({ ...newThread, trainLine: e.target.value })
+                setNewThread({ ...newThread, train_line: e.target.value })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -294,6 +299,39 @@ const Threads = () => {
               ))}
             </Form.Select>
           </Form.Group>
+          <Form.Group controlId="station">
+            <Form.Label>Station</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter station"
+              value={newThread.station}
+              onChange={(e) =>
+                setNewThread({ ...newThread, station: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="is_favorite">
+            <Form.Label>Is Favorite</Form.Label>
+            <Form.Check
+              type="checkbox"
+              label="Yes"
+              checked={newThread.is_favorite}
+              onChange={(e) =>
+                setNewThread({ ...newThread, is_favorite: e.target.checked })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="tags">
+            <Form.Label>Tags (comma-separated)</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter tags"
+              value={newThread.tags.join(', ')}
+              onChange={(e) =>
+                setNewThread({ ...newThread, tags: e.target.value.split(', ') })
+              }
+            />
+          </Form.Group>
           <Form.Group controlId="title">
             <Form.Label>Thread Title</Form.Label>
             <Form.Control
@@ -302,6 +340,19 @@ const Threads = () => {
               value={newThread.title}
               onChange={(e) =>
                 setNewThread({ ...newThread, title: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="rating">
+            <Form.Label>Rating (1-5)</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter rating"
+              min="1"
+              max="5"
+              value={newThread.rating}
+              onChange={(e) =>
+                setNewThread({ ...newThread, rating: parseInt(e.target.value) })
               }
             />
           </Form.Group>
@@ -333,12 +384,12 @@ const Threads = () => {
           <Modal.Title>Edit Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="trainLine">
+          <Form.Group controlId="train_line">
             <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={editingThread?.trainLine || ""}
+              value={editingThread?.train_line || "Select Train Line"}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, trainLine: e.target.value })
+                setEditingThread({ ...editingThread, train_line: e.target.value })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -348,6 +399,39 @@ const Threads = () => {
               ))}
             </Form.Select>
           </Form.Group>
+          <Form.Group controlId="station">
+            <Form.Label>Station</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter station"
+              value={editingThread?.station || ""}
+              onChange={(e) =>
+                setEditingThread({ ...editingThread, station: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="is_favorite">
+            <Form.Label>Is Favorite</Form.Label>
+            <Form.Check
+              type="checkbox"
+              label="Yes"
+              checked={editingThread?.is_favorite || false}
+              onChange={(e) =>
+                setEditingThread({ ...editingThread, is_favorite: e.target.checked })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="tags">
+            <Form.Label>Tags (comma-separated)</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter tags"
+              value={editingThread?.tags ? editingThread.tags.join(', ') : ""}
+              onChange={(e) =>
+                setEditingThread({ ...editingThread, tags: e.target.value.split(', ') })
+              }
+            />
+          </Form.Group>
           <Form.Group controlId="title">
             <Form.Label>Thread Title</Form.Label>
             <Form.Control
@@ -356,6 +440,19 @@ const Threads = () => {
               value={editingThread?.title || ""}
               onChange={(e) =>
                 setEditingThread({ ...editingThread, title: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="rating">
+            <Form.Label>Rating (1-5)</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter rating"
+              min="1"
+              max="5"
+              value={editingThread?.rating || 1}
+              onChange={(e) =>
+                setEditingThread({ ...editingThread, rating: parseInt(e.target.value) })
               }
             />
           </Form.Group>
