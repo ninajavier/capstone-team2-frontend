@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useMapContext, SET_CURRENT_POSITION, SET_DIRECTIONS_RESPONSE } from "./MapContext";
+import {
+  useMapContext,
+  SET_CURRENT_POSITION,
+  SET_DIRECTIONS_RESPONSE,
+} from "./MapContext";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -8,6 +12,8 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
+import './styles.css'
+import NewThread from "./NewThread";
 
 const center = {
   lat: 40.7128,
@@ -16,7 +22,6 @@ const center = {
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   useEffect(() => {
-
     if (useCurrentLocation && currentPosition) {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: currentPosition }, (results, status) => {
@@ -60,19 +65,23 @@ const Map = () => {
   const [geoAddress, setGeoAddress] = useState("");
   let directionsService;
   const departureTimeRef = useRef(null);
+  let trainArr = [];
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          dispatch({ type: SET_CURRENT_POSITION, payload: { lat: latitude, lng: longitude } });
+          dispatch({
+            type: SET_CURRENT_POSITION,
+            payload: { lat: latitude, lng: longitude },
+          });
           // setCurrentPosition({ lat: latitude, lng: longitude });
           const now = new Date();
           const hours = now.getHours().toString().padStart(2, "0");
           const minutes = now.getMinutes().toString().padStart(2, "0");
           const currentTime = `${hours}:${minutes}`;
-          
+
           if (departureTimeRef.current) {
             departureTimeRef.current.value = currentTime;
           } else {
@@ -87,14 +96,13 @@ const Map = () => {
     } else {
       console.error("Geolocation is not available in your browser.");
     }
-  
+
     return () => {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
       }
     };
   }, [watchId, departureTimeRef, dispatch]);
-  
 
   if ("gelocation" in navigator) {
     setGeoAddress(originRef.current.value);
@@ -104,16 +112,16 @@ const Map = () => {
     if (destinationRef.current.value === "") {
       return;
     }
-  
+
     dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null }); // Clear old directions
     centerToUserLocation();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-  
+
     const originAddress = originRef.current.value;
-  
+
     const geocoder = new window.google.maps.Geocoder();
-  
+
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
         geocoder.geocode({ address: originAddress }, (results, status) => {
@@ -124,20 +132,20 @@ const Map = () => {
           }
         });
       });
-  
+
       const origin = geocodeResult;
-  
+
       const departureTime = departureTimeRef.current.value;
-  
+
       if (!departureTime) {
         alert("Please enter a departure time.");
         return;
       }
-  
+
       const selectedTime = new Date();
       selectedTime.setHours(departureTime.split(":")[0]);
       selectedTime.setMinutes(departureTime.split(":")[1]);
-  
+
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
           {
@@ -160,7 +168,7 @@ const Map = () => {
           }
         );
       });
-  
+
       if (results) {
         dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: results });
         console.log(results);
@@ -168,7 +176,7 @@ const Map = () => {
         markers.forEach((marker) => {
           marker.setMap(null);
         });
-  
+
         // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
@@ -180,14 +188,13 @@ const Map = () => {
             map: map,
           }),
         ];
-  
+
         setMarkers(routeMarkers);
       }
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
-  
 
   const updateDepartureTimeToCurrent = () => {
     const now = new Date();
@@ -225,6 +232,17 @@ const Map = () => {
     return <div>Loading...</div>;
   }
 
+  if (directionsResponse) {
+    directionsResponse.routes[0].legs[0].steps.forEach((step) => {
+      if (step.transit && step.travel_mode === "TRANSIT") {
+        trainArr.push(step.transit.line.short_name)
+      }
+    });
+    console.log(trainArr);
+  }
+  
+   
+
   return (
     <Container>
       <Row className="mt-4">
@@ -253,7 +271,9 @@ const Map = () => {
 
       <Row className="mt-4">
         <Form.Group as={Col} md={4}>
-          <Form.Label><h6>Mode of Travel:</h6></Form.Label>
+          <Form.Label>
+            <h6>Mode of Travel:</h6>
+          </Form.Label>
 
           <Form.Select ref={travelModeRef}>
             <option value="TRANSIT">Transit</option>
@@ -283,7 +303,7 @@ const Map = () => {
 
       <Row>
         <Col md={directionsResponse ? 6 : 12}>
-          <div style={{ width: "100%", height: "500px" }}>
+          <div style={{ width: "100%", height: "100vh" }}>
             <GoogleMap
               center={currentPosition || center}
               zoom={15}
@@ -317,17 +337,20 @@ const Map = () => {
                 Duration:{" "}
                 {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
               </h5>
-              <h5>Departure Time: {departureTimeRef.current && departureTimeRef.current.value}</h5>
+              <h5>
+                Departure Time:{" "}
+                {departureTimeRef.current && departureTimeRef.current.value}
+              </h5>
 
               <h5>
                 Arrival Time:{" "}
                 {directionsResponse.routes[0].legs[0].arrival_time.text}
               </h5>
-              <h4>Directions:</h4>
-              <ol>
+              <h4 style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px' }}>Directions:</h4>
+<ol className="directions-list" style={{ listStyleType: 'decimal', paddingLeft: '1.5em' }}>
                 {directionsResponse.routes[0].legs[0].steps.map(
                   (step, index) => (
-                    <li key={index}>
+                    <li key={index} className="directions-step">
                       {step.transit ? (
                         <div>
                           <div>
@@ -360,6 +383,7 @@ const Map = () => {
                   )
                 )}
               </ol>
+              <NewThread />
             </div>
           </Col>
         )}
