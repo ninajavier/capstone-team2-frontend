@@ -5,7 +5,6 @@ import { styled } from '@mui/system';
 import { ChatBubbleOutline } from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: '1rem',
   padding: '1rem',
@@ -29,7 +28,7 @@ const Icon = styled(ChatBubbleOutline)(({ theme }) => ({
 const NewThread = () => {
   const [threads, setThreads] = useState([]);
   const [newThread, setNewThread] = useState({
-    station: '',
+    train_line: '', // Update "station" to "train_line"
     title: '',
     body: '',
   });
@@ -71,7 +70,7 @@ const NewThread = () => {
 
       // Reset the new thread state
       setNewThread({
-        station: '',
+        train_line: '', // Update "station" to "train_line"
         title: '',
         body: '',
       });
@@ -122,52 +121,52 @@ const NewThread = () => {
       </Row>
       {/* New Thread Modal */}
       <Modal show={showNewThreadModal} onHide={closeNewThreadModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Create a New Thread</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group className="mb-3">
-        <Form.Label>Select a Station</Form.Label>
-        <Form.Select name="station" onChange={handleInputChange} value={newThread.station}>
-          {nycTrainLines.map((line, lineIndex) => (
-            <option key={lineIndex} value={line}>
-              {line}
-            </option>
-          ))}
-        </Form.Select>
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Thread Title</Form.Label>
-        <Form.Control type="text" name="title" onChange={handleInputChange} value={newThread.title} />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Thread Body</Form.Label>
-        <Form.Control as="textarea" name="body" onChange={handleInputChange} value={newThread.body} />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={closeNewThreadModal}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={submitNewThread}>
-      Create Thread
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Create a New Thread</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Select a Train Line</Form.Label>
+              <Form.Select name="train_line" onChange={handleInputChange} value={newThread.train_line}>
+                {nycTrainLines.map((line, lineIndex) => (
+                  <option key={lineIndex} value={line}>
+                    {line}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Thread Title</Form.Label>
+              <Form.Control type="text" name="title" onChange={handleInputChange} value={newThread.title} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Thread Body</Form.Label>
+              <Form.Control as="textarea" name="body" onChange={handleInputChange} value={newThread.body} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeNewThreadModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={submitNewThread}>
+            Create Thread
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-<Modal show={showSuccessModal} onHide={closeSuccessModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Success!</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>Your thread has been added successfully.</Modal.Body>
-  <Modal.Footer>
-    <Button variant="primary" onClick={closeSuccessModal}>
-      Close
-    </Button>
-  </Modal.Footer>
-</Modal>
+      <Modal show={showSuccessModal} onHide={closeSuccessModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Success!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Your thread has been added successfully.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={closeSuccessModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

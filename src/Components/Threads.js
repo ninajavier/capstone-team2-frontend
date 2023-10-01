@@ -14,6 +14,8 @@ import { ChatBubbleOutline } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import CommentList from './CommentList'; // Import the CommentList component
+import icons from "../Assets";
+
 
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
@@ -32,19 +34,20 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   opacity: 0.7,
 }));
 
+
 const Threads = () => {
   const [threads, setThreads] = useState([]);
-  const [selectedStation, setSelectedStation] = useState("");
+  const [selectedTrainLine, setSelectedTrainLine] = useState("");
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
   const [showEditThreadModal, setShowEditThreadModal] = useState(false);
   const [newThread, setNewThread] = useState({
-    station: "",
+    trainLine: "",
     title: "",
     body: "",
   });
   const [editingThread, setEditingThread] = useState(null);
-  const [showComments, setShowComments] = useState(false); // State for displaying comments
-  const [selectedThreadIndex, setSelectedThreadIndex] = useState(null); // Index of the thread to show comments
+  const [showComments, setShowComments] = useState(false);
+  const [selectedThreadIndex, setSelectedThreadIndex] = useState(null);
 
   const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
@@ -78,10 +81,10 @@ const Threads = () => {
     const fetchCommentsForThread = async (threadId) => {
       try {
         const response = await axios.get(`${API}/api/threads/${threadId}/comments`);
-        return response.data.comments; // Assuming the comments are in response.data.comments
+        return response.data.comments;
       } catch (error) {
         console.error(`Error fetching comments for thread ${threadId}:`, error);
-        return []; // Return an empty array if there's an error
+        return [];
       }
     };
   
@@ -90,7 +93,6 @@ const Threads = () => {
         const response = await axios.get(`${API}/api/threads`);
         const threadsData = response.data.data;
     
-        // Fetch comments for each thread
         const threadsWithComments = await Promise.all(
           threadsData.map(async (thread) => {
             const commentsResponse = await axios.get(`${API}/api/threads/${thread.id}/comments`);
@@ -99,7 +101,6 @@ const Threads = () => {
           })
         );
     
-        // Sort threads by created_at in reverse order (most recent first)
         const sortedThreads = threadsWithComments.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
@@ -119,8 +120,8 @@ const Threads = () => {
     setSelectedThreadIndex(index);
   };
 
-  const filteredThreads = selectedStation
-    ? threads.filter((thread) => thread.station === selectedStation)
+  const filteredThreads = selectedTrainLine
+    ? threads.filter((thread) => thread.trainLine === selectedTrainLine)
     : threads;
 
   const openNewThreadModal = () => {
@@ -145,7 +146,7 @@ const Threads = () => {
       const response = await axios.post(`${API}/api/threads`, newThread);
       setThreads([...threads, response.data.data]);
       setNewThread({
-        station: "",
+        trainLine: "",
         title: "",
         body: "",
       });
@@ -187,29 +188,9 @@ const Threads = () => {
         <Col>
           <h3>Live Thread Feed!</h3>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Select a Station</Form.Label>
-            <Form.Select
-              name="station"
-              onChange={(e) => {
-                setSelectedStation(e.target.value);
-                setNewThread({ ...newThread, station: e.target.value });
-              }}
-              value={selectedStation}
-            >
-              <option value="">All Stations</option>
-              {nycTrainLines.map((line, lineIndex) => (
-                <option key={lineIndex} value={line}>
-                  {line}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
           <Button
             variant="primary"
             onClick={openNewThreadModal}
-            disabled={!newThread.station}
           >
             Create New Thread
           </Button>
@@ -249,6 +230,14 @@ const Threads = () => {
                 </div>
 
                 <Card.Text>
+                  Train Line: {thread.train_line}
+                  <br />
+                  Station: {thread.station}
+                  <br />
+                  Is Favorite: {thread.is_favorite ? 'Yes' : 'No'}
+                  <br />
+                  Tags: {thread.tags.join(', ')}
+                  <br />
                   {thread.body.split("\n").map((text, tIndex) => (
                     <React.Fragment key={tIndex}>
                       <ChatBubbleOutline />
@@ -258,10 +247,20 @@ const Threads = () => {
                   ))}
                 </Card.Text>
 
-                {/* Toggle comments based on showComments state */}
+                {icons[thread.trainLine] && (
+                  <img
+                    src={icons[thread.trainLine]}
+                    alt={`${thread.trainLine} icon`}
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      marginLeft: "8px",
+                    }}
+                  />
+                )}
+
                 {selectedThreadIndex === index && showComments ? <CommentList comments={thread.comments} /> : null}
               </Card.Body>
-              {/* View Comments button */}
               <Button
                 variant="outline-primary"
                 size="sm"
@@ -280,12 +279,12 @@ const Threads = () => {
           <Modal.Title>Create New Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="station">
-            <Form.Label>Select Station</Form.Label>
+          <Form.Group controlId="trainLine">
+            <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={newThread.station}
+              value={newThread.trainLine}
               onChange={(e) =>
-                setNewThread({ ...newThread, station: e.target.value })
+                setNewThread({ ...newThread, trainLine: e.target.value })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -334,12 +333,12 @@ const Threads = () => {
           <Modal.Title>Edit Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="station">
-            <Form.Label>Select Station</Form.Label>
+          <Form.Group controlId="trainLine">
+            <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={editingThread?.station || ""}
+              value={editingThread?.trainLine || ""}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, station: e.target.value })
+                setEditingThread({ ...editingThread, trainLine: e.target.value })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
