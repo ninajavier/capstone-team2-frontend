@@ -253,7 +253,7 @@ const Map = () => {
 
       <Row className="mt-4">
         <Form.Group as={Col} md={4}>
-          <Form.Label>Mode of Travel:</Form.Label>
+          <Form.Label><h6>Mode of Travel:</h6></Form.Label>
 
           <Form.Select ref={travelModeRef}>
             <option value="TRANSIT">Transit</option>

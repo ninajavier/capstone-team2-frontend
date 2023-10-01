@@ -43,6 +43,8 @@ const Threads = () => {
     body: "",
   });
   const [editingThread, setEditingThread] = useState(null);
+  const [showComments, setShowComments] = useState(false); // State for displaying comments
+  const [selectedThreadIndex, setSelectedThreadIndex] = useState(null); // Index of the thread to show comments
 
   const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
@@ -111,7 +113,11 @@ const Threads = () => {
   
     fetchThreadsAndComments();
   }, [API]);
-  
+
+  const toggleComments = (index) => {
+    setShowComments(!showComments);
+    setSelectedThreadIndex(index);
+  };
 
   const filteredThreads = selectedStation
     ? threads.filter((thread) => thread.station === selectedStation)
@@ -252,8 +258,18 @@ const Threads = () => {
                   ))}
                 </Card.Text>
 
-                <CommentList comments={thread.comments} /> {/* Add this line */}
+                {/* Toggle comments based on showComments state */}
+                {selectedThreadIndex === index && showComments ? <CommentList comments={thread.comments} /> : null}
               </Card.Body>
+              {/* View Comments button */}
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => toggleComments(index)}
+                style={{ marginLeft: "10px" }}
+              >
+                {selectedThreadIndex === index && showComments ? "Hide Comments" : "View Comments"}
+              </Button>
             </CommentCard>
           ))}
         </Col>
