@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Card } from "react-bootstrap";
-import { Container } from "react-bootstrap";
+import { Card, Container, Badge } from "react-bootstrap";
+
 const LIRRAlerts = () => {
   const [lirrAlerts, setLirrAlerts] = useState({});
 
@@ -102,7 +102,9 @@ const LIRRAlerts = () => {
           {sortedAlerts.length > 0 ? (
             sortedAlerts.map((ent) => (
               <Card className="lirr-alerts" key={ent.id}>
-                <Card.Header>PROGRADE LIVE ALERT </Card.Header>
+                <Card.Header>
+                  PROGRADE LIVE ALERT <Badge> LI</Badge>{" "}
+                </Card.Header>
                 <Card.Title className="lirr-alerts-title">
                   <div
                     dangerouslySetInnerHTML={{
