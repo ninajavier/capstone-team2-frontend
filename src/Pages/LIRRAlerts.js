@@ -84,37 +84,43 @@ const LIRRAlerts = () => {
       )} EST`;
     }
   }
+  const sortedAlerts = lirrAlerts
+    ? lirrAlerts.entity
+        .filter((ent) => ent.alert.informedEntity[0].agencyId === "LI")
+        .sort((a, b) => {
+          const startDateA = parseInt(a.alert.activePeriod[0].start);
+          const startDateB = parseInt(b.alert.activePeriod[0].start);
+          return startDateA - startDateB;
+        })
+    : [];
 
   return (
     <div>
       <div>
-        <h1>Metro North RailRoad Alerts</h1>
+        <h1>Long Island Rail Road (LIRR) Alerts</h1>
         <Container>
-          {lirrAlerts && lirrAlerts.entity ? (
-            lirrAlerts.entity.map((ent) => {
-              return ent.alert.informedEntity[0].agencyId === "LI" ? (
-                <Card className="lirr-alerts" key={ent.id}>
-                  <Card.Header>PROGRADE LIVE ALERT </Card.Header>
-                  <Card.Title>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: ent.alert.headerText.translation[1].text,
-                      }}
-                    ></div>
-                  </Card.Title>
-                  <Card.Body>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: ent.alert.descriptionText.translation[1].text,
-                      }}
-                    ></div>
-                    <b>When's it happening?</b>
-
-                    <div>{formatAlertPeriod(ent.alert)}</div>
-                  </Card.Body>
-                </Card>
-              ) : null;
-            })
+          {sortedAlerts.length > 0 ? (
+            sortedAlerts.map((ent) => (
+              <Card className="lirr-alerts" key={ent.id}>
+                <Card.Header>PROGRADE LIVE ALERT </Card.Header>
+                <Card.Title className="lirr-alerts-title">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: ent.alert.headerText.translation[1].text,
+                    }}
+                  ></div>
+                </Card.Title>
+                <Card.Body>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: ent.alert.descriptionText.translation[1].text,
+                    }}
+                  ></div>
+                  <b>When's it happening?</b>
+                  <div>{formatAlertPeriod(ent.alert)}</div>
+                </Card.Body>
+              </Card>
+            ))
           ) : (
             <p>Loading...</p>
           )}
