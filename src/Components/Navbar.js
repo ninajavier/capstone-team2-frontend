@@ -23,6 +23,7 @@ const MyNavbar = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      window.location.href = '/';
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -44,15 +45,19 @@ const MyNavbar = () => {
     fontWeight: "bold",
   };
 
+  const logoStyle = {
+    marginRight: "auto", // Align the logo to the left
+  };
+
   return (
     <Navbar
       style={navbarStyle}
       variant="dark"
       expand="lg"
-      className="justify-content-center"
+      // className="justify-content-center"
     >
       <Container>
-        <LinkContainer to="/">
+        <LinkContainer to="/" style={logoStyle}>
           <Navbar.Brand>
             <Image
               src={progradeLogoPath}
@@ -66,11 +71,11 @@ const MyNavbar = () => {
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
+          <Nav className="ms-auto align-items-center">
             <LinkContainer to="/home">
               <Nav.Link className="navbar-link"><h5>Home</h5></Nav.Link>
             </LinkContainer>
-            <NavDropdown title={<h5>About Us</h5>} id="basic-nav-dropdown" className="navbar-link">
+            <NavDropdown title={<h5>About Us</h5>} id="basic-nav-dropdown" className="navbar-link" style={{ marginTop: '1.9rem' }}>
               <LinkContainer to="/build">
                 <NavDropdown.Item><h6>Github Repositories</h6></NavDropdown.Item>
               </LinkContainer>
@@ -87,44 +92,36 @@ const MyNavbar = () => {
             <LinkContainer to="/station-info">
               <Nav.Link className="navbar-link"><h5>Service Alerts</h5></Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/profile">
-              <Nav.Link className="navbar-link"><h5>Profile</h5></Nav.Link>
-            </LinkContainer>
             <LinkContainer to="/settings">
               <Nav.Link className="navbar-link"><h5>Settings</h5></Nav.Link>
             </LinkContainer>
-            {user ? (
-              <>
-                <Image
-                  src={user.photoURL} // Use the user's photo URL as the src
-                  roundedCircle
-                  width="50"
-                  height="50"
-                  alt="User Avatar"
-                  className="mr-3"
-                />
-                <Navbar.Text className="mr-3">
-                  Signed in as: {user.email}
-                </Navbar.Text>
-              </>
-            ) : (
-              <Button
-                style={buttonStyle} // Apply the button style here
-                onClick={openAuthModal}
-                className="navbar-link"
-              >
-                Rate Prograde
-              </Button>
-            )}
+            <NavDropdown title={user ? <Image
+              src={user.photoURL}
+              roundedCircle
+              width="50"
+              height="50"
+              alt="User Avatar"
+            /> : null} id="basic-nav-dropdown" className="navbar-link">
+              {user && (
+                <NavDropdown.Item>
+                  <Navbar.Text style={{ color: "#000" }}>{user.email}</Navbar.Text>
+                </NavDropdown.Item>
+              )}
+              {user && (
+                <LinkContainer to="/profile">
+                  <NavDropdown.Item>
+                    <h6>Profile</h6>
+                  </NavDropdown.Item>
+                </LinkContainer>
+              )}
+              {user && (
+                <NavDropdown.Item onClick={handleSignOut}>
+                  <h6>Logout</h6>
+                </NavDropdown.Item>
+              )}
+            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
-        {user && (
-          <div className="d-flex justify-content-center">
-            <Button variant="outline-info" onClick={handleSignOut}>
-              Logout
-            </Button>
-          </div>
-        )}
       </Container>
       <RatingModal
         show={showAuthModal}
