@@ -5,7 +5,7 @@ const About = () => {
   return (
     <Container maxWidth="md">
       <Box my={4}>
-        <Card elevation={3} sx={{ p: 2 }}>
+        <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
           <video
             autoPlay
             loop
@@ -17,18 +17,19 @@ const About = () => {
           </video>
           <CardContent>
             <Typography variant="h4" gutterBottom>
-Where Commuters Converse            </Typography>
+              <h3>Where Commuters Converse</h3>
+            </Typography>
             <Typography variant="body1">
-              Elevate your daily commute with Prograde, where real-time transit
+              <p>Elevate your daily commute with Prograde, where real-time transit
               information meets community engagement. We are here to make your
-              journey smoother and more enjoyable.
+              journey smoother and more enjoyable.</p>
             </Typography>
           </CardContent>
         </Card>
       </Box>
 
       <Box my={4} sx={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Card elevation={3} sx={{ p: 2 }}>
+        <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
           <video
             autoPlay
             loop
@@ -40,22 +41,22 @@ Where Commuters Converse            </Typography>
           </video>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Our Mission
+              <h3>Our Mission</h3>
             </Typography>
             <Typography variant="body1">
-              Our mission is simple: to make your daily commute smoother, more
+              <p>Our mission is simple: to make your daily commute smoother, more
               engaging, and truly communal. We've created a platform that bridges
               the gap between real-time transit information and a vibrant
               community where you can share your transit stories, report issues,
               and connect with others who understand exactly what you're going
-              through.
+              through.</p>
             </Typography>
           </CardContent>
         </Card>
       </Box>
 
       <Box my={4} sx={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Card elevation={3} sx={{ p: 2 }}>
+        <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
           <video
             autoPlay
             loop
@@ -67,14 +68,14 @@ Where Commuters Converse            </Typography>
           </video>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Join the Prograde Community
+              <h3>Join the Prograde Community</h3>
             </Typography>
             <Typography variant="body1">
-              Sign up today and experience the difference. Become a part of a
+              <p>Sign up today and experience the difference. Become a part of a
               community that values your stories, embraces your challenges, and is
               dedicated to making your daily commute as smooth as possible.
               Prograde – where real-time updates meet communal connections. Your
-              journey, our mission.
+              journey, our mission.</p>
             </Typography>
           </CardContent>
         </Card>
@@ -82,7 +83,7 @@ Where Commuters Converse            </Typography>
 
       <Grid container spacing={4}>
         <Grid item xs={12} sm={4}>
-          <Card elevation={3} sx={{ p: 2 }}>
+          <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
             <CardMedia
               component="img"
               alt="Real-Time Updates"
@@ -91,16 +92,16 @@ Where Commuters Converse            </Typography>
             />
             <CardContent>
               <Typography variant="body1">
-                <strong>Real-Time Updates:</strong> Stay informed about delays,
+                <p><strong>Real-Time Updates:</strong> Stay informed about delays,
                 service interruptions, and station conditions in real time, so you
-                can plan your journey better.
+                can plan your journey better.</p>
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={4}>
-          <Card elevation={3} sx={{ p: 2 }}>
+          <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
             <CardMedia
               component="img"
               alt="Community Engagements"
@@ -109,16 +110,16 @@ Where Commuters Converse            </Typography>
             />
             <CardContent>
               <Typography variant="body1">
-                <strong>Community Engagement:</strong> Join a thriving community of
+                <p><strong>Community Engagement:</strong> Join a thriving community of
                 NYC commuters who understand your daily struggles. Share your
-                experiences, learn from others, and make your voice heard.
+                experiences, learn from others, and make your voice heard.</p>
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={4}>
-          <Card elevation={3} sx={{ p: 2 }}>
+          <Card elevation={3} sx={{ p: 2, fontFamily: 'Raleway' }}>
             <CardMedia
               component="img"
               alt="Anonymous Interactions"
@@ -126,10 +127,10 @@ Where Commuters Converse            </Typography>
               image="/assets/anonymous.png" // Replace with your image path
             />
             <CardContent>
-            <Typography variant="body1">
-                <strong>Anonymous Interactions:</strong> Your privacy and safety
+              <Typography variant="body1">
+                <p><strong>Anonymous Interactions:</strong> Your privacy and safety
                 matter. Interact with others, share your stories, and report issues
-                all while remaining anonymous.
+                all while remaining anonymous.</p>
               </Typography>
             </CardContent>
           </Card>

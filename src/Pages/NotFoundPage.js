@@ -8,7 +8,7 @@ const NotFoundPage = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '20vh' }}>
       <Typography variant="h1" color="primary" style={{ fontWeight: 'bold' }}>
-        Sorry, we couldn't find that page
+        <h1>Sorry, we couldn't find that page</h1>
       </Typography>
       <Button
         variant="contained"

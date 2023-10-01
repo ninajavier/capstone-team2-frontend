@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useMapContext, SET_CURRENT_POSITION, SET_DIRECTIONS_RESPONSE } from "./MapContext";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -15,6 +16,7 @@ const center = {
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   useEffect(() => {
+
     if (useCurrentLocation && currentPosition) {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: currentPosition }, (results, status) => {
@@ -39,17 +41,19 @@ const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
 };
 const libs = ["places"];
 const Map = () => {
+  const { state, dispatch } = useMapContext();
+  const { currentPosition, directionsResponse } = state;
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: libs,
   });
 
   const [map, setMap] = useState(null);
-  const [directionsResponse, setDirectionsResponse] = useState(null);
+  // const [directionsResponse, setDirectionsResponse] = useState(null);
   const originRef = useRef(null);
   const destinationRef = useRef();
   const travelModeRef = useRef();
-  const [currentPosition, setCurrentPosition] = useState(null);
+  // const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
   const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
@@ -62,12 +66,18 @@ const Map = () => {
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setCurrentPosition({ lat: latitude, lng: longitude });
+          dispatch({ type: SET_CURRENT_POSITION, payload: { lat: latitude, lng: longitude } });
+          // setCurrentPosition({ lat: latitude, lng: longitude });
           const now = new Date();
           const hours = now.getHours().toString().padStart(2, "0");
           const minutes = now.getMinutes().toString().padStart(2, "0");
           const currentTime = `${hours}:${minutes}`;
-          departureTimeRef.current.value = currentTime;
+          
+          if (departureTimeRef.current) {
+            departureTimeRef.current.value = currentTime;
+          } else {
+            console.error("departureTimeRef.current is null");
+          }
         },
         (error) => {
           console.error("Error getting user's location:", error);
@@ -77,13 +87,14 @@ const Map = () => {
     } else {
       console.error("Geolocation is not available in your browser.");
     }
-
+  
     return () => {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [watchId]);
+  }, [watchId, departureTimeRef, dispatch]);
+  
 
   if ("gelocation" in navigator) {
     setGeoAddress(originRef.current.value);
@@ -93,15 +104,16 @@ const Map = () => {
     if (destinationRef.current.value === "") {
       return;
     }
-    setDirectionsResponse(null);
+  
+    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null }); // Clear old directions
     centerToUserLocation();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-
+  
     const originAddress = originRef.current.value;
-
+  
     const geocoder = new window.google.maps.Geocoder();
-
+  
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
         geocoder.geocode({ address: originAddress }, (results, status) => {
@@ -112,20 +124,20 @@ const Map = () => {
           }
         });
       });
-
+  
       const origin = geocodeResult;
-
+  
       const departureTime = departureTimeRef.current.value;
-
+  
       if (!departureTime) {
         alert("Please enter a departure time.");
         return;
       }
-
+  
       const selectedTime = new Date();
       selectedTime.setHours(departureTime.split(":")[0]);
       selectedTime.setMinutes(departureTime.split(":")[1]);
-
+  
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
           {
@@ -148,15 +160,15 @@ const Map = () => {
           }
         );
       });
-
+  
       if (results) {
-        setDirectionsResponse(results);
-        console.log(directionsResponse);
+        dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: results });
+        console.log(results);
         // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
         });
-
+  
         // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
@@ -168,13 +180,14 @@ const Map = () => {
             map: map,
           }),
         ];
-
+  
         setMarkers(routeMarkers);
       }
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
+  
 
   const updateDepartureTimeToCurrent = () => {
     const now = new Date();
@@ -185,7 +198,7 @@ const Map = () => {
   };
 
   function clearRoute() {
-    setDirectionsResponse(null);
+    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null });
     centerToUserLocation();
     originRef.current.value = currentPosition ? geoAddress : "";
     destinationRef.current.value = "";
@@ -240,7 +253,7 @@ const Map = () => {
 
       <Row className="mt-4">
         <Form.Group as={Col} md={4}>
-          <Form.Label>Mode of Travel:</Form.Label>
+          <Form.Label><h6>Mode of Travel:</h6></Form.Label>
 
           <Form.Select ref={travelModeRef}>
             <option value="TRANSIT">Transit</option>
@@ -304,7 +317,8 @@ const Map = () => {
                 Duration:{" "}
                 {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
               </h5>
-              <h5>Departure Time: {departureTimeRef.current.value}</h5>
+              <h5>Departure Time: {departureTimeRef.current && departureTimeRef.current.value}</h5>
+
               <h5>
                 Arrival Time:{" "}
                 {directionsResponse.routes[0].legs[0].arrival_time.text}
