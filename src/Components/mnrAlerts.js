@@ -111,20 +111,20 @@ const MnrAlerts = () => {
                 PROGRADE LIVE ALERT <Badge> MNR</Badge>{" "}
               </Card.Header>
               <Card.Title className="mnr-alerts-title">
-                <div
+                {/* <div
                   dangerouslySetInnerHTML={{
                     __html: ent.headerText.translation[0].text,
                   }}
-                ></div>
+                ></div> */}
               </Card.Title>
               <Card.Body>
-                <div
+                {/* <div
                   dangerouslySetInnerHTML={{
                     __html: ent.alert.descriptionText.translation[1].text,
                   }}
                 ></div>
                 <b>When's it happening?</b>
-                <div>{formatAlertPeriod(ent.alert)}</div>
+                <div>{formatAlertPeriod(ent.alert)}</div> */}
               </Card.Body>
             </Card>
           ))
