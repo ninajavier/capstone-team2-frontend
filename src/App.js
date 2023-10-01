@@ -11,7 +11,7 @@ import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
-import Developers from "./Pages/Developers"; // Import the MeetTheDevelopers component
+import Developers from "./Pages/Developers";
 import MnrAlerts from "./Components/MnrAlerts";
 
 import SubwayAlerts from "./Components/SubwayAlerts";

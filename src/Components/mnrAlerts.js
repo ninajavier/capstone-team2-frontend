@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Container, Card } from "react-bootstrap";
+import { Container, Card, Badge } from "react-bootstrap";
 
 function formatAlertPeriod(alert) {
   //gets dates of Piunx in numbers
@@ -90,33 +90,44 @@ const MnrAlerts = () => {
       });
   }, []);
 
+  const sortedAlerts = metroNorthRailroadAlerts
+    ? metroNorthRailroadAlerts.entity
+        .filter((ent) => ent.alert.informedEntity[0].agencyId === "MNR")
+        .sort((a, b) => {
+          const startDateA = parseInt(a.alert.activePeriod[0].start);
+          const startDateB = parseInt(b.alert.activePeriod[0].start);
+          return startDateA - startDateB;
+        })
+    : [];
+
   return (
     <div>
       <h1>Metro North RailRoad Alerts</h1>
       <Container>
-        {metroNorthRailroadAlerts && metroNorthRailroadAlerts.entity ? (
-          metroNorthRailroadAlerts.entity.map((ent) => {
-            return ent.alert.informedEntity[0].agencyId === "MNR" ? (
-              <Card key={ent.id}>
-                <Card.Header>PROGRADE LIVE ALERT </Card.Header>
-                <Card.Title>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: ent.alert.headerText.translation[1].text,
-                    }}
-                  ></div>
-                </Card.Title>
-                <Card.Body>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: ent.alert.descriptionText.translation[1].text,
-                    }}
-                  ></div>
-                  <div>{formatAlertPeriod(ent.alert)}</div>
-                </Card.Body>
-              </Card>
-            ) : null;
-          })
+        {sortedAlerts.length > 0 ? (
+          sortedAlerts.map((ent) => (
+            <Card className="mnr-alerts" key={ent.id}>
+              <Card.Header>
+                PROGRADE LIVE ALERT <Badge> MNR</Badge>{" "}
+              </Card.Header>
+              <Card.Title className="mnr-alerts-title">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: ent.headerText.translation[0].text,
+                  }}
+                ></div>
+              </Card.Title>
+              <Card.Body>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: ent.alert.descriptionText.translation[1].text,
+                  }}
+                ></div>
+                <b>When's it happening?</b>
+                <div>{formatAlertPeriod(ent.alert)}</div>
+              </Card.Body>
+            </Card>
+          ))
         ) : (
           <p>Loading...</p>
         )}
