@@ -13,7 +13,6 @@ import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
 import Developers from "./Pages/Developers"; // Import the MeetTheDevelopers component
 
-
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
 import { AuthProvider } from "./context/AuthContext";
@@ -22,6 +21,7 @@ import { UserProvider } from "./providers/UserProvider";
 
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import LIRRAlerts from "./Pages/LIRRAlerts";
 
 function App() {
   const [user, setUser] = useState(null); // Initialize user state
@@ -46,6 +46,7 @@ function App() {
             <Route path="/dropdown" element={<FilterDropdown />} />
             <Route path="/developers" element={<Developers />} />
             <Route path="*" element={<NotFoundPage />} />
+            {<Route path="lirr-alerts" element={<LIRRAlerts />} />}
           </Routes>
           <Footer />
         </UserProvider>
