@@ -1,62 +1,85 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Dropdown, Card, Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Comments from '../Components/Threads';
-// import ThreadDetail from '../Components/ThreadDetail';
 
 const Community = () => {
-  const [filter, setFilter] = useState('Location');
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
 
   return (
-    <Container>
-      <Row className="justify-content-center mt-4">
-        <Col xs={12} className="text-center">
-          <h1>
+    <div className="container mt-4">
+      <Container fluid className="py-5 bg-light text-center">
+        <h1>
             <i className="material-icons">forum</i> Welcome to Prograde's Community Page
           </h1>
+          <p>Navigating NYC has never been easier. Get real-time updates, connect with the community, and find the best routes for your journey.</p>
+      </Container>
+
+      <Row className="mb-4">
+        <Col md={4}>
+          <Card className="h-100">
+            <Card.Img variant="top" src="/assets/paths.avif" alt="Community image" />
+
+            <Card.Body>
+              <Card.Title>
+                <i className="material-icons">railway_alert</i> Service Alerts
+              </Card.Title>
+              <Card.Text>
+              Stay informed with the latest guidance and strategies from MTA's Navigators, covering climate emergencies, outages, and practical route advice.
+              </Card.Text>
+              <Button variant="secondary" as={Link} to="/community">
+              Explore
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="h-100">
+            <Card.Img variant="top" src="/assets/uptown.gif" alt="Profile image" />
+            <Card.Body>
+              <Card.Title>
+                <i className="material-icons">developer_board</i> Devs
+              </Card.Title>
+              <Card.Text>
+              Discover the remarkable Pursuit Core Fellows who brought <strong>Prograde</strong> to NYC -- <strong>Sign up for Developer Beta!</strong>
+              </Card.Text>
+              <Button variant="secondary" as={Link} to="/developers">
+                Sign Up
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="h-100">
+            <Card.Img variant="top" src="/assets/vignelli-clip.gif" alt="Settings image" />
+            <Card.Body>
+              <Card.Title>
+                <i className="material-icons">directions</i> Find Route
+              </Card.Title>
+              <Card.Text>
+                Customize your preferences, notifications, and more to get the most out of Prograde.
+              </Card.Text>
+              <Button variant="secondary" as={Link} to="/find-route">
+          Find a Route
+          </Button>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
 
-      <Row className="mt-3 mb-4">
-        <Col md={3}>
-          <Form.Control as="select" value={filter} onChange={handleFilterChange}>
-            <option value="Location">Location</option>
-            <option value="Borough">Borough</option>
-            <option value="Time">Time</option>
-            <option value="Station">Station</option>
-          </Form.Control>
-        </Col>
-        <Col md={9}>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              <i className="material-icons">sort</i> Sort By: {filter}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              {/* ... dynamically generate dropdown items based on the selected filter ... */}
-            </Dropdown.Menu>
-          </Dropdown>
+      {/* The rest of your code for the Community component */}
+      <Row className="justify-content-center mt-4">
+        <Col xs={12} className="text-center">
+         
         </Col>
       </Row>
 
       <Row>
         <Col>
           <Card className="mb-3">
-            <Card.Header>
-              <i className="material-icons">location_on</i> Current Location
-            </Card.Header>
-            <Card.Body>
-              <Card.Title>Nearby Discussions</Card.Title>
-              <Card.Text>
-                View discussions near your current location to stay updated with the latest happenings around you.
-              </Card.Text>
-              <Button variant="primary">
-                <i className="material-icons">explore</i> Explore
-              </Button>
-            </Card.Body>
+          
           </Card>
         </Col>
       </Row>
@@ -64,10 +87,9 @@ const Community = () => {
       <Row>
         <Col>
           <Comments />
-          {/* <ThreadDetail /> */}
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 };
 

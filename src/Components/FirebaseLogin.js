@@ -161,6 +161,7 @@ const FirebaseLogin = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Form.Group>
+                  
                   <Button variant="secondary" onClick={handleSignIn}>
                     Sign In
                   </Button>
