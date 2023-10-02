@@ -83,6 +83,11 @@ const ESTHandler = (UnixTimeStamp) => {
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
   const [checkedTrains, setCheckedTrains] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   const generateUniqueKey = (id, index) => {
     return `${id}_${index}`;
@@ -120,15 +125,18 @@ export default function SubwayAlerts() {
     <Container>
       {subwayAlerts.entity ? (
         <ul>
-          {console.log("checked trains", checkedTrains)}
           {Object.keys(checkedTrains).map((selectedTrain) => {
-            console.log("selected trains", selectedTrain);
             const matchingAlerts = subwayAlerts.entity.filter((entity) => {
-              return entity.alert.informedEntity.some(
-                (train) => train.routeId === selectedTrain
+              return (
+                entity.alert.informedEntity.some(
+                  (train) => train.routeId === selectedTrain
+                ) &&
+                (!selectedDate ||
+                  new Date(entity.alert.activePeriod[0].start * 1000) >=
+                    selectedDate)
               );
             });
-            console.log("matching alerts", matchingAlerts);
+
             if (matchingAlerts.length > 0) {
               return (
                 <div key={selectedTrain}>
@@ -227,7 +235,7 @@ export default function SubwayAlerts() {
             checkedTrains={checkedTrains}
             setCheckedTrains={setCheckedTrains}
           />
-          <DateFilter />
+          <DateFilter onDateChange={handleDateChange} />
         </Container>
       </div>
       {subwayAlerts.entity
