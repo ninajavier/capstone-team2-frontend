@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub'; // Import the GitHub icon
 import LinkedInIcon from '@mui/icons-material/LinkedIn'; // Import the LinkedIn icon
 import EmailIcon from '@mui/icons-material/Email'; // Import the Email icon
-
+import DevSignup from '../Components/DevSignup'
 const developers = [
   {
     name: 'Laura',
@@ -42,11 +42,11 @@ const developers = [
 
 const MeetTheDevelopers = () => {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" style={{ marginBottom: '20px' }}>
       <Typography variant="h4" align="center" gutterBottom>
         <h1>Meet the Developers</h1>
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {developers.map((developer, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card>
@@ -98,6 +98,9 @@ const MeetTheDevelopers = () => {
           </Grid>
         ))}
       </Grid>
+      <div style={{ marginTop: '20px' }}>
+        <DevSignup />
+      </div>
     </Container>
   );
 };

@@ -1,4 +1,29 @@
 import React, { useEffect, useState } from "react";
+// Import individual images with "A-letter" pattern
+import _1Train from "../Assets/1-digit.256x256.png";
+import _2Train from "../Assets/2-digit.256x256.png";
+import _3Train from "../Assets/3-digit.256x256.png";
+import _4Train from "../Assets/4-digit.256x256.png";
+import _5Train from "../Assets/5-digit.256x256.png";
+import _6Train from "../Assets/6-digit.256x256.png";
+import _7Train from "../Assets/7-digit.256x256.png";
+import _ATrain from "../Assets/a-letter.256x256.png";
+import _BTrain from "../Assets/b-letter.256x256.png";
+import _CTrain from "../Assets/c-letter.256x256.png";
+import _DTrain from "../Assets/d-letter.256x256.png";
+import _ETrain from "../Assets/e-letter.256x256.png";
+import _FTrain from "../Assets/f-letter.256x256.png";
+import _MTrain from "../Assets/m-letter.256x256.png";
+import _NTrain from "../Assets/n-letter.256x256.png";
+import _QTrain from "../Assets/q-letter.256x256.png";
+import _RTrain from "../Assets/r-letter.256x256.png";
+import _WTrain from "../Assets/w-letter.256x256.png";
+import _GTrain from "../Assets/g-letter.256x256.png";
+import _JTrain from "../Assets/j-letter.256x256.png";
+import _ZTrain from "../Assets/z-letter.256x256.png";
+import _LTrain from "../Assets/l-letter.256x256.png";
+import _STrain from "../Assets/s-letter.256x256.png";
+
 import axios from "axios";
 import {
   Container,
@@ -9,18 +34,18 @@ import {
   Button,
   Modal,
 } from "react-bootstrap";
+import { IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { ChatBubbleOutline } from "@mui/icons-material";
+import { ChatBubble, Edit, Delete } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
-import CommentList from './CommentList'; // Import the CommentList component
-import icons from "../Assets";
+import CommentList from "./CommentList"; // Import the CommentList component
 
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
   borderRadius: "10px",
-  background: "rgba(255, 255, 255, 0.8)",
+  backgroundColor: "rgba(64, 64, 64, 0.4)", // Darker gray color with 40% opacity
 }));
 
 const CommentText = styled(Card.Title)(({ theme }) => ({
@@ -33,9 +58,61 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   opacity: 0.7,
 }));
 
+const getTrainLineIcon = (trainLine) => {
+  switch (trainLine) {
+    case "1":
+      return _1Train;
+    case "2":
+      return _2Train;
+    case "3":
+      return _3Train;
+    case "4":
+      return _4Train;
+    case "5":
+      return _5Train;
+    case "6":
+      return _6Train;
+    case "7":
+      return _7Train;
+    case "A":
+      return _ATrain;
+    case "B":
+      return _BTrain;
+    case "C":
+      return _CTrain;
+    case "D":
+      return _DTrain;
+    case "E":
+      return _ETrain;
+    case "F":
+      return _FTrain;
+    case "M":
+      return _MTrain;
+    case "N":
+      return _NTrain;
+    case "Q":
+      return _QTrain;
+    case "R":
+      return _RTrain;
+    case "W":
+      return _WTrain;
+    case "G":
+      return _GTrain;
+    case "J":
+      return _JTrain;
+    case "Z":
+      return _ZTrain;
+    case "L":
+      return _LTrain;
+    case "S":
+      return _STrain;
+    default:
+      return null; // Return null for unknown train lines
+  }
+};
+
 const Threads = () => {
   const [threads, setThreads] = useState([]);
-  const [selectedTrainLine, setSelectedTrainLine] = useState("");
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
   const [showEditThreadModal, setShowEditThreadModal] = useState(false);
   const [newThread, setNewThread] = useState({
@@ -50,10 +127,11 @@ const Threads = () => {
   const [editingThread, setEditingThread] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [selectedThreadIndex, setSelectedThreadIndex] = useState(null);
+  const [sortByTrainLine, setSortByTrainLine] = useState(""); // Added state for sorting by train line
+  const [selectedTrainLine, setSelectedTrainLine] = useState("All"); // Added state for selected train line
 
   const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
-    "Select Train Line",
     "1",
     "2",
     "3",
@@ -80,39 +158,31 @@ const Threads = () => {
   ];
 
   useEffect(() => {
-    const fetchCommentsForThread = async (threadId) => {
-      try {
-        const response = await axios.get(`${API}/api/threads/${threadId}/comments`);
-        return response.data.comments;
-      } catch (error) {
-        console.error(`Error fetching comments for thread ${threadId}:`, error);
-        return [];
-      }
-    };
-  
     const fetchThreadsAndComments = async () => {
       try {
         const response = await axios.get(`${API}/api/threads`);
         const threadsData = response.data.data;
-    
+
         const threadsWithComments = await Promise.all(
           threadsData.map(async (thread) => {
-            const commentsResponse = await axios.get(`${API}/api/threads/${thread.id}/comments`);
+            const commentsResponse = await axios.get(
+              `${API}/api/threads/${thread.id}/comments`
+            );
             const comments = commentsResponse.data.data;
             return { ...thread, comments };
           })
         );
-    
+
         const sortedThreads = threadsWithComments.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-    
+
         setThreads(sortedThreads);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
     };
-    
+
     fetchThreadsAndComments();
   }, [API]);
 
@@ -120,10 +190,6 @@ const Threads = () => {
     setShowComments(!showComments);
     setSelectedThreadIndex(index);
   };
-
-  const filteredThreads = selectedTrainLine
-    ? threads.filter((thread) => thread.train_line === selectedTrainLine)
-    : threads;
 
   const openNewThreadModal = () => {
     setShowNewThreadModal(true);
@@ -187,16 +253,43 @@ const Threads = () => {
     }
   };
 
+  const filteredThreads = threads.filter((thread) => {
+    if (selectedTrainLine === "All") {
+      return true; // Show all threads if "All" is selected
+    } else {
+      return thread.train_line === selectedTrainLine; // Filter threads by selected train line
+    }
+  });
+  // Sort threads based on the selected train line
+  if (sortByTrainLine === "asc") {
+    // Ascending order
+    filteredThreads.sort((a, b) => a.train_line.localeCompare(b.train_line));
+  } else if (sortByTrainLine === "desc") {
+    // Descending order
+    filteredThreads.sort((a, b) => b.train_line.localeCompare(a.train_line));
+  }
+
   return (
     <Container>
       <Row>
         <Col>
           <h3>Live Thread Feed!</h3>
+          <Form.Group controlId="selectTrainLine">
+            <Form.Label>Select Train Line</Form.Label>
+            <Form.Select
+              value={selectedTrainLine}
+              onChange={(e) => setSelectedTrainLine(e.target.value)}
+            >
+              <option value="All">All</option>
+              {nycTrainLines.map((line, lineIndex) => (
+                <option key={lineIndex} value={line}>
+                  {line}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
 
-          <Button
-            variant="primary"
-            onClick={openNewThreadModal}
-          >
+          <Button variant="primary" onClick={openNewThreadModal}>
             Create New Thread
           </Button>
 
@@ -212,59 +305,63 @@ const Threads = () => {
                   <div>
                     <CommentText>{thread.title}</CommentText>
                     <small>
-                      {format(new Date(thread.created_at), "yyyy-MM-dd HH:mm:ss")}
+                      {format(
+                        new Date(thread.created_at),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                     </small>
                   </div>
                   <div style={{ marginLeft: "auto", display: "flex" }}>
-                    <Button
+                    <IconButton
                       variant="outline-primary"
                       size="sm"
                       onClick={() => openEditThreadModal(thread)}
                       style={{ marginRight: "5px" }}
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <Edit />
+                    </IconButton>
+                    <IconButton
                       variant="outline-danger"
                       size="sm"
                       onClick={() => deleteThread(thread.id)}
                     >
-                      Delete
-                    </Button>
+                      <Delete />
+                    </IconButton>
                   </div>
                 </div>
 
                 <Card.Text>
-                  Train Line: {thread.train_line}
+                  Train Line:
+                  {getTrainLineIcon(thread.train_line) && (
+                    <img
+                      src={getTrainLineIcon(thread.train_line)}
+                      alt={`${thread.train_line} icon`}
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        marginLeft: "8px",
+                      }}
+                    />
+                  )}
                   <br />
                   Station: {thread.station}
                   <br />
-                  Is Favorite: {thread.is_favorite ? 'Yes' : 'No'}
+                  Is Favorite: {thread.is_favorite ? "Yes" : "No"}
                   <br />
-                  Tags: {thread.tags.join(', ')}
+                  Tags: {thread.tags.join(", ")}
                   <br />
                   {thread.body.split("\n").map((text, tIndex) => (
                     <React.Fragment key={tIndex}>
-                      <ChatBubbleOutline />
+                      <ChatBubble />
                       <ThreadTitle as="span">{text}</ThreadTitle>
                       <br />
                     </React.Fragment>
                   ))}
                 </Card.Text>
 
-                {icons[thread.trainLine] && (
-                  <img
-                    src={icons[thread.trainLine]}
-                    alt={`${thread.trainLine} icon`}
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      marginLeft: "8px",
-                    }}
-                  />
-                )}
-
-                {selectedThreadIndex === index && showComments ? <CommentList comments={thread.comments} /> : null}
+                {selectedThreadIndex === index && showComments ? (
+                  <CommentList comments={thread.comments} />
+                ) : null}
               </Card.Body>
               <Button
                 variant="outline-primary"
@@ -272,7 +369,9 @@ const Threads = () => {
                 onClick={() => toggleComments(index)}
                 style={{ marginLeft: "10px" }}
               >
-                {selectedThreadIndex === index && showComments ? "Hide Comments" : "View Comments"}
+                {selectedThreadIndex === index && showComments
+                  ? "Hide Comments"
+                  : "View Comments"}
               </Button>
             </CommentCard>
           ))}
@@ -326,9 +425,9 @@ const Threads = () => {
             <Form.Control
               type="text"
               placeholder="Enter tags"
-              value={newThread.tags.join(', ')}
+              value={newThread.tags.join(", ")}
               onChange={(e) =>
-                setNewThread({ ...newThread, tags: e.target.value.split(', ') })
+                setNewThread({ ...newThread, tags: e.target.value.split(", ") })
               }
             />
           </Form.Group>
@@ -389,7 +488,10 @@ const Threads = () => {
             <Form.Select
               value={editingThread?.train_line || "Select Train Line"}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, train_line: e.target.value })
+                setEditingThread({
+                  ...editingThread,
+                  train_line: e.target.value,
+                })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -417,7 +519,10 @@ const Threads = () => {
               label="Yes"
               checked={editingThread?.is_favorite || false}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, is_favorite: e.target.checked })
+                setEditingThread({
+                  ...editingThread,
+                  is_favorite: e.target.checked,
+                })
               }
             />
           </Form.Group>
@@ -426,9 +531,12 @@ const Threads = () => {
             <Form.Control
               type="text"
               placeholder="Enter tags"
-              value={editingThread?.tags ? editingThread.tags.join(', ') : ""}
+              value={editingThread?.tags ? editingThread.tags.join(", ") : ""}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, tags: e.target.value.split(', ') })
+                setEditingThread({
+                  ...editingThread,
+                  tags: e.target.value.split(", "),
+                })
               }
             />
           </Form.Group>
@@ -452,7 +560,10 @@ const Threads = () => {
               max="5"
               value={editingThread?.rating || 1}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, rating: parseInt(e.target.value) })
+                setEditingThread({
+                  ...editingThread,
+                  rating: parseInt(e.target.value),
+                })
               }
             />
           </Form.Group>
