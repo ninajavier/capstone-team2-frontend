@@ -47,6 +47,11 @@
   break-inside: avoid;
 }
 
+.map-transit-icons {
+  width: 20px;
+  height: 20px;
+}
+
 .no-alets {
   max-width: 20px;
 }
