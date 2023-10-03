@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Dropdown, Card, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Comments from '../Components/Threads';
+import Threads from '../Components/Threads';
 
 const Community = () => {
-  const [filter, setFilter] = useState('Location');
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
 
   return (
     <div className="container mt-4">
@@ -26,10 +22,10 @@ const Community = () => {
 
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">people</i> Community
+                <i className="material-icons">railway_alert</i> Service Alerts
               </Card.Title>
               <Card.Text>
-                Connect with other commuters, share your experiences, and get the latest tips and tricks for navigating the city.
+              Stay informed with the latest guidance and strategies from MTA's Navigators, covering climate emergencies, outages, and practical route advice.
               </Card.Text>
               <Button variant="secondary" as={Link} to="/community">
               Explore
@@ -43,13 +39,13 @@ const Community = () => {
             <Card.Img variant="top" src="/assets/uptown.gif" alt="Profile image" />
             <Card.Body>
               <Card.Title>
-                <i className="material-icons">account_circle</i> Your Profile
+                <i className="material-icons">developer_board</i> Devs
               </Card.Title>
               <Card.Text>
-                View your contributions, bookmarks, upvotes, and more. Personalize your Prograde experience.
+              Discover the remarkable Pursuit Core Fellows who brought <strong>Prograde</strong> to NYC -- <strong>Sign up for Developer Beta!</strong>
               </Card.Text>
-              <Button variant="secondary" as={Link} to="/profile">
-                View Profile
+              <Button variant="secondary" as={Link} to="/developers">
+                Sign Up
               </Button>
             </Card.Body>
           </Card>
@@ -90,7 +86,8 @@ const Community = () => {
 
       <Row>
         <Col>
-          <Comments />
+        {/* <Threads /> */}
+          <Threads />
         </Col>
       </Row>
     </div>

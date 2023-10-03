@@ -1,4 +1,29 @@
 import React, { useEffect, useState } from "react";
+// Import individual images with "A-letter" pattern
+import _1Train from "../Assets/1-digit.256x256.png";
+import _2Train from "../Assets/2-digit.256x256.png";
+import _3Train from "../Assets/3-digit.256x256.png";
+import _4Train from "../Assets/4-digit.256x256.png";
+import _5Train from "../Assets/5-digit.256x256.png";
+import _6Train from "../Assets/6-digit.256x256.png";
+import _7Train from "../Assets/7-digit.256x256.png";
+import _ATrain from "../Assets/a-letter.256x256.png";
+import _BTrain from "../Assets/b-letter.256x256.png";
+import _CTrain from "../Assets/c-letter.256x256.png";
+import _DTrain from "../Assets/d-letter.256x256.png";
+import _ETrain from "../Assets/e-letter.256x256.png";
+import _FTrain from "../Assets/f-letter.256x256.png";
+import _MTrain from "../Assets/m-letter.256x256.png";
+import _NTrain from "../Assets/n-letter.256x256.png";
+import _QTrain from "../Assets/q-letter.256x256.png";
+import _RTrain from "../Assets/r-letter.256x256.png";
+import _WTrain from "../Assets/w-letter.256x256.png";
+import _GTrain from "../Assets/g-letter.256x256.png";
+import _JTrain from "../Assets/j-letter.256x256.png";
+import _ZTrain from "../Assets/z-letter.256x256.png";
+import _LTrain from "../Assets/l-letter.256x256.png";
+import _STrain from "../Assets/s-letter.256x256.png";
+
 import axios from "axios";
 import {
   Container,
@@ -9,17 +34,18 @@ import {
   Button,
   Modal,
 } from "react-bootstrap";
+import { IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { ChatBubbleOutline } from "@mui/icons-material";
+import { ChatBubble, Edit, Delete, Place, Subway } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
-import CommentList from './CommentList'; // Import the CommentList component
+import CommentList from "./CommentList"; // Import the CommentList component
 
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
   borderRadius: "10px",
-  background: "rgba(255, 255, 255, 0.8)",
+  backgroundColor: "rgba(64, 64, 64, 0.4)", // Darker gray color with 40% opacity
 }));
 
 const CommentText = styled(Card.Title)(({ theme }) => ({
@@ -32,23 +58,80 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   opacity: 0.7,
 }));
 
+const getTrainLineIcon = (trainLine) => {
+  switch (trainLine) {
+    case "1":
+      return _1Train;
+    case "2":
+      return _2Train;
+    case "3":
+      return _3Train;
+    case "4":
+      return _4Train;
+    case "5":
+      return _5Train;
+    case "6":
+      return _6Train;
+    case "7":
+      return _7Train;
+    case "A":
+      return _ATrain;
+    case "B":
+      return _BTrain;
+    case "C":
+      return _CTrain;
+    case "D":
+      return _DTrain;
+    case "E":
+      return _ETrain;
+    case "F":
+      return _FTrain;
+    case "M":
+      return _MTrain;
+    case "N":
+      return _NTrain;
+    case "Q":
+      return _QTrain;
+    case "R":
+      return _RTrain;
+    case "W":
+      return _WTrain;
+    case "G":
+      return _GTrain;
+    case "J":
+      return _JTrain;
+    case "Z":
+      return _ZTrain;
+    case "L":
+      return _LTrain;
+    case "S":
+      return _STrain;
+    default:
+      return null; // Return null for unknown train lines
+  }
+};
+
 const Threads = () => {
   const [threads, setThreads] = useState([]);
-  const [selectedStation, setSelectedStation] = useState("");
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
   const [showEditThreadModal, setShowEditThreadModal] = useState(false);
   const [newThread, setNewThread] = useState({
+    train_line: "Select Train Line",
     station: "",
     title: "",
     body: "",
+    rating: 1, // Default rating
+    is_favorite: false, // Default is_favorite
+    tags: [],
   });
   const [editingThread, setEditingThread] = useState(null);
-  const [showComments, setShowComments] = useState(false); // State for displaying comments
-  const [selectedThreadIndex, setSelectedThreadIndex] = useState(null); // Index of the thread to show comments
+  const [showComments, setShowComments] = useState(false);
+  const [selectedThreadIndex, setSelectedThreadIndex] = useState(null);
+  const [sortByTrainLine, setSortByTrainLine] = useState(""); // Added state for sorting by train line
+  const [selectedTrainLine, setSelectedTrainLine] = useState("All"); // Added state for selected train line
 
   const API = process.env.REACT_APP_API_URL;
   const nycTrainLines = [
-    "Select Train Line",
     "1",
     "2",
     "3",
@@ -75,42 +158,31 @@ const Threads = () => {
   ];
 
   useEffect(() => {
-    const fetchCommentsForThread = async (threadId) => {
-      try {
-        const response = await axios.get(`${API}/api/threads/${threadId}/comments`);
-        return response.data.comments; // Assuming the comments are in response.data.comments
-      } catch (error) {
-        console.error(`Error fetching comments for thread ${threadId}:`, error);
-        return []; // Return an empty array if there's an error
-      }
-    };
-  
     const fetchThreadsAndComments = async () => {
       try {
         const response = await axios.get(`${API}/api/threads`);
         const threadsData = response.data.data;
-    
-        // Fetch comments for each thread
+
         const threadsWithComments = await Promise.all(
           threadsData.map(async (thread) => {
-            const commentsResponse = await axios.get(`${API}/api/threads/${thread.id}/comments`);
+            const commentsResponse = await axios.get(
+              `${API}/api/threads/${thread.id}/comments`
+            );
             const comments = commentsResponse.data.data;
             return { ...thread, comments };
           })
         );
-    
-        // Sort threads by created_at in reverse order (most recent first)
+
         const sortedThreads = threadsWithComments.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-    
+
         setThreads(sortedThreads);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
     };
-    
-  
+
     fetchThreadsAndComments();
   }, [API]);
 
@@ -118,10 +190,6 @@ const Threads = () => {
     setShowComments(!showComments);
     setSelectedThreadIndex(index);
   };
-
-  const filteredThreads = selectedStation
-    ? threads.filter((thread) => thread.station === selectedStation)
-    : threads;
 
   const openNewThreadModal = () => {
     setShowNewThreadModal(true);
@@ -145,9 +213,13 @@ const Threads = () => {
       const response = await axios.post(`${API}/api/threads`, newThread);
       setThreads([...threads, response.data.data]);
       setNewThread({
+        train_line: "Select Train Line",
         station: "",
         title: "",
         body: "",
+        rating: 1,
+        is_favorite: false,
+        tags: [],
       });
       closeNewThreadModal();
     } catch (error) {
@@ -181,23 +253,34 @@ const Threads = () => {
     }
   };
 
+  const filteredThreads = threads.filter((thread) => {
+    if (selectedTrainLine === "All") {
+      return true; // Show all threads if "All" is selected
+    } else {
+      return thread.train_line === selectedTrainLine; // Filter threads by selected train line
+    }
+  });
+  // Sort threads based on the selected train line
+  if (sortByTrainLine === "asc") {
+    // Ascending order
+    filteredThreads.sort((a, b) => a.train_line.localeCompare(b.train_line));
+  } else if (sortByTrainLine === "desc") {
+    // Descending order
+    filteredThreads.sort((a, b) => b.train_line.localeCompare(a.train_line));
+  }
+
   return (
     <Container>
       <Row>
         <Col>
           <h3>Live Thread Feed!</h3>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Select a Station</Form.Label>
+          <Form.Group controlId="selectTrainLine">
+            <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              name="station"
-              onChange={(e) => {
-                setSelectedStation(e.target.value);
-                setNewThread({ ...newThread, station: e.target.value });
-              }}
-              value={selectedStation}
+              value={selectedTrainLine}
+              onChange={(e) => setSelectedTrainLine(e.target.value)}
             >
-              <option value="">All Stations</option>
+              <option value="All">All</option>
               {nycTrainLines.map((line, lineIndex) => (
                 <option key={lineIndex} value={line}>
                   {line}
@@ -206,11 +289,7 @@ const Threads = () => {
             </Form.Select>
           </Form.Group>
 
-          <Button
-            variant="primary"
-            onClick={openNewThreadModal}
-            disabled={!newThread.station}
-          >
+          <Button variant="primary" onClick={openNewThreadModal}>
             Create New Thread
           </Button>
 
@@ -226,49 +305,71 @@ const Threads = () => {
                   <div>
                     <CommentText>{thread.title}</CommentText>
                     <small>
-                      {format(new Date(thread.created_at), "yyyy-MM-dd HH:mm:ss")}
+                      {format(
+                        new Date(thread.created_at),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                     </small>
                   </div>
                   <div style={{ marginLeft: "auto", display: "flex" }}>
-                    <Button
+                    <IconButton
                       variant="outline-primary"
                       size="sm"
                       onClick={() => openEditThreadModal(thread)}
                       style={{ marginRight: "5px" }}
                     >
-                      Edit
-                    </Button>
-                    <Button
+                      <Edit />
+                    </IconButton>
+                    <IconButton
                       variant="outline-danger"
                       size="sm"
                       onClick={() => deleteThread(thread.id)}
                     >
-                      Delete
-                    </Button>
+                      <Delete />
+                    </IconButton>
                   </div>
                 </div>
 
                 <Card.Text>
+                  <Subway />:
+                  {getTrainLineIcon(thread.train_line) && (
+                    <img
+                      src={getTrainLineIcon(thread.train_line)}
+                      alt={`${thread.train_line} icon`}
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        marginLeft: "8px",
+                      }}
+                    />
+                  )}
+                  <br />
+                  <Place />: {thread.station}
+           
+                  Tags: {thread.tags.join(", ")}
+                  <br />
                   {thread.body.split("\n").map((text, tIndex) => (
                     <React.Fragment key={tIndex}>
-                      <ChatBubbleOutline />
+                      <ChatBubble />
                       <ThreadTitle as="span">{text}</ThreadTitle>
                       <br />
                     </React.Fragment>
                   ))}
                 </Card.Text>
 
-                {/* Toggle comments based on showComments state */}
-                {selectedThreadIndex === index && showComments ? <CommentList comments={thread.comments} /> : null}
+                {selectedThreadIndex === index && showComments ? (
+                  <CommentList comments={thread.comments} />
+                ) : null}
               </Card.Body>
-              {/* View Comments button */}
               <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => toggleComments(index)}
                 style={{ marginLeft: "10px" }}
               >
-                {selectedThreadIndex === index && showComments ? "Hide Comments" : "View Comments"}
+                {selectedThreadIndex === index && showComments
+                  ? "Hide Comments"
+                  : "View Comments"}
               </Button>
             </CommentCard>
           ))}
@@ -280,12 +381,12 @@ const Threads = () => {
           <Modal.Title>Create New Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="station">
-            <Form.Label>Select Station</Form.Label>
+          <Form.Group controlId="train_line">
+            <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={newThread.station}
+              value={newThread.train_line}
               onChange={(e) =>
-                setNewThread({ ...newThread, station: e.target.value })
+                setNewThread({ ...newThread, train_line: e.target.value })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -295,6 +396,39 @@ const Threads = () => {
               ))}
             </Form.Select>
           </Form.Group>
+          <Form.Group controlId="station">
+            <Form.Label>Station</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter station"
+              value={newThread.station}
+              onChange={(e) =>
+                setNewThread({ ...newThread, station: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="is_favorite">
+            <Form.Label>Is Favorite</Form.Label>
+            <Form.Check
+              type="checkbox"
+              label="Yes"
+              checked={newThread.is_favorite}
+              onChange={(e) =>
+                setNewThread({ ...newThread, is_favorite: e.target.checked })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="tags">
+            <Form.Label>Tags (comma-separated)</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter tags"
+              value={newThread.tags.join(", ")}
+              onChange={(e) =>
+                setNewThread({ ...newThread, tags: e.target.value.split(", ") })
+              }
+            />
+          </Form.Group>
           <Form.Group controlId="title">
             <Form.Label>Thread Title</Form.Label>
             <Form.Control
@@ -303,6 +437,19 @@ const Threads = () => {
               value={newThread.title}
               onChange={(e) =>
                 setNewThread({ ...newThread, title: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="rating">
+            <Form.Label>Rating (1-5)</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter rating"
+              min="1"
+              max="5"
+              value={newThread.rating}
+              onChange={(e) =>
+                setNewThread({ ...newThread, rating: parseInt(e.target.value) })
               }
             />
           </Form.Group>
@@ -334,12 +481,15 @@ const Threads = () => {
           <Modal.Title>Edit Thread</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group controlId="station">
-            <Form.Label>Select Station</Form.Label>
+          <Form.Group controlId="train_line">
+            <Form.Label>Select Train Line</Form.Label>
             <Form.Select
-              value={editingThread?.station || ""}
+              value={editingThread?.train_line || "Select Train Line"}
               onChange={(e) =>
-                setEditingThread({ ...editingThread, station: e.target.value })
+                setEditingThread({
+                  ...editingThread,
+                  train_line: e.target.value,
+                })
               }
             >
               {nycTrainLines.map((line, lineIndex) => (
@@ -349,6 +499,45 @@ const Threads = () => {
               ))}
             </Form.Select>
           </Form.Group>
+          <Form.Group controlId="station">
+            <Form.Label>Station</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter station"
+              value={editingThread?.station || ""}
+              onChange={(e) =>
+                setEditingThread({ ...editingThread, station: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="is_favorite">
+            <Form.Label>Is Favorite</Form.Label>
+            <Form.Check
+              type="checkbox"
+              label="Yes"
+              checked={editingThread?.is_favorite || false}
+              onChange={(e) =>
+                setEditingThread({
+                  ...editingThread,
+                  is_favorite: e.target.checked,
+                })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="tags">
+            <Form.Label>Tags (comma-separated)</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter tags"
+              value={editingThread?.tags ? editingThread.tags.join(", ") : ""}
+              onChange={(e) =>
+                setEditingThread({
+                  ...editingThread,
+                  tags: e.target.value.split(", "),
+                })
+              }
+            />
+          </Form.Group>
           <Form.Group controlId="title">
             <Form.Label>Thread Title</Form.Label>
             <Form.Control
@@ -357,6 +546,22 @@ const Threads = () => {
               value={editingThread?.title || ""}
               onChange={(e) =>
                 setEditingThread({ ...editingThread, title: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="rating">
+            <Form.Label>Rating (1-5)</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter rating"
+              min="1"
+              max="5"
+              value={editingThread?.rating || 1}
+              onChange={(e) =>
+                setEditingThread({
+                  ...editingThread,
+                  rating: parseInt(e.target.value),
+                })
               }
             />
           </Form.Group>
