@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import {
   useMapContext,
   SET_CURRENT_POSITION,
@@ -12,7 +13,7 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
-import './styles.css'
+import "./styles.css";
 import NewThread from "./NewThread";
 
 const center = {
@@ -45,6 +46,7 @@ const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
   );
 };
 const libs = ["places"];
+
 const Map = () => {
   const { state, dispatch } = useMapContext();
   const { currentPosition, directionsResponse } = state;
@@ -65,7 +67,31 @@ const Map = () => {
   const [geoAddress, setGeoAddress] = useState("");
   let directionsService;
   const departureTimeRef = useRef(null);
-  let trainArr = [];
+  const [trainThreads, setTrainThreads] = useState([]);
+  const API = process.env.REACT_APP_API_URL;
+
+  const getThreadsByTrainId = async (train_id) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/threads/by-train/${train_id}`
+      );
+      console.log(train_id, response)
+      return response.data.data;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  const getThreadsByTrains = async (train_id) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/threads/by-train?trains=${train_id}`
+      );
+      return response.data;
+    } catch (error) {
+      return error;
+    }
+  };
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
@@ -76,7 +102,7 @@ const Map = () => {
             type: SET_CURRENT_POSITION,
             payload: { lat: latitude, lng: longitude },
           });
-          // setCurrentPosition({ lat: latitude, lng: longitude });
+
           const now = new Date();
           const hours = now.getHours().toString().padStart(2, "0");
           const minutes = now.getMinutes().toString().padStart(2, "0");
@@ -113,7 +139,7 @@ const Map = () => {
       return;
     }
 
-    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null }); // Clear old directions
+    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null });
     centerToUserLocation();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
@@ -172,12 +198,10 @@ const Map = () => {
       if (results) {
         dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: results });
         console.log(results);
-        // Clear existing markers
         markers.forEach((marker) => {
           marker.setMap(null);
         });
 
-        // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
             position: results.routes[0].legs[0].start_location,
@@ -196,6 +220,33 @@ const Map = () => {
     }
   }
 
+  async function getTrainThreads() {
+    if (directionsResponse) {
+      const trainIds = [];
+      directionsResponse.routes[0].legs[0].steps.forEach((step) => {
+        console.log(step)
+        if (step.transit && step.transit.line.agencies[0].name === "MTA New York City Transit") {
+          trainIds.push(step.transit.line.short_name);
+        }
+        console.log(trainIds)
+      });
+
+      try {
+        if (trainIds.length === 1) {
+          const threads = await getThreadsByTrainId(trainIds[0]);
+          console.log(trainIds);
+          setTrainThreads(threads);
+        } else if (trainIds.length === 2) {
+          let id = trainIds.join("");
+          const threads = await getThreadsByTrains(id);
+          setTrainThreads(threads);
+        }
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+      console.log(trainThreads)
+    }
+  }
   const updateDepartureTimeToCurrent = () => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
@@ -231,17 +282,6 @@ const Map = () => {
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
-
-  if (directionsResponse) {
-    directionsResponse.routes[0].legs[0].steps.forEach((step) => {
-      if (step.transit && step.travel_mode === "TRANSIT") {
-        trainArr.push(step.transit.line.short_name)
-      }
-    });
-    console.log(trainArr);
-  }
-  
-   
 
   return (
     <Container>
@@ -346,8 +386,19 @@ const Map = () => {
                 Arrival Time:{" "}
                 {directionsResponse.routes[0].legs[0].arrival_time.text}
               </h5>
-              <h4 style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px' }}>Directions:</h4>
-<ol className="directions-list" style={{ listStyleType: 'decimal', paddingLeft: '1.5em' }}>
+              <h4
+                style={{
+                  fontSize: "1.2em",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+              >
+                Directions:
+              </h4>
+              <ol
+                className="directions-list"
+                style={{ listStyleType: "decimal", paddingLeft: "1.5em" }}
+              >
                 {directionsResponse.routes[0].legs[0].steps.map(
                   (step, index) => (
                     <li key={index} className="directions-step">
@@ -384,6 +435,20 @@ const Map = () => {
                 )}
               </ol>
               <NewThread />
+            </div>
+
+            <div>
+              <div>
+                <h4>Threads:</h4>
+                <Button variant="dark" type="button" onClick={getTrainThreads}>
+                  Get Train Threads
+                </Button>
+                <ul>
+                  {trainThreads.map((thread) => (
+                    <li key={thread.id}>{thread.text}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </Col>
         )}
