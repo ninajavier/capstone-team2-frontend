@@ -55,7 +55,7 @@ const Login = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, userProfile]);
 
   const handleSignIn = async () => {
     try {
