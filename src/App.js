@@ -12,8 +12,9 @@ import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
 
+
 import Developers from "./Pages/Developers";
-import MnrAlerts from "./Components/MnrAlerts";
+import MnrAlerts from "./Components/mnrAlerts";
 
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
