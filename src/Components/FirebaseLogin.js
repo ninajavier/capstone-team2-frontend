@@ -59,7 +59,7 @@ const FirebaseLogin = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, userProfile]);
 
   const handleSignIn = async () => {
     try {
@@ -161,6 +161,7 @@ const FirebaseLogin = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Form.Group>
+                  
                   <Button variant="secondary" onClick={handleSignIn}>
                     Sign In
                   </Button>

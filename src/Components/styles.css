@@ -43,3 +43,12 @@
   margin-bottom: 8px;
   break-inside: avoid;
 }
+
+.map-transit-icons {
+  width: 20px;
+  height: 20px;
+}
+
+.directions-list {
+  text-align: left;
+}

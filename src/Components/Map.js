@@ -1,4 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import {
+  useMapContext,
+  SET_CURRENT_POSITION,
+  SET_DIRECTIONS_RESPONSE,
+} from "./MapContext";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -7,66 +13,106 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
+import "./styles.css";
+import NewThread from "./NewThread";
 
-const center = { 
-  lat: 40.7128, 
-  lng: -74.0060 
+const center = {
+  lat: 40.7128,
+  lng: -74.006,
 };
 
 const LocationInput = ({ useCurrentLocation, currentPosition, originRef }) => {
-  const [currentAddress, setCurrentAddress] = useState("");
-
   useEffect(() => {
     if (useCurrentLocation && currentPosition) {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: currentPosition }, (results, status) => {
         if (status === "OK" && results[0]) {
-          setCurrentAddress(results[0].formatted_address);
+          originRef.current.value = results[0].formatted_address;
         } else {
           console.error("Geocoder failed due to: " + status);
         }
       });
     } else {
-      setCurrentAddress("");
+      originRef.current.value = "";
     }
-  }, [useCurrentLocation, currentPosition]);
+  }, [useCurrentLocation, currentPosition, originRef]);
 
   return (
     <Form.Group as={Col} md={12}>
-      <Form.Control
-        type="text"
-        value={currentAddress}
-        ref={originRef}
-        onChange={(e) => setCurrentAddress(e.target.value)}
-      />
+      <Autocomplete>
+        <Form.Control type="text" placeholder="Origin" ref={originRef} />
+      </Autocomplete>
     </Form.Group>
   );
 };
 const libs = ["places"];
+
 const Map = () => {
+  const { state, dispatch } = useMapContext();
+  const { currentPosition, directionsResponse } = state;
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: libs,
   });
 
   const [map, setMap] = useState(null);
-  const [directionsResponse, setDirectionsResponse] = useState(null);
+  // const [directionsResponse, setDirectionsResponse] = useState(null);
   const originRef = useRef(null);
   const destinationRef = useRef();
   const travelModeRef = useRef();
-  const [currentPosition, setCurrentPosition] = useState(null);
+  // const [currentPosition, setCurrentPosition] = useState(null);
   const [watchId, setWatchId] = useState(null);
   const [useCurrentLocation] = useState(true);
   const [markers, setMarkers] = useState([]);
+  const [geoAddress, setGeoAddress] = useState("");
   let directionsService;
+  const departureTimeRef = useRef(null);
+  const [trainThreads, setTrainThreads] = useState([]);
+  const API = process.env.REACT_APP_API_URL;
+
+  const getThreadsByTrainId = async (train_id) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/threads/by-train/${train_id}`
+      );
+      console.log(train_id, response);
+      return response.data.data;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  const getThreadsByTrains = async (train_id) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/threads/by-train?trains=${train_id}`
+      );
+      return response.data;
+    } catch (error) {
+      return error;
+    }
+  };
 
   useEffect(() => {
     if ("geolocation" in navigator && !watchId) {
-      console.log('testing')
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setCurrentPosition({ lat: latitude, lng: longitude });
+          dispatch({
+            type: SET_CURRENT_POSITION,
+            payload: { lat: latitude, lng: longitude },
+          });
+
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, "0");
+          const minutes = now.getMinutes().toString().padStart(2, "0");
+          const currentTime = `${hours}:${minutes}`;
+
+          if (departureTimeRef.current) {
+            departureTimeRef.current.value = currentTime;
+          } else {
+            console.error("departureTimeRef.current is null");
+          }
         },
         (error) => {
           console.error("Error getting user's location:", error);
@@ -82,21 +128,25 @@ const Map = () => {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [watchId]);
+  }, [watchId, departureTimeRef, dispatch]);
+
+  if ("gelocation" in navigator) {
+    setGeoAddress(originRef.current.value);
+  }
 
   async function calculateRoute() {
     if (destinationRef.current.value === "") {
       return;
     }
-    clearRoute();
+
+    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null });
+    centerToUserLocation();
     directionsService = new window.google.maps.DirectionsService();
     const mode = travelModeRef.current.value;
-    console.log(directionsService);
 
     const originAddress = originRef.current.value;
 
     const geocoder = new window.google.maps.Geocoder();
-    console.log("hello");
 
     try {
       const geocodeResult = await new Promise((resolve, reject) => {
@@ -110,7 +160,17 @@ const Map = () => {
       });
 
       const origin = geocodeResult;
-      console.log("geocodeResult");
+
+      const departureTime = departureTimeRef.current.value;
+
+      if (!departureTime) {
+        alert("Please enter a departure time.");
+        return;
+      }
+
+      const selectedTime = new Date();
+      selectedTime.setHours(departureTime.split(":")[0]);
+      selectedTime.setMinutes(departureTime.split(":")[1]);
 
       const results = await new Promise((resolve, reject) => {
         directionsService.route(
@@ -118,11 +178,14 @@ const Map = () => {
             origin,
             destination: destinationRef.current.value,
             travelMode: mode,
+            transitOptions: {
+              departureTime: selectedTime,
+              routingPreference: "FEWER_TRANSFERS",
+            },
           },
           (response, status) => {
             if (status === "OK") {
               resolve(response);
-              console.log("response");
             } else {
               reject(
                 new Error("Directions request failed with status: " + status)
@@ -133,13 +196,12 @@ const Map = () => {
       });
 
       if (results) {
-        setDirectionsResponse(results);
-        // Clear existing markers
+        dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: results });
+        console.log(results);
         markers.forEach((marker) => {
           marker.setMap(null);
         });
 
-        // Create new markers for the route
         const routeMarkers = [
           new window.google.maps.Marker({
             position: results.routes[0].legs[0].start_location,
@@ -150,30 +212,65 @@ const Map = () => {
             map: map,
           }),
         ];
-  
+
         setMarkers(routeMarkers);
       }
-
     } catch (error) {
       console.error("Error geocoding or calculating the route:", error);
     }
   }
 
-  function clearRoute() {
-    setDirectionsResponse(null);
-    centerToUserLocation();
-    // clear origin (or reset to user location)
-    // clear destination
+  async function getTrainThreads() {
+    if (directionsResponse) {
+      const trainIds = [];
+      directionsResponse.routes[0].legs[0].steps.forEach((step) => {
+        console.log(step);
+        if (
+          step.transit &&
+          step.transit.line.agencies[0].name === "MTA New York City Transit"
+        ) {
+          trainIds.push(step.transit.line.short_name);
+        }
+        console.log(trainIds);
+      });
 
+      try {
+        if (trainIds.length === 1) {
+          const threads = await getThreadsByTrainId(trainIds[0]);
+          console.log(trainIds);
+          setTrainThreads(threads);
+        } else if (trainIds.length === 2) {
+          let id = trainIds.join("");
+          const threads = await getThreadsByTrains(id);
+          setTrainThreads(threads);
+        }
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+      console.log(trainThreads);
+    }
   }
+  const updateDepartureTimeToCurrent = () => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const currentTime = `${hours}:${minutes}`;
+    departureTimeRef.current.value = currentTime;
+  };
 
-
-
+  function clearRoute() {
+    dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: null });
+    centerToUserLocation();
+    originRef.current.value = currentPosition ? geoAddress : "";
+    destinationRef.current.value = "";
+    updateDepartureTimeToCurrent();
+  }
+  console.log(geoAddress);
   function centerToUserLocation() {
     if (map && currentPosition) {
       map.panTo(currentPosition);
       map.setZoom(15);
-    } 
+    }
   }
 
   if (loadError) {
@@ -193,13 +290,11 @@ const Map = () => {
     <Container>
       <Row className="mt-4">
         <Col sm={6} className="input-container">
-          <Autocomplete>
-            <LocationInput
-              useCurrentLocation={useCurrentLocation}
-              currentPosition={currentPosition}
-              originRef={originRef}
-            />
-          </Autocomplete>
+          <LocationInput
+            useCurrentLocation={useCurrentLocation}
+            currentPosition={currentPosition}
+            originRef={originRef}
+          />
         </Col>
         <Col sm={5} className="input-container">
           <Autocomplete>
@@ -210,7 +305,7 @@ const Map = () => {
             />
           </Autocomplete>
         </Col>
-        <Col md={1} className="button-container">
+        <Col md={1} className="mb-1 d-flex justify-content-end">
           <Button variant="dark" type="button" onClick={calculateRoute}>
             Go
           </Button>
@@ -218,33 +313,41 @@ const Map = () => {
       </Row>
 
       <Row className="mt-4">
-        <Form.Group as={Col} md={4}>
-          <Form.Label>Mode of Travel:</Form.Label>
+        <Col md={4} className="mb-4 d-flex align-items-center">
+          <Form.Label className="me-3">Departure Time:</Form.Label>
+          <Form.Control type="time" ref={departureTimeRef} className="me-4"/>
+        </Col>
 
-          <Form.Select ref={travelModeRef}>
+        <Col md={4} className="mb-4 d-flex align-items-center">
+          <Form.Label>Mode of Travel:</Form.Label>
+          <Form.Select ref={travelModeRef} className="ms-2">
             <option value="TRANSIT">Transit</option>
             <option value="DRIVING">Driving</option>
             <option value="WALKING">Walking</option>
             <option value="BICYCLING">Bicycling</option>
           </Form.Select>
-        </Form.Group>
+        </Col>
 
-        <Form.Group as={Col} md={8}>
+        <Col md={4} className="mb-4 d-flex justify-content-end">
           {useCurrentLocation && currentPosition && (
-              <Button variant="dark" type="button" onClick={clearRoute}>
-            Clear Route
-          </Button>
-              )}
-
+            <Button
+              variant="dark"
+              type="button"
+              onClick={clearRoute}
+              className="me-2"
+            >
+              Clear Route
+            </Button>
+          )}
           <Button variant="dark" type="button" onClick={centerToUserLocation}>
             Center Map
           </Button>
-        </Form.Group>
+        </Col>
       </Row>
 
       <Row>
         <Col md={directionsResponse ? 6 : 12}>
-          <div style={{ width: "100%", height: "500px" }}>
+          <div style={{ width: "100%", height: "100vh" }}>
             <GoogleMap
               center={currentPosition || center}
               zoom={15}
@@ -266,28 +369,94 @@ const Map = () => {
             </GoogleMap>
           </div>
         </Col>
+
         {directionsResponse && (
           <Col md={6} className="text-left">
             <div>
               <h5>
                 Distance:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}
               </h5>
               <h5>
                 Duration:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}{" "}
+                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
               </h5>
-              <h4>Directions:</h4>
-              <ol>
+              <h5>
+                Departure Time:{" "}
+                {departureTimeRef.current && departureTimeRef.current.value}
+              </h5>
+
+              <h5>
+                Arrival Time:{" "}
+                {directionsResponse.routes[0].legs[0].arrival_time.text}
+              </h5>
+              <h4
+                style={{
+                  fontSize: "1.2em",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+              >
+                Directions:
+              </h4>
+              <ol
+                className="directions-list"
+                style={{ listStyleType: "decimal", paddingLeft: "1.5em" }}
+              >
                 {directionsResponse.routes[0].legs[0].steps.map(
                   (step, index) => (
-                    <li
-                      key={index}
-                      dangerouslySetInnerHTML={{ __html: step.instructions }}
-                    ></li>
+                    <li key={index} className="directions-step">
+                      {step.transit ? (
+                        <div>
+                          <div>
+                            <img
+                              className="map-transit-icons"
+                              src={step.transit.line.vehicle.icon}
+                              alt={step.transit.line.vehicle.name}
+                            />
+                            <img
+                              className="map-transit-icons"
+                              src={step.transit.line.icon}
+                              alt={step.transit.line.name}
+                            />
+                            {step.transit.line.name}
+                          </div>
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: step.instructions,
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: step.instructions,
+                          }}
+                        />
+                      )}
+                    </li>
                   )
                 )}
               </ol>
+              <NewThread />
+            </div>
+
+            <div>
+              <div>
+                <h4>Threads:</h4>
+                <Button variant="dark" type="button" onClick={getTrainThreads}>
+                  Show Train Threads
+                </Button>
+                {trainThreads.length > 0 ? (
+                  <ul>
+                    {trainThreads.map((thread) => (
+                      <li key={thread.id}>{thread.text}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No threads in relation to your route.</p>
+                )}
+              </div>
             </div>
           </Col>
         )}

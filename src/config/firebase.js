@@ -3,7 +3,6 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 
-
 const firebaseConfig = process.env.NODE_ENV !== "development"?{
   apiKey: "AIzaSyDbRx2_Fg-Wtq3Pnd3GswVntetmsOXv2iI",
   authDomain: "prograde-df423.firebaseapp.com",
