@@ -371,7 +371,7 @@ const Map = () => {
         </Col>
 
         {directionsResponse && (
-          <Col md={6} className="text-left">
+          <Col md={6} className="route-info">
             <div>
               <h5>
                 Distance:{" "}
