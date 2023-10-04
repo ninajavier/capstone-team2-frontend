@@ -75,7 +75,7 @@ const Map = () => {
       const response = await axios.get(
         `${API}/api/threads/by-train/${train_id}`
       );
-      console.log(train_id, response)
+      console.log(train_id, response);
       return response.data.data;
     } catch (error) {
       return error;
@@ -224,11 +224,14 @@ const Map = () => {
     if (directionsResponse) {
       const trainIds = [];
       directionsResponse.routes[0].legs[0].steps.forEach((step) => {
-        console.log(step)
-        if (step.transit && step.transit.line.agencies[0].name === "MTA New York City Transit") {
+        console.log(step);
+        if (
+          step.transit &&
+          step.transit.line.agencies[0].name === "MTA New York City Transit"
+        ) {
           trainIds.push(step.transit.line.short_name);
         }
-        console.log(trainIds)
+        console.log(trainIds);
       });
 
       try {
@@ -244,7 +247,7 @@ const Map = () => {
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
-      console.log(trainThreads)
+      console.log(trainThreads);
     }
   }
   const updateDepartureTimeToCurrent = () => {
@@ -302,7 +305,7 @@ const Map = () => {
             />
           </Autocomplete>
         </Col>
-        <Col md={1} className="button-container">
+        <Col md={1} className="mb-1 d-flex justify-content-end">
           <Button variant="dark" type="button" onClick={calculateRoute}>
             Go
           </Button>
@@ -310,35 +313,36 @@ const Map = () => {
       </Row>
 
       <Row className="mt-4">
-        <Form.Group as={Col} md={4}>
-          <Form.Label>
-            <h6>Mode of Travel:</h6>
-          </Form.Label>
+        <Col md={4} className="mb-4 d-flex align-items-center">
+          <Form.Label className="me-3">Departure Time:</Form.Label>
+          <Form.Control type="time" ref={departureTimeRef} className="me-4"/>
+        </Col>
 
-          <Form.Select ref={travelModeRef}>
+        <Col md={4} className="mb-4 d-flex align-items-center">
+          <Form.Label>Mode of Travel:</Form.Label>
+          <Form.Select ref={travelModeRef} className="ms-2">
             <option value="TRANSIT">Transit</option>
             <option value="DRIVING">Driving</option>
             <option value="WALKING">Walking</option>
             <option value="BICYCLING">Bicycling</option>
           </Form.Select>
-        </Form.Group>
+        </Col>
 
-        <Form.Group as={Col} md={4}>
-          <Form.Label>Departure Time:</Form.Label>
-          <Form.Control type="time" ref={departureTimeRef} />
-        </Form.Group>
-
-        <Form.Group as={Col} md={8}>
+        <Col md={4} className="mb-4 d-flex justify-content-end">
           {useCurrentLocation && currentPosition && (
-            <Button variant="dark" type="button" onClick={clearRoute}>
+            <Button
+              variant="dark"
+              type="button"
+              onClick={clearRoute}
+              className="me-2"
+            >
               Clear Route
             </Button>
           )}
-
           <Button variant="dark" type="button" onClick={centerToUserLocation}>
             Center Map
           </Button>
-        </Form.Group>
+        </Col>
       </Row>
 
       <Row>
@@ -441,13 +445,17 @@ const Map = () => {
               <div>
                 <h4>Threads:</h4>
                 <Button variant="dark" type="button" onClick={getTrainThreads}>
-                  Get Train Threads
+                  Show Train Threads
                 </Button>
-                <ul>
-                  {trainThreads.map((thread) => (
-                    <li key={thread.id}>{thread.text}</li>
-                  ))}
-                </ul>
+                {trainThreads.length > 0 ? (
+                  <ul>
+                    {trainThreads.map((thread) => (
+                      <li key={thread.id}>{thread.text}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No threads in relation to your route.</p>
+                )}
               </div>
             </div>
           </Col>
