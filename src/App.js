@@ -11,7 +11,9 @@ import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
-import Developers from "./Pages/Developers"; // Import the MeetTheDevelopers component
+
+import Developers from "./Pages/Developers";
+import MnrAlerts from "./Components/MnrAlerts";
 
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
@@ -46,6 +48,7 @@ function App() {
               <Route path="/subway-alerts" element={<SubwayAlerts />} />
               <Route path="/dropdown" element={<FilterDropdown />} />
               <Route path="/developers" element={<Developers />} />
+              <Route path="/mnr-alerts" element={<MnrAlerts />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <Footer />
