@@ -11,9 +11,9 @@ const CommentCard = styled(Card)(({ theme }) => ({
   background: 'rgba(255, 255, 255, 0.8)',
 }));
 
-const CommentText = styled(Card.Title)(({ theme }) => ({
-  fontSize: '1.25rem',
-}));
+// const CommentText = styled(Card.Title)(({ theme }) => ({
+//   fontSize: '1.25rem',
+// }));
 
 const ThreadTitle = styled(Card.Text)(({ theme }) => ({
   fontSize: '1rem',

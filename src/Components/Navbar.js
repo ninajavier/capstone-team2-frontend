@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Navbar, Nav, Container, Image, Button, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Container, Image, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import RatingModal from "./RatingModal";
 import { signOut } from "firebase/auth";
@@ -12,9 +12,9 @@ const MyNavbar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const user = useContext(UserContext); // Access user context
 
-  const openAuthModal = () => {
-    setShowAuthModal(true);
-  };
+  // const openAuthModal = () => {
+  //   setShowAuthModal(true);
+  // };
 
   const closeAuthModal = () => {
     setShowAuthModal(false);
@@ -36,14 +36,14 @@ const MyNavbar = () => {
     fontWeight: 250, // Add any other inline styles you want here
   };
 
-  // Customize the button style to remove the green outline
-  const buttonStyle = {
-    backgroundColor: "transparent",
-    color: "#fff",
-    border: "none",
-    fontSize: "20px",
-    fontWeight: "bold",
-  };
+  // // Customize the button style to remove the green outline
+  // const buttonStyle = {
+  //   backgroundColor: "transparent",
+  //   color: "#fff",
+  //   border: "none",
+  //   fontSize: "20px",
+  //   fontWeight: "bold",
+  // };
 
   const logoStyle = {
     marginRight: "auto", // Align the logo to the left
