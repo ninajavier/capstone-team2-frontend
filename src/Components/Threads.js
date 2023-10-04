@@ -127,7 +127,7 @@ const Threads = () => {
   const [editingThread, setEditingThread] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [selectedThreadIndex, setSelectedThreadIndex] = useState(null);
-  const [sortByTrainLine, setSortByTrainLine] = useState(""); // Added state for sorting by train line
+  const [sortByTrainLine] = useState(""); // Added state for sorting by train line
   const [selectedTrainLine, setSelectedTrainLine] = useState("All"); // Added state for selected train line
 
   const API = process.env.REACT_APP_API_URL;
