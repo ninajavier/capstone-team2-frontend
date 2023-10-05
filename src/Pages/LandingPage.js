@@ -1,11 +1,11 @@
 import React from "react";
 import FirebaseLogin from "../Components/FirebaseLogin";
 import { Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const videos = [
     "assets/bkview.mp4",
     "assets/bxview.mp4",

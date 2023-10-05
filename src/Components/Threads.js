@@ -36,7 +36,7 @@ import {
 } from "react-bootstrap";
 import { IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { ChatBubble, Edit, Delete } from "@mui/icons-material";
+import { ChatBubble, Edit, Delete, Place, Subway } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import CommentList from "./CommentList"; // Import the CommentList component
@@ -127,7 +127,7 @@ const Threads = () => {
   const [editingThread, setEditingThread] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [selectedThreadIndex, setSelectedThreadIndex] = useState(null);
-  const [sortByTrainLine, setSortByTrainLine] = useState(""); // Added state for sorting by train line
+  const [sortByTrainLine] = useState(""); // Added state for sorting by train line
   const [selectedTrainLine, setSelectedTrainLine] = useState("All"); // Added state for selected train line
 
   const API = process.env.REACT_APP_API_URL;
@@ -331,7 +331,7 @@ const Threads = () => {
                 </div>
 
                 <Card.Text>
-                  Train Line:
+                  <Subway />:
                   {getTrainLineIcon(thread.train_line) && (
                     <img
                       src={getTrainLineIcon(thread.train_line)}
@@ -344,10 +344,8 @@ const Threads = () => {
                     />
                   )}
                   <br />
-                  Station: {thread.station}
-                  <br />
-                  Is Favorite: {thread.is_favorite ? "Yes" : "No"}
-                  <br />
+                  <Place />: {thread.station}
+           
                   Tags: {thread.tags.join(", ")}
                   <br />
                   {thread.body.split("\n").map((text, tIndex) => (

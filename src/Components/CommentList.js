@@ -9,7 +9,7 @@ import {
   TextareaAutosize,
   IconButton,
 } from "@mui/material";
-import { Chat, Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import axios from "axios";
 
 const CommentList = ({ comments, setComments }) => {

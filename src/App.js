@@ -11,7 +11,9 @@ import StationInfo from "./Pages/StationInfo";
 import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
-import Developers from "./Pages/Developers"; // Import the MeetTheDevelopers component
+
+import Developers from "./Pages/Developers";
+import MnrAlerts from "./Components/mnrAlerts";
 
 import SubwayAlerts from "./Components/SubwayAlerts";
 import FilterDropdown from "./Components/FilterDropdown";
@@ -36,6 +38,21 @@ function App() {
           {/* Wrap components with UserContext.Provider */}
           <MapProvider>
             <Navbar />
+            <Routes>
+              <Route path="/" element={<LandingPage setUser={setUser} />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/find-route" element={<FindRoute />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/update-profile" element={<UpdateProfile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/station-info" element={<StationInfo />} />
+              <Route path="/subway-alerts" element={<SubwayAlerts />} />
+              <Route path="/dropdown" element={<FilterDropdown />} />
+              <Route path="/developers" element={<Developers />} />
+              <Route path="/mnr-alerts" element={<MnrAlerts />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Routes>
                 <Route path="/" element={<LandingPage setUser={setUser} />} />

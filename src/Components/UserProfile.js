@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth } from '../config/firebase'; 
 import { Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
-import { Card, Typography, TextareaAutosize } from '@mui/material';
+import { Card, Typography } from '@mui/material';
 import { Button } from '@mui/material';
  // Importing MUI components
 import 'bootstrap/dist/css/bootstrap.min.css';  

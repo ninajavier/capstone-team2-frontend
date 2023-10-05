@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Dropdown, Card, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col,  Card, Button,  } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Comments from '../Components/Threads';
+import Threads from '../Components/Threads';
 
 const Community = () => {
 
@@ -86,7 +85,8 @@ const Community = () => {
 
       <Row>
         <Col>
-          <Comments />
+        {/* <Threads /> */}
+          <Threads />
         </Col>
       </Row>
     </div>

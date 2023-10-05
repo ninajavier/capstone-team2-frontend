@@ -59,7 +59,7 @@ const FirebaseLogin = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, userProfile]);
 
   const handleSignIn = async () => {
     try {
