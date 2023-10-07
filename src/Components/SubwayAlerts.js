@@ -6,7 +6,7 @@ import "./styles.css";
 import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
 import icons from "../Assets";
-import DateFilter from "./DateFilter";
+// import DateFilter from "./DateFilter";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 
@@ -235,7 +235,7 @@ export default function SubwayAlerts() {
             checkedTrains={checkedTrains}
             setCheckedTrains={setCheckedTrains}
           />
-          <DateFilter onDateChange={handleDateChange} />
+          {/* <DateFilter onDateChange={handleDateChange} /> */}
         </Container>
       </div>
       {subwayAlerts.entity
