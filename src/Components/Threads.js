@@ -45,7 +45,9 @@ const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
   borderRadius: "10px",
-  backgroundColor: "rgba(64, 64, 64, 0.4)", // Darker gray color with 40% opacity
+  backgroundColor: "rgba(0, 0, 0)",
+  color: "white", // Set font color to white
+  // textShadow: "0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white",
 }));
 
 const CommentText = styled(Card.Title)(({ theme }) => ({
@@ -298,7 +300,7 @@ const Threads = () => {
               <Card.Body>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
-                    src={`https://source.unsplash.com/random/50x50/?portrait&${index}`}
+                    src={`https://source.unsplash.com/random/75x75/?portrait&${index}`}
                     alt="avatar"
                     style={{ borderRadius: "50%", marginRight: "10px" }}
                   />
@@ -316,16 +318,21 @@ const Threads = () => {
                       variant="outline-primary"
                       size="sm"
                       onClick={() => openEditThreadModal(thread)}
-                      style={{ marginRight: "5px" }}
+                      style={
+                        index === 0
+                          ? { marginRight: "5px", color: "white" }
+                          : { marginRight: "5px" }
+                      }
                     >
-                      <Edit />
+                      <Edit style={index === 0 ? { color: "white" } : {}} />
                     </IconButton>
                     <IconButton
                       variant="outline-danger"
                       size="sm"
                       onClick={() => deleteThread(thread.id)}
+                      style={index === 0 ? { color: "white" } : {}}
                     >
-                      <Delete />
+                      <Delete style={index === 0 ? { color: "white" } : {}} />
                     </IconButton>
                   </div>
                 </div>
@@ -345,7 +352,6 @@ const Threads = () => {
                   )}
                   <br />
                   <Place />: {thread.station}
-           
                   Tags: {thread.tags.join(", ")}
                   <br />
                   {thread.body.split("\n").map((text, tIndex) => (

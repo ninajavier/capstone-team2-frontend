@@ -13,6 +13,7 @@ import { styled } from "@mui/system";
 import { ChatBubbleOutline } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+
 const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
@@ -32,6 +33,11 @@ const ThreadTitle = styled(Card.Text)(({ theme }) => ({
 const Icon = styled(ChatBubbleOutline)(({ theme }) => ({
   marginRight: "0.5rem",
 }));
+
+const modalStyle = {
+  fontFamily: 'Raleway, sans-serif'
+};
+
 
 const NewThread = () => {
   const [threads, setThreads] = useState([]);
@@ -247,13 +253,13 @@ const NewThread = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showSuccessModal} onHide={closeSuccessModal}>
+      <Modal show={showSuccessModal} onHide={closeSuccessModal} style={modalStyle}>
         <Modal.Header closeButton>
           <Modal.Title>Success!</Modal.Title>
         </Modal.Header>
         <Modal.Body>Your thread has been added successfully.</Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={closeSuccessModal}>
+          <Button variant="primary" onClick={closeSuccessModal} style={modalStyle}>
             Close
           </Button>
         </Modal.Footer>

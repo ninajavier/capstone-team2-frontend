@@ -12,9 +12,9 @@ const MyNavbar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const user = useContext(UserContext); // Access user context
 
-  // const openAuthModal = () => {
-  //   setShowAuthModal(true);
-  // };
+  const openAuthModal = () => {
+    setShowAuthModal(true);
+  };
 
   const closeAuthModal = () => {
     setShowAuthModal(false);
@@ -36,15 +36,6 @@ const MyNavbar = () => {
     fontWeight: 250, // Add any other inline styles you want here
   };
 
-  // // Customize the button style to remove the green outline
-  // const buttonStyle = {
-  //   backgroundColor: "transparent",
-  //   color: "#fff",
-  //   border: "none",
-  //   fontSize: "20px",
-  //   fontWeight: "bold",
-  // };
-
   const logoStyle = {
     marginRight: "auto", // Align the logo to the left
   };
@@ -54,7 +45,6 @@ const MyNavbar = () => {
       style={navbarStyle}
       variant="dark"
       expand="lg"
-      // className="justify-content-center"
     >
       <Container>
         <LinkContainer to="/" style={logoStyle}>
@@ -92,9 +82,10 @@ const MyNavbar = () => {
             <LinkContainer to="/station-info">
               <Nav.Link className="navbar-link"><h5>Service Alerts</h5></Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/settings">
-              <Nav.Link className="navbar-link"><h5>Settings</h5></Nav.Link>
-            </LinkContainer>
+            {/* RatingModal trigger */}
+            <Nav.Link onClick={openAuthModal} className="navbar-link">
+              <h5>Feedback?</h5>
+            </Nav.Link>
             <NavDropdown title={user ? <Image
               src={user.photoURL}
               roundedCircle
@@ -123,10 +114,11 @@ const MyNavbar = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
+
+      {/* RatingModal */}
       <RatingModal
         show={showAuthModal}
         onClose={closeAuthModal}
-        isAuthenticated={!!user}
       />
     </Navbar>
   );
