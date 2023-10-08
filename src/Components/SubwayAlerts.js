@@ -84,9 +84,9 @@ export default function SubwayAlerts() {
   const [checkedTrains, setCheckedTrains] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  // const handleDateChange = (date) => {
+  //   setSelectedDate(date);
+  // };
 
   const generateUniqueKey = (id, index) => {
     return `${id}_${index}`;
@@ -154,6 +154,7 @@ export default function SubwayAlerts() {
                           ? icons[`${selectedTrain.toLocaleLowerCase()}_letter`]
                           : icons[`_${selectedTrain}_digit`]
                       }
+                      alt={selectedTrain}
                     />
                     {console.log(icons)}
                   </h2>
