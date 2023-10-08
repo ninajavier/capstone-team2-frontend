@@ -24,9 +24,7 @@ import { MapProvider } from "./Components/MapContext";
 
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import DateFilter from "./Components/DateFilter";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 function App() {
   const [user, setUser] = useState(null); // Initialize user state
 
