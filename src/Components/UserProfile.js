@@ -1,13 +1,14 @@
-// src/components/UserProfile.js
-import React, { useContext, useState } from 'react';
-import { UserContext } from '../providers/UserProvider';
-import { 
-  Avatar, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Container, 
-  Grid, 
+// src/components/UserProfile.js//
+//
+import React, { useContext, useState } from "react";
+import { UserContext } from "../providers/UserProvider";
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  Container,
+  Grid,
   Typography,
   List,
   ListItem,
@@ -16,13 +17,13 @@ import {
   Divider,
   TextField,
   Button,
-} from '@mui/material';
-import ForumIcon from '@mui/icons-material/Forum';
-import EditIcon from '@mui/icons-material/Edit';
+} from "@mui/material";
+import ForumIcon from "@mui/icons-material/Forum";
+import EditIcon from "@mui/icons-material/Edit";
 
 const UserProfile = () => {
   const user = useContext(UserContext);
-  const [bio, setBio] = useState(user ? user.bio : '');
+  const [bio, setBio] = useState(user ? user.bio : "");
   const [isEditing, setIsEditing] = useState(false);
 
   const handleBioChange = (event) => {
@@ -33,10 +34,11 @@ const UserProfile = () => {
     setIsEditing((prev) => !prev);
   };
 
-  const avatarURL = user && user.photoURL ? user.photoURL : 'https://via.placeholder.com/150';
+  const avatarURL =
+    user && user.photoURL ? user.photoURL : "https://via.placeholder.com/150";
 
   if (!user) {
-    return null;  // or return a loading spinner, or some other placeholder
+    return null; // or return a loading spinner, or some other placeholder
   }
 
   return (
@@ -50,7 +52,7 @@ const UserProfile = () => {
               subheader="User Bio"
               action={
                 <Button onClick={toggleEditing} startIcon={<EditIcon />}>
-                  {isEditing ? 'Done' : 'Edit'}
+                  {isEditing ? "Done" : "Edit"}
                 </Button>
               }
             />
@@ -69,7 +71,7 @@ const UserProfile = () => {
             ) : (
               <CardContent>
                 <Typography variant="body2" color="textSecondary">
-                  {bio || 'No bio provided.'}
+                  {bio || "No bio provided."}
                 </Typography>
               </CardContent>
             )}
