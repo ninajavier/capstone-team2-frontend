@@ -82,7 +82,7 @@ const ESTHandler = (UnixTimeStamp) => {
 export default function SubwayAlerts() {
   const [subwayAlerts, setSubwayAlerts] = useState({});
   const [checkedTrains, setCheckedTrains] = useState({});
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
 
   // const handleDateChange = (date) => {
   //   setSelectedDate(date);
@@ -129,10 +129,7 @@ export default function SubwayAlerts() {
               return (
                 entity.alert.informedEntity.some(
                   (train) => train.routeId === selectedTrain
-                ) &&
-                (!selectedDate ||
-                  new Date(entity.alert.activePeriod[0].start * 1000) >=
-                    selectedDate)
+                ) && new Date(entity.alert.activePeriod[0].start * 1000)
               );
             });
             matchingAlerts.sort((a, b) =>
