@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const LandingPage = () => {
+
   const videos = [
     "assets/bkview.mp4",
     "assets/bxview.mp4",
