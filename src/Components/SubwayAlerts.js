@@ -111,7 +111,7 @@ export default function SubwayAlerts() {
     replaceWithIcon("icon-accessibility-placeholder", <AccessibleIcon />);
 
     replaceWithIcon("icon-shuttle-bus-placeholder", <DirectionsBusIcon />);
-  }, [subwayAlerts]);
+  }, []);
 
   const loadingPage = (
     <div className="d-flex justify-content-center align-items-center">
