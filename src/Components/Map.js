@@ -469,33 +469,35 @@ const Map = () => {
 
         {directionsResponse && (
           <Col md={6} className="route-info">
-            <div>
-              <h5>
-                Distance:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.distance?.text || ""}
-              </h5>
-              <h5>
-                Duration:{" "}
-                {directionsResponse?.routes[0]?.legs[0]?.duration?.text || ""}
-              </h5>
-              <h5>
-                Departure Time:{" "}
-                {departureTimeRef.current && departureTimeRef.current.value}
-              </h5>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ flex: 1, marginRight: "1rem" }}>
+                <div className="direction-info">
+                  <h5>Distance: {directionsResponse?.routes[0]?.legs[0]?.distance?.text ||
+                      ""}</h5>
+                  
+                </div>
+                <div className="direction-info">
+                  <h5>Duration: {directionsResponse?.routes[0]?.legs[0]?.duration?.text ||
+                      ""}</h5>
+                </div>
+              </div>
 
-              <h5>
-                Arrival Time:{" "}
-                {directionsResponse.routes[0].legs[0].arrival_time.text}
-              </h5>
-              <h4
-                style={{
-                  fontSize: "1.2em",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                }}
-              >
-                Directions:
-              </h4>
+              <div style={{ flex: 1 }}>
+                <div className="direction-info">
+                  <h5>Departure Time: {departureTimeRef.current && departureTimeRef.current.value}</h5>
+                  
+                </div>
+                <div className="direction-info">
+                  <h5>Arrival Time: {directionsResponse.routes[0].legs[0].arrival_time.text}</h5>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="directions-container"
+              style={{ background: "black", color: "white", padding: "1rem", margin: "2em", borderRadius: "10px" }}
+            >
+              <h3>Directions:</h3>
               <ol
                 className="directions-list"
                 style={{ listStyleType: "decimal", paddingLeft: "1.5em" }}
@@ -535,11 +537,10 @@ const Map = () => {
                   )
                 )}
               </ol>
-              <NewThread />
             </div>
 
             <div>
-              <h4>Threads:</h4>
+              <NewThread />
               <Button variant="dark" type="button" onClick={getTrainThreads}>
                 {showTrainThreads ? "Hide Train Threads" : "Show Train Threads"}
               </Button>
