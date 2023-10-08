@@ -15,6 +15,7 @@ import {
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import "./styles.css";
 import NewThread from "./NewThread";
+// import MapThreads from "./MapThreads";
 
 const center = {
   lat: 40.7128,
@@ -69,6 +70,8 @@ const Map = () => {
   const departureTimeRef = useRef(null);
   const [trainThreads, setTrainThreads] = useState([]);
   const API = process.env.REACT_APP_API_URL;
+  const [showTrainThreads, setShowTrainThreads] = useState(false);
+  const trainIds = [];
 
   const getThreadsByTrainId = async (train_id) => {
     try {
@@ -197,7 +200,6 @@ const Map = () => {
 
       if (results) {
         dispatch({ type: SET_DIRECTIONS_RESPONSE, payload: results });
-        console.log(results);
         markers.forEach((marker) => {
           marker.setMap(null);
         });
@@ -222,16 +224,13 @@ const Map = () => {
 
   async function getTrainThreads() {
     if (directionsResponse) {
-      const trainIds = [];
       directionsResponse.routes[0].legs[0].steps.forEach((step) => {
-        console.log(step);
         if (
           step.transit &&
           step.transit.line.agencies[0].name === "MTA New York City Transit"
         ) {
           trainIds.push(step.transit.line.short_name);
         }
-        console.log(trainIds);
       });
 
       try {
@@ -247,8 +246,8 @@ const Map = () => {
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
-      console.log(trainThreads);
     }
+    setShowTrainThreads(!showTrainThreads);
   }
   const updateDepartureTimeToCurrent = () => {
     const now = new Date();
@@ -265,7 +264,7 @@ const Map = () => {
     destinationRef.current.value = "";
     updateDepartureTimeToCurrent();
   }
-  console.log(geoAddress);
+ 
   function centerToUserLocation() {
     if (map && currentPosition) {
       map.panTo(currentPosition);
@@ -281,7 +280,7 @@ const Map = () => {
       </div>
     );
   }
-
+  console.log(trainThreads);
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
@@ -315,7 +314,7 @@ const Map = () => {
       <Row className="mt-4">
         <Col md={4} className="mb-4 d-flex align-items-center">
           <Form.Label className="me-3">Departure Time:</Form.Label>
-          <Form.Control type="time" ref={departureTimeRef} className="me-4"/>
+          <Form.Control type="time" ref={departureTimeRef} className="me-4" />
         </Col>
 
         <Col md={4} className="mb-4 d-flex align-items-center">
@@ -442,21 +441,33 @@ const Map = () => {
             </div>
 
             <div>
-              <div>
-                <h4>Threads:</h4>
-                <Button variant="dark" type="button" onClick={getTrainThreads}>
-                  Show Train Threads
-                </Button>
-                {trainThreads.length > 0 ? (
-                  <ul>
+              <h4>Threads:</h4>
+              <Button
+                variant="dark"
+                type="button"
+                onClick={getTrainThreads}
+              >
+                {showTrainThreads ? "Hide Train Threads" : "Show Train Threads"}
+              </Button>
+              {showTrainThreads &&
+                (trainThreads.length > 0 ? (
+                  <div>
+                 
                     {trainThreads.map((thread) => (
-                      <li key={thread.id}>{thread.text}</li>
+                      <div key={thread.id}>
+                      <p>{thread.created_at}</p>
+                      <h2>{thread.station}</h2>
+                      <h2>{thread.train_line}</h2>
+                      <p>{thread.body}</p>
+                      </div>
                     ))}
-                  </ul>
+                 
+                  {/* <MapThreads trainIds={trainIds} directionsResponse={directionsResponse} /> */}
+                  </div>
                 ) : (
                   <p>No threads in relation to your route.</p>
-                )}
-              </div>
+                ))
+                }
             </div>
           </Col>
         )}

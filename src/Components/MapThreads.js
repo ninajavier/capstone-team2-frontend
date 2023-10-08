@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 // Import individual images with "A-letter" pattern
 import _1Train from "../Assets/1-digit.256x256.png";
 import _2Train from "../Assets/2-digit.256x256.png";
@@ -36,7 +36,7 @@ import {
 } from "react-bootstrap";
 import { IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { ChatBubble, Edit, Delete, Place, Subway, Tag } from "@mui/icons-material";
+import { ChatBubble, Edit, Delete, Place, Subway } from "@mui/icons-material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { format } from "date-fns";
 import CommentList from "./CommentList"; // Import the CommentList component
@@ -45,9 +45,7 @@ const CommentCard = styled(Card)(({ theme }) => ({
   marginTop: "1rem",
   padding: "1rem",
   borderRadius: "10px",
-  backgroundColor: "rgba(0, 0, 0)",
-  color: "white", // Set font color to white
-  // textShadow: "0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white",
+  backgroundColor: "rgba(64, 64, 64, 0.4)", // Darker gray color with 40% opacity
 }));
 
 const CommentText = styled(Card.Title)(({ theme }) => ({
@@ -113,7 +111,7 @@ const getTrainLineIcon = (trainLine) => {
   }
 };
 
-const Threads = () => {
+const MapThreads = (trainIds, directionsResponse) => {
   const [threads, setThreads] = useState([]);
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
   const [showEditThreadModal, setShowEditThreadModal] = useState(false);
@@ -159,34 +157,73 @@ const Threads = () => {
     "S",
   ];
 
-  useEffect(() => {
-    const fetchThreadsAndComments = async () => {
-      try {
-        const response = await axios.get(`${API}/api/threads`);
-        const threadsData = response.data.data;
+  const getThreadsByTrainId = useCallback(async (train_id) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/threads/by-train/${train_id}`
+      );
+      console.log(train_id, response);
+      const threadsData = response.data.data;
+      const threadsWithComments = await Promise.all(
+        threadsData.map(async (thread) => {
+          const commentsResponse = await axios.get(
+            `${API}/api/threads/${thread.id}/comments`
+          );
+          const comments = commentsResponse.data.data;
+          return { ...thread, comments };
+        })
+      );
 
-        const threadsWithComments = await Promise.all(
-          threadsData.map(async (thread) => {
-            const commentsResponse = await axios.get(
-              `${API}/api/threads/${thread.id}/comments`
-            );
-            const comments = commentsResponse.data.data;
-            return { ...thread, comments };
-          })
-        );
+      const sortedThreads = threadsWithComments.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
 
-        const sortedThreads = threadsWithComments.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-
-        setThreads(sortedThreads);
-      } catch (error) {
-        console.error("Error fetching threads:", error);
-      }
-    };
-
-    fetchThreadsAndComments();
+      setThreads(sortedThreads);
+    } catch (error) {
+      return error;
+    }
   }, [API]);
+
+  useEffect(() => {
+    async function getTrainThreads() {
+      if (directionsResponse) {
+        trainIds.forEach(async (trainId) => {
+          try {
+            if (trainId.length === 1) {
+              const threads = await getThreadsByTrainId(trainId);
+              console.log(trainId, threads);
+              setThreads((prevThreads) => [...prevThreads, ...threads]);
+            } else if (trainId.length === 2) {
+              const response = await axios.get(
+                `${API}/api/threads/by-train?trains=${trainId}`
+              );
+              const threadsData = response.data.data;
+              const threadsWithComments = await Promise.all(
+                threadsData.map(async (thread) => {
+                  const commentsResponse = await axios.get(
+                    `${API}/api/threads/${thread.id}/comments`
+                  );
+                  const comments = commentsResponse.data.data;
+                  return { ...thread, comments };
+                })
+              );
+
+              const sortedThreads = threadsWithComments.sort(
+                (a, b) => new Date(b.created_at) - new Date(a.created_at)
+              );
+
+              setThreads((prevThreads) => [...prevThreads, ...sortedThreads]);
+            }
+          } catch (error) {
+            console.error("Error fetching threads:", error);
+          }
+        });
+      }
+    }
+
+    getTrainThreads();
+  }, [API, directionsResponse, trainIds, getThreadsByTrainId]);
+
 
   const toggleComments = (index) => {
     setShowComments(!showComments);
@@ -300,7 +337,7 @@ const Threads = () => {
               <Card.Body>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
-                    src={`https://source.unsplash.com/random/75x75/?portrait&${index}`}
+                    src={`https://source.unsplash.com/random/50x50/?portrait&${index}`}
                     alt="avatar"
                     style={{ borderRadius: "50%", marginRight: "10px" }}
                   />
@@ -318,21 +355,16 @@ const Threads = () => {
                       variant="outline-primary"
                       size="sm"
                       onClick={() => openEditThreadModal(thread)}
-                      style={
-                        index === 0
-                          ? { marginRight: "5px", color: "white" }
-                          : { marginRight: "5px" }
-                      }
+                      style={{ marginRight: "5px" }}
                     >
-                      <Edit style={index === 0 ? { color: "white" } : {}} />
+                      <Edit />
                     </IconButton>
                     <IconButton
                       variant="outline-danger"
                       size="sm"
                       onClick={() => deleteThread(thread.id)}
-                      style={index === 0 ? { color: "white" } : {}}
                     >
-                      <Delete style={index === 0 ? { color: "white" } : {}} />
+                      <Delete />
                     </IconButton>
                   </div>
                 </div>
@@ -352,8 +384,8 @@ const Threads = () => {
                   )}
                   <br />
                   <Place />: {thread.station}
-                  <br />
-                  <Tag />: {thread.tags.join(", ")}
+           
+                  Tags: {thread.tags.join(", ")}
                   <br />
                   {thread.body.split("\n").map((text, tIndex) => (
                     <React.Fragment key={tIndex}>
@@ -598,4 +630,4 @@ const Threads = () => {
   );
 };
 
-export default Threads;
+export default MapThreads;

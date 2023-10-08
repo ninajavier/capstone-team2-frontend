@@ -1,11 +1,10 @@
 import React from "react";
 import FirebaseLogin from "../Components/FirebaseLogin";
 import { Container } from "react-bootstrap";
-// import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const LandingPage = () => {
-  // const navigate = useNavigate();
+
   const videos = [
     "assets/bkview.mp4",
     "assets/bxview.mp4",
@@ -51,7 +50,7 @@ const LandingPage = () => {
       >
         <h1>Welcome to Prograde!</h1>
         <h5>
-        "Welcome to Prograde, the ultimate commuter-based social network designed for NYC transit users. Experience a revolutionary platform that enhances your daily commute by providing real-time, locally sourced service updates. Dive into an intuitive space where productivity meets community engagement, making learning effortless and growth inevitable. Join us and be part of the future of community-powered transit experiences."
+        "Prograde is a NYC transit-focused social network offering real-time service updates and a community space for commuters to connect and grow. Join the future of community-driven transit experiences."
         </h5>
 
         {/* FirebaseLogin component */}

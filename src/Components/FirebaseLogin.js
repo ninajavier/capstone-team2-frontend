@@ -89,6 +89,9 @@ const FirebaseLogin = () => {
     }
   };
 
+  const avatarURL = user && user.photoURL ? user.photoURL : `https://source.unsplash.com/random/90x90/?portrait&`;
+
+
   return (
     <Container fluid>
       <Row className="justify-content-center">
@@ -103,7 +106,7 @@ const FirebaseLogin = () => {
           <Card
             className="w-100 p-5"
             style={{
-              borderRadius: "50%", // Make the card circular
+              borderRadius: "10%", // Make the card circular
               width: "400px", // Adjust the size as needed
               height: "400px", // Adjust the size as needed
               textAlign: "center",
@@ -111,6 +114,10 @@ const FirebaseLogin = () => {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "space-evenly", // Add spacing around the buttons
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+              color: "white", // Set font color to white
+              textShadow: "0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white", // Apply glowing effect
+              fontSize: "20px" // Set font size to 20px
             }}
           >
             <Card.Title className="text-center">
@@ -126,15 +133,13 @@ const FirebaseLogin = () => {
             {user ? (
               <>
                 <img
-                  src={`https://source.unsplash.com/random/50x50/?portrait&`}
+                  src={avatarURL} // Use the determined avatar URL
                   alt="avatar"
-                  style={{ borderRadius: "50%", marginRight: "10px" }}
+                  style={{ borderRadius: "50%", marginRight: "10px", width: "90px", height: "90px" }}
                 />
                 <div><strong>Welcome Back</strong></div>
                 <div>{user.displayName}</div>
                 <div>{user.email}</div>
-                {/* <h3>Your Threads:</h3>
-                <h3>Your Comments:</h3> */}
                 <Button variant="danger" onClick={handleSignOut}>
                   Logout
                 </Button>

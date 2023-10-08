@@ -9,7 +9,7 @@ import {
   TextareaAutosize,
   IconButton,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, AccessTime } from "@mui/icons-material";
 import axios from "axios";
 
 const CommentList = ({ comments, setComments }) => {
@@ -27,12 +27,25 @@ const CommentList = ({ comments, setComments }) => {
         content: newCommentText,
       });
       console.log("Comment update response:", response.data); // Log the response
+      
+      // Update the local state to reflect the changes
+      const updatedComments = comments.map((comment) => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            content: newCommentText,
+          };
+        }
+        return comment;
+      });
+      setComments(updatedComments);
+
       // Clear edit mode
       setEditingCommentId(null);
     } catch (error) {
       console.error("Error updating comment:", error.response); // Log the error response
     }
-  };
+};
   
   const handleDeleteClick = async (commentId) => {
     try {
@@ -104,12 +117,12 @@ const CommentList = ({ comments, setComments }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
-                  <strong>Posted by:</strong>
+                  <strong>Posted Anonymously</strong>
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Posted at:</strong> {comment.created_at}
+                    <AccessTime />{comment.created_at}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
