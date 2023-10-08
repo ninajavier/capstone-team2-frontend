@@ -1,5 +1,5 @@
 .subway-alerts {
-  margin: 20px;
+  margin: 10px;
 }
 
 .subway-alerts-header {
@@ -35,8 +35,11 @@
   margin-bottom: 15px;
 }
 .multi-column-dropdown {
-  column-count: 3;
-  column-gap: 20px;
+  column-count: 5;
+  column-gap: 10px;
+  padding: 10px;
+  padding-top: 10px;
+  padding-right: 40px;
 }
 
 .trains-dropdown .dropdown-item {
@@ -49,6 +52,43 @@
   height: 20px;
 }
 
+.no-alets {
+  max-width: 20px;
+}
+.subwayAlerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+.filter-dropdown {
+  order: 7;
+  align-self: start;
+}
+.clear-train {
+  width: 10px;
+}
+ul {
+  list-style: none;
+}
+
+.card-subway-icons {
+  width: 32px;
+  height: 32px;
+}
+
+.train-render-icon {
+  width: 16px;
+  height: 16px;
+}
+
 .directions-list {
   text-align: left;
+}
+
+.directions-list {
+  text-align: left;
+}
+.padding-style {
+  margin-bottom: 10px;
 }

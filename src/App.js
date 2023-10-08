@@ -12,7 +12,6 @@ import LandingPage from "./Pages/LandingPage";
 import UpdateProfile from "./Pages/UpdateProfile";
 import NotFoundPage from "./Pages/NotFoundPage";
 
-
 import Developers from "./Pages/Developers";
 import MnrAlerts from "./Components/mnrAlerts";
 
@@ -52,6 +51,7 @@ function App() {
               <Route path="/mnr-alerts" element={<MnrAlerts />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
+
             <Footer />
           </MapProvider>
         </UserProvider>
