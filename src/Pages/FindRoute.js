@@ -1,9 +1,12 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Map from '../Components/Map';
 
 const FindRoute = () => {
+  const [trainIds, setTrainIds] = useState([]);
   return (
-      <Map />
+      <Map trainIds={trainIds}
+      setTrainIds={setTrainIds}
+      />
   )
 }
 

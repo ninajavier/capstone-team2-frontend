@@ -1,4 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
+import _1Train from "../Assets/1-digit.256x256.png";
+import _2Train from "../Assets/2-digit.256x256.png";
+import _3Train from "../Assets/3-digit.256x256.png";
+import _4Train from "../Assets/4-digit.256x256.png";
+import _5Train from "../Assets/5-digit.256x256.png";
+import _6Train from "../Assets/6-digit.256x256.png";
+import _7Train from "../Assets/7-digit.256x256.png";
+import _ATrain from "../Assets/a-letter.256x256.png";
+import _BTrain from "../Assets/b-letter.256x256.png";
+import _CTrain from "../Assets/c-letter.256x256.png";
+import _DTrain from "../Assets/d-letter.256x256.png";
+import _ETrain from "../Assets/e-letter.256x256.png";
+import _FTrain from "../Assets/f-letter.256x256.png";
+import _MTrain from "../Assets/m-letter.256x256.png";
+import _NTrain from "../Assets/n-letter.256x256.png";
+import _QTrain from "../Assets/q-letter.256x256.png";
+import _RTrain from "../Assets/r-letter.256x256.png";
+import _WTrain from "../Assets/w-letter.256x256.png";
+import _GTrain from "../Assets/g-letter.256x256.png";
+import _JTrain from "../Assets/j-letter.256x256.png";
+import _ZTrain from "../Assets/z-letter.256x256.png";
+import _LTrain from "../Assets/l-letter.256x256.png";
+import _STrain from "../Assets/s-letter.256x256.png";
 import axios from "axios";
 import {
   useMapContext,
@@ -12,10 +35,83 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import { Container, Button, Form, Row, Col } from "react-bootstrap";
+import { Container, Button, Form, Row, Col, Card } from "react-bootstrap";
+import { styled } from "@mui/system";
+import { ChatBubble, Place, Subway } from "@mui/icons-material";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { format } from "date-fns";
 import "./styles.css";
 import NewThread from "./NewThread";
-// import MapThreads from "./MapThreads";
+
+const CommentCard = styled(Card)(({ theme }) => ({
+  marginTop: "1rem",
+  padding: "1rem",
+  borderRadius: "10px",
+  backgroundColor: "rgba(64, 64, 64, 0.4)", // Darker gray color with 40% opacity
+}));
+
+const CommentText = styled(Card.Title)(({ theme }) => ({
+  fontSize: "1.25rem",
+  marginBottom: "0",
+}));
+
+const ThreadTitle = styled(Card.Text)(({ theme }) => ({
+  fontSize: "1rem",
+  opacity: 0.7,
+}));
+
+const getTrainLineIcon = (trainLine) => {
+  switch (trainLine) {
+    case "1":
+      return _1Train;
+    case "2":
+      return _2Train;
+    case "3":
+      return _3Train;
+    case "4":
+      return _4Train;
+    case "5":
+      return _5Train;
+    case "6":
+      return _6Train;
+    case "7":
+      return _7Train;
+    case "A":
+      return _ATrain;
+    case "B":
+      return _BTrain;
+    case "C":
+      return _CTrain;
+    case "D":
+      return _DTrain;
+    case "E":
+      return _ETrain;
+    case "F":
+      return _FTrain;
+    case "M":
+      return _MTrain;
+    case "N":
+      return _NTrain;
+    case "Q":
+      return _QTrain;
+    case "R":
+      return _RTrain;
+    case "W":
+      return _WTrain;
+    case "G":
+      return _GTrain;
+    case "J":
+      return _JTrain;
+    case "Z":
+      return _ZTrain;
+    case "L":
+      return _LTrain;
+    case "S":
+      return _STrain;
+    default:
+      return null; // Return null for unknown train lines
+  }
+};
 
 const center = {
   lat: 40.7128,
@@ -72,6 +168,8 @@ const Map = () => {
   const API = process.env.REACT_APP_API_URL;
   const [showTrainThreads, setShowTrainThreads] = useState(false);
   const trainIds = [];
+  const noThreads = !trainThreads.data || trainThreads.data.length === 0;
+  const noThreadsAlt = !trainThreads || trainThreads.length === 0;
 
   const getThreadsByTrainId = async (train_id) => {
     try {
@@ -264,7 +362,7 @@ const Map = () => {
     destinationRef.current.value = "";
     updateDepartureTimeToCurrent();
   }
- 
+
   function centerToUserLocation() {
     if (map && currentPosition) {
       map.panTo(currentPosition);
@@ -442,32 +540,142 @@ const Map = () => {
 
             <div>
               <h4>Threads:</h4>
-              <Button
-                variant="dark"
-                type="button"
-                onClick={getTrainThreads}
-              >
+              <Button variant="dark" type="button" onClick={getTrainThreads}>
                 {showTrainThreads ? "Hide Train Threads" : "Show Train Threads"}
               </Button>
-              {showTrainThreads &&
-                (trainThreads.length > 0 ? (
-                  <div>
-                 
-                    {trainThreads.map((thread) => (
-                      <div key={thread.id}>
-                      <p>{thread.created_at}</p>
-                      <h2>{thread.station}</h2>
-                      <h2>{thread.train_line}</h2>
-                      <p>{thread.body}</p>
-                      </div>
-                    ))}
-                 
-                  {/* <MapThreads trainIds={trainIds} directionsResponse={directionsResponse} /> */}
-                  </div>
-                ) : (
+              <div>
+                {showTrainThreads && noThreads && noThreadsAlt ? (
                   <p>No threads in relation to your route.</p>
-                ))
-                }
+                ) : (
+                  <>
+                    {trainIds.length > 1
+                      ? trainThreads.data.map((thread, index) => (
+                          <div key={thread.id}>
+                            <CommentCard key={index}>
+                              <Card.Body>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <img
+                                    src={`https://source.unsplash.com/random/50x50/?portrait&${index}`}
+                                    alt="avatar"
+                                    style={{
+                                      borderRadius: "50%",
+                                      marginRight: "10px",
+                                    }}
+                                  />
+                                  <div>
+                                    <CommentText>{thread.title}</CommentText>
+                                    <small>
+                                      {format(
+                                        new Date(thread.created_at),
+                                        "yyyy-MM-dd HH:mm:ss"
+                                      )}
+                                    </small>
+                                  </div>
+                                </div>
+
+                                <Card.Text>
+                                  <Subway />:
+                                  {getTrainLineIcon(thread.train_line) && (
+                                    <img
+                                      src={getTrainLineIcon(thread.train_line)}
+                                      alt={`${thread.train_line} icon`}
+                                      style={{
+                                        width: "24px",
+                                        height: "24px",
+                                        marginLeft: "8px",
+                                      }}
+                                    />
+                                  )}
+                                  <br />
+                                  <Place />: {thread.station}
+                                  Tags: {thread.tags.join(", ")}
+                                  <br />
+                                  {thread.body
+                                    .split("\n")
+                                    .map((text, tIndex) => (
+                                      <React.Fragment key={tIndex}>
+                                        <ChatBubble />
+                                        <ThreadTitle as="span">
+                                          {text}
+                                        </ThreadTitle>
+                                        <br />
+                                      </React.Fragment>
+                                    ))}
+                                </Card.Text>
+                              </Card.Body>
+                            </CommentCard>
+                          </div>
+                        ))
+                      : trainThreads.map((thread, index) => (
+                          <div key={index}>
+                            <CommentCard key={index}>
+                              <Card.Body>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <img
+                                    src={`https://source.unsplash.com/random/50x50/?portrait&${index}`}
+                                    alt="avatar"
+                                    style={{
+                                      borderRadius: "50%",
+                                      marginRight: "10px",
+                                    }}
+                                  />
+                                  <div>
+                                    <CommentText>{thread.title}</CommentText>
+                                    <small>
+                                      {format(
+                                        new Date(thread.created_at),
+                                        "yyyy-MM-dd HH:mm:ss"
+                                      )}
+                                    </small>
+                                  </div>
+                                </div>
+
+                                <Card.Text>
+                                  <Subway />:
+                                  {getTrainLineIcon(thread.train_line) && (
+                                    <img
+                                      src={getTrainLineIcon(thread.train_line)}
+                                      alt={`${thread.train_line} icon`}
+                                      style={{
+                                        width: "24px",
+                                        height: "24px",
+                                        marginLeft: "8px",
+                                      }}
+                                    />
+                                  )}
+                                  <br />
+                                  <Place />: {thread.station}
+                                  Tags: {thread.tags.join(", ")}
+                                  <br />
+                                  {thread.body
+                                    .split("\n")
+                                    .map((text, tIndex) => (
+                                      <React.Fragment key={tIndex}>
+                                        <ChatBubble />
+                                        <ThreadTitle as="span">
+                                          {text}
+                                        </ThreadTitle>
+                                        <br />
+                                      </React.Fragment>
+                                    ))}
+                                </Card.Text>
+                              </Card.Body>
+                            </CommentCard>
+                          </div>
+                        ))}
+                  </>
+                )}
+              </div>
             </div>
           </Col>
         )}

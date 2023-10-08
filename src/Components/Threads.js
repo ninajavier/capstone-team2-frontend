@@ -165,21 +165,21 @@ const Threads = () => {
         const response = await axios.get(`${API}/api/threads`);
         const threadsData = response.data.data;
 
-        const threadsWithComments = await Promise.all(
-          threadsData.map(async (thread) => {
-            const commentsResponse = await axios.get(
-              `${API}/api/threads/${thread.id}/comments`
-            );
-            const comments = commentsResponse.data.data;
-            return { ...thread, comments };
-          })
-        );
+        // const threadsWithComments = await Promise.all(
+        //   threadsData.map(async (thread) => {
+        //     const commentsResponse = await axios.get(
+        //       `${API}/api/threads/${thread.id}/comments`
+        //     );
+        //     const comments = commentsResponse.data.data;
+        //     return { ...thread, comments };
+        //   })
+        // );
 
-        const sortedThreads = threadsWithComments.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
+        // const sortedThreads = threadsWithComments.sort(
+        //   (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        // );
 
-        setThreads(sortedThreads);
+        setThreads(threadsData);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
@@ -365,7 +365,7 @@ const Threads = () => {
                 </Card.Text>
 
                 {selectedThreadIndex === index && showComments ? (
-                  <CommentList comments={thread.comments} />
+                  <CommentList threadId={thread.id} />
                 ) : null}
               </Card.Body>
               <Button

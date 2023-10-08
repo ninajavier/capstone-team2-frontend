@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -12,22 +12,38 @@ import {
 import { Delete, Edit, AccessTime } from "@mui/icons-material";
 import axios from "axios";
 
-const CommentList = ({ comments, setComments }) => {
+const CommentList = ({ threadId }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [newCommentText, setNewCommentText] = useState("");
+  const [comments, setComments] = useState([]);
+  const API = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    const getComments = async () => {
+      const commentsResponse = await axios.get(
+        `${API}/api/threads/${threadId}/comments`
+      );
+      const comments = commentsResponse.data.data;
+
+      const sortedComments = comments.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setComments(sortedComments);
+    };
+    getComments();
+  }, []);
 
   const handleEditClick = (commentId, commentText) => {
     setEditingCommentId(commentId);
     setNewCommentText(commentText);
   };
-
   const handleEditSave = async (commentId) => {
     try {
       const response = await axios.put(`/api/comments/${commentId}`, {
         content: newCommentText,
       });
       console.log("Comment update response:", response.data); // Log the response
-      
+
       // Update the local state to reflect the changes
       const updatedComments = comments.map((comment) => {
         if (comment.id === commentId) {
@@ -45,8 +61,8 @@ const CommentList = ({ comments, setComments }) => {
     } catch (error) {
       console.error("Error updating comment:", error.response); // Log the error response
     }
-};
-  
+  };
+
   const handleDeleteClick = async (commentId) => {
     try {
       const response = await axios.delete(`/api/comments/${commentId}`);
@@ -57,7 +73,6 @@ const CommentList = ({ comments, setComments }) => {
       console.error("Error deleting comment:", error.response); // Log the error response
     }
   };
-  
 
   return (
     <div>
@@ -108,7 +123,9 @@ const CommentList = ({ comments, setComments }) => {
                     <Grid item xs={1}>
                       <IconButton
                         color="warning"
-                        onClick={() => handleEditClick(comment.id, comment.content)}
+                        onClick={() =>
+                          handleEditClick(comment.id, comment.content)
+                        }
                       >
                         <Edit />
                       </IconButton>
@@ -117,12 +134,13 @@ const CommentList = ({ comments, setComments }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
-                  <strong>Posted Anonymously</strong>
+                    <strong>Posted Anonymously</strong>
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
-                    <AccessTime />{comment.created_at}
+                    <AccessTime />
+                    {comment.created_at}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>

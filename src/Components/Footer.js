@@ -3,16 +3,21 @@ import { Container } from "react-bootstrap";
 
 const Footer = () => {
   const footerStyle = {
-    backgroundColor: "#000", // Set the background color
-    minHeight: "80px", // Set the minimum height to make it larger
-    fontSize: "20px", // Set the font size
-    color: "#fff", // Set text color to white
+    backgroundColor: "#000",
+    minHeight: "80px",
+    fontSize: "20px",
+    color: "#fff",
     display: "flex",
-    flexDirection: "column", // Make it a column layout
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    fontFamily: "Raleway, sans-serif", // Set the font family to Raleway
-    // Add any other inline styles you want here
+    fontFamily: "Raleway, sans-serif",
+    paddingTop: "1em",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    marginTop: "2em"
   };
 
   const pantoneColors = [
@@ -41,14 +46,14 @@ const Footer = () => {
 
   return (
     <footer style={footerStyle}>
-       <img
-          src="./assets/pursuit.png" // Assuming the image path is correct
-          alt="Pursuit Logo" // Provide a meaningful alt text
-          style={{ width: "100px", height: "auto", marginRight: "10px" }} // Adjust the image size and spacing
-        />
+      <img
+        src="./assets/pursuit.png" // Assuming the image path is correct
+        alt="Pursuit Logo" // Provide a meaningful alt text
+        style={{ width: "100px", height: "auto", marginRight: "10px" }}
+         // Adjust the image size and spacing
+      />
       <Container>
-        &copy; {new Date().getFullYear()}{" "}
-        Prograde. All rights reserved.
+        &copy; {new Date().getFullYear()} Prograde. All rights reserved.
       </Container>
       <div style={squaresContainerStyle}>
         {pantoneColors.map((color, index) => (
@@ -58,7 +63,6 @@ const Footer = () => {
               ...squareStyle,
               backgroundColor: color,
             }}
-            
           ></div>
         ))}
       </div>
