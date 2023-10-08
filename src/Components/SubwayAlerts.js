@@ -1,12 +1,11 @@
 import ReactDOM from "react-dom";
 import React, { useState, useEffect } from "react";
-
 import { Card, Badge, Container, Alert, Spinner } from "react-bootstrap";
 import "./styles.css";
 import axios from "axios";
 import FilterDropdown from "./FilterDropdown";
 import icons from "../Assets";
-// import DateFilter from "./DateFilter";
+import { compareAsc } from "date-fns";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 
@@ -136,6 +135,12 @@ export default function SubwayAlerts() {
                     selectedDate)
               );
             });
+            matchingAlerts.sort((a, b) =>
+              compareAsc(
+                new Date(a.alert.activePeriod[0].start * 1000),
+                new Date(b.alert.activePeriod[0].start * 1000)
+              )
+            );
 
             if (matchingAlerts.length > 0) {
               return (
@@ -202,8 +207,13 @@ export default function SubwayAlerts() {
                               ></div>
                             ) : null}
                             <div style={{ marginTop: "1rem" }}>
-                              <strong>Starts on</strong>{" "}
-                              {ESTHandler(entity.alert.activePeriod[0].start)}
+                              <strong>Scheduled Maintenance Period</strong>
+                              <br /> <div className="padding-style"> </div>
+                              {ESTHandler(
+                                entity.alert.activePeriod[0].start
+                              )}{" "}
+                              <strong>- </strong>
+                              {ESTHandler(entity.alert.activePeriod[0].end)}
                             </div>
                             <br />
                           </Card.Body>
