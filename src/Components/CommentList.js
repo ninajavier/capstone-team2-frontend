@@ -31,7 +31,7 @@ const CommentList = ({ threadId }) => {
       setComments(sortedComments);
     };
     getComments();
-  }, []);
+  }, [API, threadId]);
 
   const handleEditClick = (commentId, commentText) => {
     setEditingCommentId(commentId);
